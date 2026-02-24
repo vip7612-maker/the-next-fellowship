@@ -1,0 +1,125 @@
+.episode-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.date-tag {
+    display: inline-block;
+    background: var(--color-electric-blue);
+    color: var(--color-navy);
+    padding: 5px 15px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    border-radius: 20px;
+    margin-bottom: 1.5rem;
+}
+
+.section-desc {
+    color: var(--color-text-sub);
+    font-size: 1.1rem;
+}
+
+.speaker-clash {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 40px;
+    margin-bottom: 100px;
+}
+
+.speaker-card {
+    flex: 1;
+    background: var(--color-navy-light);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: var(--transition-smooth);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.speaker-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--color-neon-lime);
+}
+
+.speaker-img-placeholder {
+    height: 400px;
+    background: #1d2d50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--color-text-sub);
+}
+
+.speaker-info {
+    padding: 30px;
+}
+
+.field-tag {
+    color: var(--color-neon-lime);
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+}
+
+.speaker-info h3 {
+    font-size: 1.8rem;
+    margin: 10px 0;
+}
+
+.speaker-info p {
+    color: var(--color-text-sub);
+}
+
+.clash-vs {
+    font-size: 3rem;
+    font-style: italic;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.1);
+}
+
+.mentors-grid {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+}
+
+.mentor-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.mentor-circle {
+    width: 50px;
+    height: 50px;
+    background: var(--color-navy-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    border: 1px solid var(--color-electric-blue);
+}
+
+.mentor-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+@media (max-width: 900px) {
+    .speaker-clash {
+        flex-direction: column;
+    }
+
+    .clash-vs {
+        margin: 20px 0;
+    }
+
+    .mentors-grid {
+        flex-direction: column;
+        align-items: start;
+        padding-left: 20px;
+    }
+}

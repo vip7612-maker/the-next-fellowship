@@ -1,0 +1,44 @@
+.consulting {
+    background: var(--color-navy);
+}
+
+.consulting-content {
+    max-width: 900px;
+}
+
+.process-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-top: 60px;
+}
+
+.process-step {
+    background: var(--color-navy-light);
+    padding: 40px;
+    border-radius: 12px;
+    border-bottom: 2px solid var(--color-electric-blue);
+}
+
+.step-num {
+    font-size: 3rem;
+    font-weight: 900;
+    color: rgba(0, 240, 255, 0.1);
+    margin-bottom: 20px;
+}
+
+.process-step h4 {
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+}
+
+.process-step p {
+    font-size: 0.9rem;
+    color: var(--color-text-sub);
+}
+
+@media (max-width: 768px) {
+    .process-grid {
+        grid-template-columns: 1fr;
+    }
+}

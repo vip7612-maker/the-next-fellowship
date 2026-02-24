@@ -1,0 +1,88 @@
+.application {
+    background: var(--color-navy-light);
+}
+
+.application-box {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    background: var(--color-navy);
+    padding: 60px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.application-info h2 {
+    font-size: 2.8rem;
+    margin-bottom: 2rem;
+}
+
+.application-info p {
+    color: var(--color-text-sub);
+    margin-bottom: 2rem;
+}
+
+.criteria-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.criteria-list li {
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.criteria-list li::before {
+    content: '✓';
+    color: var(--color-neon-lime);
+}
+
+.application-form-preview {
+    background: var(--color-navy-light);
+    padding: 40px;
+    border-radius: 12px;
+}
+
+.form-field {
+    margin-bottom: 20px;
+}
+
+.form-field label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.form-field input,
+.form-field textarea {
+    width: 100%;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    color: white;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.waitlist-info {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--color-text-sub);
+}
+
+@media (max-width: 1024px) {
+    .application-box {
+        grid-template-columns: 1fr;
+        padding: 40px;
+        gap: 40px;
+    }
+}
