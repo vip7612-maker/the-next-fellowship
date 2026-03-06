@@ -28,7 +28,10 @@ body {
   overflow-x: hidden;
 }
 
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   font-family: var(--font-accent);
   font-weight: 800;
   line-height: 1.1;
@@ -85,5 +88,19 @@ section {
 @media (max-width: 768px) {
   :root {
     --section-padding: 60px 20px;
+  }
+}
+
+.mobile-only-br {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .desktop-only-br {
+    display: none;
+  }
+
+  .mobile-only-br {
+    display: block;
   }
 }
