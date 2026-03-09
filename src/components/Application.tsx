@@ -64,7 +64,7 @@ const Application = () => {
                         <ul className="criteria-list" style={{ marginBottom: '40px' }}>
                             <li>신청 기간: ~ 3월 20일 18:00까지</li>
                             <li>선발 인원: 강원도 지역 고등학생 00명</li>
-                            <li>발표: 3월 21일 개별 연락</li>
+                            <li>발표: 3월 27일 개별 연락</li>
                         </ul>
 
                         <div style={{ marginTop: '20px', marginBottom: '40px' }}>
