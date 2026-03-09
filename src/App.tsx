@@ -23,9 +23,9 @@ const LandingPage = () => (
     <main>
       <Hero />
       <Application />
+      <Episode />
       <Intro />
       <Pipeline />
-      <Episode />
       <Consulting />
       <Vote />
       {/* <Gallery /> */}

@@ -4,14 +4,7 @@ const Episode = () => {
     return (
         <section className="episode" id="episode">
             <div className="container">
-                <div className="episode-header">
-                    <h2 className="section-title" style={{ fontSize: '4.5rem', lineHeight: '1.2', marginBottom: '20px' }}>
-                        1회차: <span className="neon-text">Semiconductor X Marketing</span>
-                    </h2>
-                    <p className="section-desc" style={{ fontSize: '1.3rem' }}>
-                        미래 산업의 핵심 기술과, 시장을 움직이는 전략을 함께 탐구합니다.
-                    </p>
-                </div>
+
 
                 <div className="episode-grid">
                     {/* Card 1: Experts */}
