@@ -5,7 +5,7 @@ import Hero from './components/Hero';
 import Intro from './components/Intro';
 import Pipeline from './components/Pipeline';
 import Episode from './components/Episode';
-import Consulting from './components/Consulting';
+// import Consulting from './components/Consulting';
 import Application from './components/Application';
 import Vote from './components/Vote';
 // import Gallery from './components/Gallery';
@@ -26,7 +26,7 @@ const LandingPage = () => (
       <Episode />
       <Intro />
       <Pipeline />
-      <Consulting />
+      {/* <Consulting /> */}
       <Vote />
       {/* <Gallery /> */}
     </main>
