@@ -52,11 +52,24 @@ const Application = () => {
 
                 <div className="application-box">
                     <div className="application-info">
-                        <div className="session-meta-new" style={{ marginBottom: '30px', fontSize: '1.15rem', lineHeight: '1.6' }}>
-                            <p style={{ margin: 0 }}><strong>📆 일시:</strong> 4월 5일 (일) 14:00-18:00</p>
-                            <p style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                <strong>📍 장소:</strong> 홍천 신장대리 꽃신
-                                <button className="map-btn" onClick={() => setIsMapOpen(true)}>지도보기</button>
+                        <div className="session-meta-new" style={{
+                            marginBottom: '30px',
+                            fontSize: '1.2rem',
+                            lineHeight: '1.6',
+                            border: '1px solid rgba(255, 255, 255, 0.15)',
+                            background: 'rgba(0, 0, 0, 0.2)',
+                            padding: '15px 20px',
+                            borderRadius: '12px',
+                            display: 'inline-block'
+                        }}>
+                            <p style={{ margin: '0 0 10px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <span style={{ fontSize: '1.4rem' }}>📆</span>
+                                <strong>일시:</strong> 4월 5일 (일) 14:00-18:00
+                            </p>
+                            <p style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <span style={{ fontSize: '1.4rem' }}>📍</span>
+                                <strong>장소:</strong> 홍천 신장대리 꽃신
+                                <button className="map-btn" onClick={() => setIsMapOpen(true)} style={{ marginLeft: '10px' }}>지도보기</button>
                             </p>
                         </div>
                         <h2 className="section-title" style={{ fontSize: '2.2rem' }}>속도보다는 방향,<br />우리의 기준은 <br className="mobile-only-br" /><span className="neon-text">당신의 진심</span>입니다</h2>
