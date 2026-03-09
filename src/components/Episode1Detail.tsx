@@ -105,6 +105,36 @@ const Episode1Detail = () => {
                         </div>
                     </div>
 
+                    <div className="gallery-section" style={{ marginTop: '80px', marginBottom: '80px', display: 'none' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '40px' }}>
+                            <h2 style={{ fontSize: '2.5rem', fontWeight: '800' }}>
+                                기록, 그리고 <span style={{ color: '#00f0ff' }}>성장</span>
+                            </h2>
+                        </div>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)', gap: '20px' }}>
+                            {/* 왼쪽 큰 비디오 영역 */}
+                            <div style={{ background: 'var(--color-navy-light)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)', minHeight: '500px', display: 'flex', alignItems: 'center', justifyContent: 'center', gridRow: 'span 2' }}>
+                                <span style={{ color: 'var(--color-text-sub)', fontSize: '0.9rem' }}>1회차 메인 강연 하이라이트 영상</span>
+                            </div>
+
+                            {/* 오른쪽 상단 이미지 영역 */}
+                            <div style={{ background: 'var(--color-navy-light)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)', minHeight: '240px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <span style={{ color: 'var(--color-text-sub)', fontSize: '0.9rem' }}>멘토링 세션 현장 스케치 01</span>
+                            </div>
+
+                            {/* 오른쪽 하단 이미지 영역 */}
+                            <div style={{ background: 'var(--color-navy-light)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)', minHeight: '240px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <span style={{ color: 'var(--color-text-sub)', fontSize: '0.9rem' }}>참가 학생 인터뷰</span>
+                            </div>
+
+                            {/* 아래쪽 추가 이미지 영역 */}
+                            <div style={{ background: 'var(--color-navy-light)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)', minHeight: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center', gridColumn: '1 / 2' }}>
+                                <span style={{ color: 'var(--color-text-sub)', fontSize: '0.9rem' }}>입시 컨설팅 현장</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="bottom-cta">
                         <h2 className="section-title">여러분의 진심을 기다립니다.</h2>
                         <Link to="/#application" className="cta-button-main" style={{ display: 'inline-block', textDecoration: 'none', padding: '15px 40px', fontSize: '1.2rem' }}>신청하러 가기</Link>
