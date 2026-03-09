@@ -58,6 +58,7 @@ const Vote = () => {
     return (
         <section className="vote" id="vote">
             <div className="container">
+                <div className="intro-badge neon-text" style={{ marginBottom: '20px' }}>넥스트 스테이지</div>
                 <h2 className="section-title">다음 스테이지의 <span className="neon-text">주인공을</span><br />직접 정해주세요</h2>
                 <p className="section-desc">가장 궁금한 분야를 선택해 주제를 신청하세요. 여러분의 목소리가 다음 펠로우십의 주제가 됩니다.</p>
 
