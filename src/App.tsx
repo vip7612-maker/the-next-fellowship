@@ -28,7 +28,7 @@ const LandingPage = () => (
       <Episode />
       <Consulting />
       <Vote />
-      <Gallery />
+      {/* <Gallery /> */}
     </main>
     <footer>
       <div className="container footer-content">
