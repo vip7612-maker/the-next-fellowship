@@ -80,6 +80,31 @@ const Episode1Detail = () => {
                         </div>
                     </div>
 
+                    <div className="consulting-section" style={{ marginTop: '80px', marginBottom: '80px', background: 'var(--color-navy-light)', padding: '60px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                        <div style={{ marginBottom: '40px' }}>
+                            <h3 style={{ fontSize: '1.2rem', color: 'var(--color-text-sub)', marginBottom: '5px' }}>윤앤고가 제안하는</h3>
+                            <h2 style={{ fontSize: '2.5rem', marginBottom: '15px' }}><span style={{ color: '#00f0ff' }}>데이터 기반</span> 진학 나침반</h2>
+                            <p style={{ color: 'var(--color-text-sub)', fontSize: '1.1rem', lineHeight: '1.6' }}>
+                                단순한 상담이 아닙니다. 개인별 생기부 분석부터 꿈을 구체화하는 전략까지, 믿을 수 있는 전문가 그룹이 소수 정예 밀착 컨설팅을 제공합니다.
+                            </p>
+                        </div>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+                            {[
+                                { num: '01', title: '입시 트렌드 이해', desc: '입시트렌드와 입시전략의 기본 이해' },
+                                { num: '02', title: '생기부 기획 가이드', desc: '생기부 기획 방향 및 활동 설계 가이드' },
+                                { num: '03', title: '진로 연계 정보 분석', desc: '관심(반도체/마케팅) 진로와 관련된 정보 분석' },
+                                { num: '04', title: '생기부 연계 방안 적용', desc: '관심(반도체/마케팅) 진로와의 생기부 연계 방안' },
+                            ].map((item, i) => (
+                                <div key={i} style={{ background: 'var(--color-navy)', padding: '30px', borderRadius: '12px', borderBottom: '3px solid #00f0ff', display: 'flex', flexDirection: 'column' }}>
+                                    <div style={{ fontSize: '3rem', fontWeight: '900', color: 'rgba(0, 240, 255, 0.2)', marginBottom: '20px' }}>{item.num}</div>
+                                    <h4 style={{ fontSize: '1.3rem', marginBottom: '10px' }}>{item.title}</h4>
+                                    <p style={{ color: 'var(--color-text-sub)', fontSize: '0.95rem', lineHeight: '1.5' }}>{item.desc}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
                     <div className="bottom-cta">
                         <h2 className="section-title">여러분의 진심을 기다립니다.</h2>
                         <Link to="/#application" className="cta-button-main" style={{ display: 'inline-block', textDecoration: 'none', padding: '15px 40px', fontSize: '1.2rem' }}>신청하러 가기</Link>
