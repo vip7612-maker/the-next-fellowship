@@ -195,9 +195,9 @@ export const mockGallery = [
 export const getTargetCapacity = (): number => {
     const saved = localStorage.getItem('fellowship_target_capacity');
     if (saved) {
-        return parseInt(saved, 10) || 10;
+        return parseInt(saved, 10) || 50;
     }
-    return 10;
+    return 50;
 };
 
 export const saveTargetCapacity = (capacity: number) => {

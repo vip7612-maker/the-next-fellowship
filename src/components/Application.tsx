@@ -4,7 +4,7 @@ import './Application.css';
 
 const Application = () => {
     const [applicantCount, setApplicantCount] = useState(0);
-    const [targetCapacity, setTargetCapacity] = useState(10);
+    const [targetCapacity, setTargetCapacity] = useState(50);
     const [formData, setFormData] = useState({
         name: '',
         school: '',
@@ -50,7 +50,7 @@ const Application = () => {
 
                 <div className="application-box">
                     <div className="application-info">
-                        <div className="session-meta-new">
+                        <div className="session-meta-new" style={{ marginBottom: '30px' }}>
                             <p style={{ margin: 0 }}><strong>📆 일시:</strong> 4월 5일 (일) 14:00-18:00</p>
                             <p style={{ margin: 0 }}><strong>📍 장소:</strong> 홍천 신장대리 꽃신</p>
                         </div>
