@@ -13,8 +13,8 @@ const staffMembers = [
     {
         id: 2,
         name: '박세인',
-        role: '스탠포드',
-        bio: 'The Next Fellowship 프로젝트의 기획과 글로벌 비전을 조율합니다.',
+        role: 'Stanford University \'16, Science, Technology & Society',
+        bio: '現) 폴앤마크 Global Business Director & 4MAT Trainer\n現) 리더십 웰니스 코치 (NBC-HWC)\n現) 브랜드 전략 컨설턴트 & 어드바이저\n現) 온체어 by SIDIZ 팟캐스트 호스트',
         image: '/staff/2.jpg'
     },
     {
