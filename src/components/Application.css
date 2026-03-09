@@ -1,5 +1,6 @@
 .application {
-    background: var(--color-navy-light);
+    background: transparent;
+    padding-bottom: 20px;
 }
 
 .application-box {
@@ -7,7 +8,7 @@
     grid-template-columns: 1fr 1fr;
     gap: 80px;
     align-items: center;
-    background: var(--color-navy);
+    background: var(--color-navy-light);
     padding: 60px;
     border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.05);
