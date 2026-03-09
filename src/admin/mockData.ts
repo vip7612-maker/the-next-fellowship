@@ -103,10 +103,14 @@ export interface VoteRecord {
 }
 
 const initialTopics: Topic[] = [
-    { id: 1, title: "반도체 공학", description: "현대 기술의 핵심인 반도체에 대해 더 깊이 알아보고 싶습니다.", votes: 0, createdAt: "2026-03-01", authorName: "운영진", authorPhone: "000-0000-0000" },
-    { id: 2, title: "콘텐츠 마케팅", description: "사람들의 마음을 움직이는 콘텐츠 기획의 비밀을 파헤칩니다.", votes: 0, createdAt: "2026-03-02", authorName: "운영진", authorPhone: "000-0000-0000" },
-    { id: 3, title: "투자 뱅킹 (IB)", description: "금융 시장의 꽃, IB의 세계와 커리어 패스.", votes: 0, createdAt: "2026-03-03", authorName: "운영진", authorPhone: "000-0000-0000" },
-    { id: 4, title: "의료/생명과학", description: "인류의 건강을 책임지는 생명과학 기술의 미래.", votes: 0, createdAt: "2026-03-04", authorName: "운영진", authorPhone: "000-0000-0000" }
+    { id: 1, title: "경제,금융", description: "자본주의의 흐름을 읽고 새로운 가치를 창출하는 경제와 금융의 세계.", votes: 0, createdAt: "2026-03-09", authorName: "운영진", authorPhone: "000-0000-0000" },
+    { id: 2, title: "자유전공학부", description: "나만의 길을 스스로 설계하는 융합 인재의 시대를 대비합니다.", votes: 0, createdAt: "2026-03-09", authorName: "운영진", authorPhone: "000-0000-0000" },
+    { id: 3, title: "교육계열", description: "누군가의 인생과 미래를 빚어내는 가장 가치 있는 일, 교육의 진정한 의미.", votes: 0, createdAt: "2026-03-09", authorName: "운영진", authorPhone: "000-0000-0000" },
+    { id: 4, title: "AI분야", description: "우리의 일상을 혁신하고 세상을 바꾸는 인공지능 기술의 오늘과 내일.", votes: 0, createdAt: "2026-03-09", authorName: "운영진", authorPhone: "000-0000-0000" },
+    { id: 5, title: "생명화학", description: "인류가 직면한 난제를 해결하는 생명과학과 화학의 무한한 가능성.", votes: 0, createdAt: "2026-03-09", authorName: "운영진", authorPhone: "000-0000-0000" },
+    { id: 6, title: "건축", description: "사람의 시간과 공간을 잇고 새로운 뼈대를 세우는 건축의 본질.", votes: 0, createdAt: "2026-03-09", authorName: "운영진", authorPhone: "000-0000-0000" },
+    { id: 7, title: "예체능(음악,미술,체육)", description: "한계를 극복하는 열정과 창의성으로 세상에 감동을 전합니다.", votes: 0, createdAt: "2026-03-09", authorName: "운영진", authorPhone: "000-0000-0000" },
+    { id: 8, title: "보건(간호)", description: "생명의 가장 가까이에서 돌봄과 헌신의 가치를 실천하는 의료 복지.", votes: 0, createdAt: "2026-03-09", authorName: "운영진", authorPhone: "000-0000-0000" }
 ];
 
 export const getTopics = (): Topic[] => {
