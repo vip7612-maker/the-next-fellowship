@@ -41,11 +41,11 @@ const Application = () => {
     return (
         <section className="application" id="application">
             <div className="container">
-                <div className="session-header-top">
-                    <h3 className="session-title-top">
+                <div className="session-header-top" style={{ textAlign: 'center', marginBottom: '60px' }}>
+                    <h3 className="session-title-top" style={{ fontSize: '3.5rem', lineHeight: '1.3', marginBottom: '20px' }}>
                         1회차: <span className="neon-text">Semiconductor X Marketing</span>
                     </h3>
-                    <p className="session-desc-top">미래 산업의 핵심 기술과, 시장을 움직이는 전략을 함께 탐구합니다.</p>
+                    <p className="session-desc-top" style={{ fontSize: '1.3rem', color: 'var(--color-text-sub)' }}>미래 산업의 핵심 기술과, 시장을 움직이는 전략을 함께 탐구합니다.</p>
                 </div>
 
                 <div className="application-box">
