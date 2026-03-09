@@ -10,6 +10,7 @@ import Application from './components/Application';
 import Vote from './components/Vote';
 // import Gallery from './components/Gallery';
 import Episode1Detail from './components/Episode1Detail';
+import Staff from './components/Staff';
 import AdminLayout from './admin/AdminLayout';
 import AdminLogin from './admin/AdminLogin';
 import ApplicantList from './admin/ApplicantList';
@@ -64,6 +65,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/episode/1" element={<Episode1Detail />} />
+          <Route path="/staff" element={<Staff />} />
           <Route path="/admin" element={<ProtectedAdmin><ApplicantList /></ProtectedAdmin>} />
           <Route path="/admin/vote" element={<ProtectedAdmin><VoteAdmin /></ProtectedAdmin>} />
           <Route path="/admin/gallery" element={<ProtectedAdmin><GalleryAdmin /></ProtectedAdmin>} />
