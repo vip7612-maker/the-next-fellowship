@@ -57,8 +57,8 @@ const Episode = () => {
 
                         <div className="person-item">
                             <div className="person-role">Consulting Group</div>
-                            <div className="person-name">윤앤고 입시전략팀</div>
-                            <div className="person-desc">개인별 생기부 분석 및 밀착 입시 컨설팅</div>
+                            <div className="person-name">윤여정 대표</div>
+                            <div className="person-desc">윤앤고 입시전략팀<br />개인별 생기부 분석 및 밀착 입시 컨설팅</div>
                         </div>
                     </div>
                 </div>

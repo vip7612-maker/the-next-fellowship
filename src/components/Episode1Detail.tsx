@@ -64,6 +64,20 @@ const Episode1Detail = () => {
                                 </p>
                             </div>
                         </div>
+
+                        <div className="detail-speaker-card" style={{ marginTop: '50px' }}>
+                            <div className="ds-image bg-pink" style={{ backgroundImage: 'url(/yoon.jpeg)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundColor: '#e2e8f0' }}></div>
+                            <div className="ds-info">
+                                <span className="field-tag" style={{ color: '#ff007f' }}>Consulting Group</span>
+                                <h3>윤여정 대표</h3>
+                                <h4>데이터 기반 진학 나침반, 밀착 입시 컨설팅</h4>
+                                <p className="ds-bio" style={{ lineHeight: '1.6' }}>
+                                    현) 윤앤고 입시전략팀 대표 컨설턴트<br /><br />
+                                    <strong>"개인별 맞춤형 생기부 분석 및 최적의 입학 전략 수립"</strong><br />
+                                    변화하는 대입 전형 속에서 학생 개인의 강점을 가장 잘 살릴 수 있는 전략을 제시합니다. 막연한 진학 고민을 데이터 기반의 명확한 로드맵으로 바꾸어 주는 실질적인 컨설팅을 제공합니다.
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
                     <div className="bottom-cta">
