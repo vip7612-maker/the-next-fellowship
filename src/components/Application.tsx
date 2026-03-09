@@ -76,7 +76,7 @@ const Application = () => {
                         <p style={{ marginBottom: '30px' }}>학생 보드 멤버들이 당신의 고민과 신청 이유를 신중히 읽고 함께할 동료를 선발합니다.<br />지금 바로 신청하세요!</p>
                         <ul className="criteria-list" style={{ marginBottom: '40px' }}>
                             <li>신청 기간: ~ 3월 20일 18:00까지</li>
-                            <li>선발 인원: 강원도 지역 고등학생 00명</li>
+                            <li>선발 인원: 홍천지역 고등학생 50명</li>
                             <li>발표: 3월 27일 개별 연락</li>
                         </ul>
 
