@@ -1,32 +1,108 @@
+import { useState, useEffect } from 'react';
+import { addApplicant, getApplicants, getTargetCapacity } from '../admin/mockData';
 import './Application.css';
 
 const Application = () => {
+    const [applicantCount, setApplicantCount] = useState(0);
+    const [targetCapacity, setTargetCapacity] = useState(10);
+    const [formData, setFormData] = useState({
+        name: '',
+        school: '',
+        phone: '',
+        email: '',
+        major: '',
+        reason: ''
+    });
+
+    useEffect(() => {
+        setApplicantCount(getApplicants().length);
+        setTargetCapacity(getTargetCapacity());
+    }, []);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!formData.name || !formData.phone || !formData.reason) {
+            alert("이름, 연락처, 지원 이유는 필수 항목입니다.");
+            return;
+        }
+
+        addApplicant(formData);
+
+        alert("신청이 완료되었습니다. 정성스러운 이야기 감사합니다!");
+        setFormData({ name: '', school: '', phone: '', email: '', major: '', reason: '' });
+        setApplicantCount(getApplicants().length);
+    };
+
     return (
         <section className="application" id="application">
             <div className="container">
+                <div className="session-header-top">
+                    <h3 className="session-title-top">
+                        1회차: <span className="neon-text">Semiconductor X Marketing</span>
+                    </h3>
+                    <p className="session-desc-top">미래 산업의 핵심 기술과, 시장을 움직이는 전략을 함께 탐구합니다.</p>
+                </div>
+
                 <div className="application-box">
                     <div className="application-info">
-                        <h2 className="section-title">속도보다는 방향,<br />우리의 기준은 <span className="neon-text">당신의 진심</span>입니다</h2>
-                        <p>선착순이 아닙니다. 학생 보드 멤버들이 당신의 고민과 신청 이유를 신중히 읽고 함께할 동료를 선발합니다.</p>
-                        <ul className="criteria-list">
-                            <li>신청 기간: ~ 3월 15일 23:59까지</li>
+                        <div className="session-meta-new">
+                            <p><strong>📆 일시:</strong> 4월 5일 (일) 14:00-18:00</p>
+                            <p><strong>📍 장소:</strong> 홍천 신장대리 꽃신</p>
+                        </div>
+                        <h2 className="section-title" style={{ fontSize: '2.2rem' }}>속도보다는 방향,<br />우리의 기준은 <br className="mobile-only-br" /><span className="neon-text">당신의 진심</span>입니다</h2>
+                        <p style={{ marginBottom: '30px' }}>학생 보드 멤버들이 당신의 고민과 신청 이유를 신중히 읽고 함께할 동료를 선발합니다.<br />지금 바로 신청하세요!</p>
+                        <ul className="criteria-list" style={{ marginBottom: '40px' }}>
+                            <li>신청 기간: ~ 3월 20일 18:00까지</li>
                             <li>선발 인원: 강원도 지역 고등학생 00명</li>
-                            <li>발표: 3월 17일 개별 연락</li>
+                            <li>발표: 3월 21일 개별 연락</li>
                         </ul>
+
+                        <div style={{ marginTop: '20px', marginBottom: '40px' }}>
+                            <a href="#/episode/1" className="secondary-button" style={{ display: 'inline-block', textDecoration: 'none', textAlign: 'center' }}>1회차 프로그램 더 알아보기 ➔</a>
+                        </div>
                     </div>
 
-                    <div className="application-form-preview">
+                    <form className="application-form-preview" onSubmit={handleSubmit}>
+                        <div className="form-row">
+                            <div className="form-field">
+                                <label>이름 *</label>
+                                <input type="text" name="name" placeholder="홍길동" value={formData.name} onChange={handleChange} required />
+                            </div>
+                            <div className="form-field">
+                                <label>학교</label>
+                                <input type="text" name="school" placeholder="홍천고등학교" value={formData.school} onChange={handleChange} />
+                            </div>
+                        </div>
+                        <div className="form-row">
+                            <div className="form-field">
+                                <label>연락처 *</label>
+                                <input type="text" name="phone" placeholder="010-1234-5678" value={formData.phone} onChange={handleChange} required />
+                            </div>
+                            <div className="form-field">
+                                <label>이메일</label>
+                                <input type="email" name="email" placeholder="example@email.com" value={formData.email} onChange={handleChange} />
+                            </div>
+                        </div>
                         <div className="form-field">
                             <label>꿈꾸는 전공이나 학과가 있나요?</label>
-                            <input type="text" placeholder="예: 인공지능, 영상 미디어..." disabled />
+                            <input type="text" name="major" placeholder="예: 인공지능, 영상 미디어..." value={formData.major} onChange={handleChange} />
                         </div>
                         <div className="form-field">
-                            <label>펠로우십에 합류하고 싶은 진짜 이유는?</label>
-                            <textarea placeholder="당신만의 이야기를 들려주세요 (최소 100자)" disabled></textarea>
+                            <label>펠로우십에 합류하고 싶은 진짜 이유는? *</label>
+                            <textarea name="reason" placeholder="당신만의 이야기를 들려주세요 (최소 100자)" value={formData.reason} onChange={handleChange} required></textarea>
                         </div>
-                        <button className="cta-button-main full-width">지금 지원서 작성하기</button>
-                        <p className="waitlist-info">현재 14명의 대기자가 있습니다 (신청률 140%)</p>
-                    </div>
+                        <button type="submit" className="cta-button-main full-width">지금 참가신청하기</button>
+                        <p className="waitlist-info">
+                            {applicantCount > targetCapacity
+                                ? `현재 ${applicantCount - targetCapacity}명의 대기자가 있습니다 (신청률 ${Math.round((applicantCount / targetCapacity) * 100)}%)`
+                                : `현재 ${applicantCount}명이 신청을 완료했습니다 (목표 정원 ${targetCapacity}명)`}
+                        </p>
+                    </form>
                 </div>
             </div>
         </section>

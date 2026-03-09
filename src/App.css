@@ -10,6 +10,23 @@ footer {
   align-items: center;
 }
 
+.footer-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+}
+
+.admin-link {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.2);
+  text-decoration: none;
+}
+
+.admin-link:hover {
+  color: var(--color-neon-lime);
+}
+
 .footer-logo {
   font-weight: 800;
   font-size: 1.2rem;

@@ -48,3 +48,82 @@
     background: var(--color-neon-lime);
     color: var(--color-navy);
 }
+
+/* Modals */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 25, 47, 0.85);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.modal-content {
+    background: var(--color-navy);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    padding: 40px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+}
+
+.modal-content h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: var(--color-white);
+}
+
+.modal-content p {
+    font-size: 0.9rem;
+    color: var(--color-text-sub);
+    margin-bottom: 30px;
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--color-white);
+    border-radius: 4px;
+    margin-bottom: 15px;
+    outline: none;
+    transition: var(--transition-smooth);
+}
+
+.modal-content input:focus,
+.modal-content textarea:focus {
+    border-color: var(--color-neon-lime);
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.cancel-btn,
+.submit-btn {
+    padding: 10px 25px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.cancel-btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--color-text-sub);
+}
+
+.cancel-btn:hover {
+    color: white;
+    border-color: white;
+}

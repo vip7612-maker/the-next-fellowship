@@ -1,0 +1,214 @@
+.episode-detail-page {
+    background-color: var(--color-navy);
+    min-height: 100vh;
+    padding-top: 100px;
+}
+
+.detail-main {
+    padding-bottom: 100px;
+}
+
+.back-link {
+    display: inline-block;
+    color: var(--color-text-sub);
+    text-decoration: none;
+    margin-bottom: 40px;
+    font-weight: 500;
+    transition: var(--transition-smooth);
+}
+
+.back-link:hover {
+    color: var(--color-white);
+    transform: translateX(-5px);
+}
+
+.detail-header {
+    text-align: center;
+    margin-bottom: 80px;
+}
+
+.detail-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--color-white);
+    margin-bottom: 20px;
+    letter-spacing: -1px;
+}
+
+.x-mark {
+    color: rgba(255, 255, 255, 0.2);
+    font-weight: 300;
+    margin: 0 10px;
+}
+
+.detail-subtitle {
+    font-size: 1.2rem;
+    color: var(--color-text-main);
+    margin-bottom: 40px;
+}
+
+.meta-box {
+    display: inline-block;
+    background: rgba(0, 240, 255, 0.05);
+    border: 1px solid rgba(0, 240, 255, 0.2);
+    padding: 20px 40px;
+    border-radius: 12px;
+    text-align: left;
+}
+
+.meta-box p {
+    margin: 5px 0;
+    color: var(--color-text-sub);
+}
+
+.meta-box strong {
+    color: var(--color-white);
+}
+
+.detail-speaker-card {
+    display: flex;
+    gap: 50px;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 40px;
+    margin-bottom: 40px;
+    transition: var(--transition-smooth);
+}
+
+.detail-speaker-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(204, 255, 0, 0.3);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.detail-speaker-card.reverse {
+    flex-direction: row-reverse;
+}
+
+.ds-image {
+    width: 300px;
+    height: 400px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.ds-image.bg-blue {
+    background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(0, 240, 255, 0.05));
+    border: 1px solid rgba(0, 240, 255, 0.3);
+}
+
+.ds-image.bg-neon {
+    background: linear-gradient(135deg, rgba(204, 255, 0, 0.2), rgba(204, 255, 0, 0.05));
+    border: 1px solid rgba(204, 255, 0, 0.3);
+}
+
+.placeholder-text {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.placeholder-text.text-dark {
+    color: rgba(10, 25, 47, 0.7);
+}
+
+.ds-info {
+    flex-grow: 1;
+}
+
+.ds-info h3 {
+    font-size: 2.5rem;
+    color: var(--color-white);
+    margin: 15px 0 10px;
+}
+
+.ds-info h4 {
+    font-size: 1.2rem;
+    color: var(--color-text-main);
+    font-weight: 400;
+    margin-bottom: 25px;
+}
+
+.ds-bio {
+    color: var(--color-text-sub);
+    line-height: 1.8;
+    font-size: 1.05rem;
+}
+
+.bottom-cta {
+    margin-top: 80px;
+    text-align: center;
+    padding: 60px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 900px) {
+
+    .detail-speaker-card,
+    .detail-speaker-card.reverse {
+        flex-direction: column;
+        padding: 30px;
+    }
+
+    .ds-image {
+        width: 100%;
+        height: 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    .detail-title {
+        font-size: 2.5rem;
+    }
+
+    .detail-speaker-card {
+        padding: 20px;
+    }
+
+    .ds-info h3 {
+        font-size: 2rem;
+    }
+}
+
+.floating-btn-container {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    width: 90%;
+    max-width: 400px;
+    animation: slideUpFade 0.5s ease-out forwards;
+}
+
+.floating-btn-container .cta-button-main {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 18px 40px;
+    font-size: 1.3rem;
+    box-shadow: 0 10px 30px rgba(204, 255, 0, 0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.floating-btn-container .cta-button-main:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(204, 255, 0, 0.6);
+}
+
+@keyframes slideUpFade {
+    from {
+        opacity: 0;
+        transform: translate(-50%, 20px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}

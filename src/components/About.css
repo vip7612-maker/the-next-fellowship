@@ -1,0 +1,125 @@
+.about-wrapper {
+    position: relative;
+    z-index: 2;
+}
+
+/* Subtle background glow effect */
+.about-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0, 240, 255, 0.05) 0%, rgba(10, 25, 47, 0) 70%);
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    pointer-events: none;
+}
+
+.about-content {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+    text-align: center;
+}
+
+.about-title {
+    font-size: 2.5rem;
+    color: var(--color-white);
+    margin-bottom: 50px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.about-manifesto {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 50px 40px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.manifesto-lead {
+    font-size: 1.5rem;
+    color: var(--color-electric-blue);
+    font-weight: 700;
+    margin-bottom: 40px;
+    line-height: 1.4;
+    word-break: keep-all;
+}
+
+.manifesto-body p {
+    font-size: 1.15rem;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.8;
+    margin-bottom: 25px;
+    text-align: justify;
+    word-break: keep-all;
+}
+
+.manifesto-body .highlight-text {
+    color: var(--color-neon-lime);
+    font-weight: 600;
+}
+
+.manifesto-body strong {
+    color: var(--color-white);
+    font-weight: 700;
+}
+
+.manifesto-conclusion {
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 1.25rem !important;
+    color: var(--color-white) !important;
+    text-align: center !important;
+}
+
+.manifesto-conclusion strong {
+    display: block;
+    margin-top: 15px;
+    color: var(--color-neon-lime);
+    font-size: 1.4rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .about-wrapper {
+        padding: 60px 0;
+    }
+
+    .about-title {
+        font-size: 1.8rem;
+        margin-bottom: 30px;
+        word-break: keep-all;
+    }
+
+    .about-manifesto {
+        padding: 30px 20px;
+    }
+
+    .manifesto-lead {
+        font-size: 1.25rem;
+        margin-bottom: 30px;
+    }
+
+    .manifesto-body p {
+        font-size: 1rem;
+        text-align: left;
+    }
+
+    .manifesto-conclusion strong {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 500px) {
+    .about-title {
+        font-size: 1.6rem;
+        line-height: 1.4;
+    }
+}

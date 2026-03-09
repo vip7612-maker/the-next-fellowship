@@ -28,16 +28,19 @@ const Hero = () => {
             </div>
             <div className="container hero-content">
                 <h1 className="hero-title reveal active">
-                    정답은 하나가 아니니까,<br />
+                    정답은 하나가 <br className="desktop-only-br" />아니니까,<br />
                     너만의 <span className="neon-text">다음을</span> 그려봐.
                 </h1>
                 <p className="hero-subtitle reveal active">
-                    강원도 홍천, 우리가 직접 기획하고 제안하는 우리들만의 커리어 포럼.<br />
+                    어디에 있든, 더 넓은 기회와 연결될 수 있도록,<br />
+                    입시와 전공 선택부터 커리어·삶의 방향까지 스스로 설계하는 힘을 기르는 우리들만의 커리어 포럼.<br /><br />
                     <span className="blue-text">'더 넥스트 펠로우십'</span>에서 진짜 나를 발견해보세요.
                 </p>
                 <div className="hero-btns reveal active">
-                    <button className="cta-button-main">합류 신청하기</button>
-                    <button className="secondary-button">지난 회차 보기</button>
+                    <a href="#application" className="cta-button-main" style={{ display: 'inline-block', textDecoration: 'none' }}>신청하기</a>
+                    {/* 지난 회차 보기 숨김 처리 
+                    <a href="#history" className="secondary-button" style={{ display: 'inline-block', textDecoration: 'none' }}>지난 회차 보기</a> 
+                    */}
                 </div>
             </div>
         </section>
