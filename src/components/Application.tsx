@@ -51,8 +51,8 @@ const Application = () => {
                 <div className="application-box">
                     <div className="application-info">
                         <div className="session-meta-new">
-                            <p><strong>📆 일시:</strong> 4월 5일 (일) 14:00-18:00</p>
-                            <p><strong>📍 장소:</strong> 홍천 신장대리 꽃신</p>
+                            <p style={{ margin: 0 }}><strong>📆 일시:</strong> 4월 5일 (일) 14:00-18:00</p>
+                            <p style={{ margin: 0 }}><strong>📍 장소:</strong> 홍천 신장대리 꽃신</p>
                         </div>
                         <h2 className="section-title" style={{ fontSize: '2.2rem' }}>속도보다는 방향,<br />우리의 기준은 <br className="mobile-only-br" /><span className="neon-text">당신의 진심</span>입니다</h2>
                         <p style={{ marginBottom: '30px' }}>학생 보드 멤버들이 당신의 고민과 신청 이유를 신중히 읽고 함께할 동료를 선발합니다.<br />지금 바로 신청하세요!</p>

@@ -21,8 +21,8 @@ const Episode1Detail = () => {
                         <p className="detail-subtitle">미래 산업의 핵심 기술과, 시장을 움직이는 전략을 함께 탐구합니다.</p>
 
                         <div className="meta-box">
-                            <p><strong>📆 일시:</strong> 4월 5일 (일) 14:00-18:00</p>
-                            <p><strong>📍 장소:</strong> 홍천 신장대리 꽃신</p>
+                            <p style={{ margin: 0 }}><strong>📆 일시:</strong> 4월 5일 (일) 14:00-18:00</p>
+                            <p style={{ margin: 0 }}><strong>📍 장소:</strong> 홍천 신장대리 꽃신</p>
                         </div>
                     </div>
 

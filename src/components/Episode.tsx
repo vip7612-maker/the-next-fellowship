@@ -5,11 +5,12 @@ const Episode = () => {
         <section className="episode" id="episode">
             <div className="container">
                 <div className="episode-header">
-                    <div className="intro-badge neon-text" style={{ marginBottom: '30px' }}>
-                        제1회 KickOff
-                    </div>
-                    <h2 className="section-title" style={{ fontSize: '3rem' }}>4월 5일 (일) 14:00-18:00 - <span className="neon-text">Tech X Creators</span></h2>
-                    <p className="section-desc">반도체 공학자와 콘텐츠 마케터가 만나 여러분의 가능성을 확장합니다.</p>
+                    <h2 className="section-title" style={{ fontSize: '4.5rem', lineHeight: '1.2', marginBottom: '20px' }}>
+                        1회차: <span className="neon-text">Semiconductor X Marketing</span>
+                    </h2>
+                    <p className="section-desc" style={{ fontSize: '1.3rem' }}>
+                        미래 산업의 핵심 기술과, 시장을 움직이는 전략을 함께 탐구합니다.
+                    </p>
                 </div>
 
                 <div className="episode-grid">
