@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -26,7 +27,9 @@ const Navbar = () => {
     <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
       <div className="navbar-container container">
         <div className="logo">
-          THE <span className="neon-text">NEXT</span> FELLOWSHIP
+          <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+            THE <span className="neon-text">NEXT</span> FELLOWSHIP
+          </Link>
         </div>
 
         <div className={`hamburger ${isMobileMenuOpen ? 'active' : ''}`} onClick={toggleMobileMenu}>
