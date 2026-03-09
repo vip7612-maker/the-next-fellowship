@@ -5,6 +5,7 @@ import './Application.css';
 const Application = () => {
     const [applicantCount, setApplicantCount] = useState(0);
     const [targetCapacity, setTargetCapacity] = useState(50);
+    const [isMapOpen, setIsMapOpen] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         school: '',
@@ -52,7 +53,10 @@ const Application = () => {
                     <div className="application-info">
                         <div className="session-meta-new" style={{ marginBottom: '30px' }}>
                             <p style={{ margin: 0 }}><strong>📆 일시:</strong> 4월 5일 (일) 14:00-18:00</p>
-                            <p style={{ margin: 0 }}><strong>📍 장소:</strong> 홍천 신장대리 꽃신</p>
+                            <p style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <strong>📍 장소:</strong> 홍천 신장대리 꽃신
+                                <button className="map-btn" onClick={() => setIsMapOpen(true)}>지도보기</button>
+                            </p>
                         </div>
                         <h2 className="section-title" style={{ fontSize: '2.2rem' }}>속도보다는 방향,<br />우리의 기준은 <br className="mobile-only-br" /><span className="neon-text">당신의 진심</span>입니다</h2>
                         <p style={{ marginBottom: '30px' }}>학생 보드 멤버들이 당신의 고민과 신청 이유를 신중히 읽고 함께할 동료를 선발합니다.<br />지금 바로 신청하세요!</p>
@@ -105,6 +109,28 @@ const Application = () => {
                     </form>
                 </div>
             </div>
+
+            {isMapOpen && (
+                <div className="map-modal-overlay" onClick={() => setIsMapOpen(false)}>
+                    <div className="map-modal-content" onClick={e => e.stopPropagation()}>
+                        <div className="map-modal-header">
+                            <h3>오시는 길</h3>
+                            <button className="map-close-btn" onClick={() => setIsMapOpen(false)}>&times;</button>
+                        </div>
+                        <p className="map-address">강원특별자치도 홍천군 홍천읍 홍천로5길 10</p>
+                        <div className="map-iframe-container">
+                            <iframe
+                                src="https://www.google.com/maps?q=강원특별자치도 홍천군 홍천읍 홍천로5길 10&output=embed"
+                                width="100%"
+                                height="100%"
+                                style={{ border: 0 }}
+                                allowFullScreen
+                                loading="lazy">
+                            </iframe>
+                        </div>
+                    </div>
+                </div>
+            )}
         </section>
     );
 };
