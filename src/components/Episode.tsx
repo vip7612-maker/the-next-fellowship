@@ -16,12 +16,21 @@ const Episode = () => {
                             <div className="person-role">Semiconductor</div>
                             <div className="person-name">권정현 개발자</div>
                             <div className="person-desc">AI 시대의 핵심, Custom HBM 디지털 설계</div>
+                            <div style={{ marginTop: '12px', fontSize: '0.85rem', color: 'var(--color-neon-lime)', lineHeight: '1.5' }}>
+                                현) SK하이닉스 Custom HBM 개발자, 사내 강사 (CL4)<br />
+                                <strong style={{ color: 'var(--color-white)', fontSize: '0.9rem' }}>"대한민국 3대 기업이 동시에 선택한, 반도체 설계 엔지니어"</strong><br />
+                                <span style={{ color: 'var(--color-text-sub)' }}>삼성전자, SK하이닉스, 현대자동차 3사 모두 최종 합격</span>
+                            </div>
                         </div>
 
                         <div className="person-item">
                             <div className="person-role">Marketing</div>
                             <div className="person-name">이하희 실장</div>
                             <div className="person-desc">IP 가치를 극대화하는 글로벌 전략 마케팅</div>
+                            <div style={{ marginTop: '12px', fontSize: '0.85rem', color: 'var(--color-white)', lineHeight: '1.5' }}>
+                                <strong style={{ color: 'var(--color-neon-lime)', fontSize: '0.9rem' }}>현) 하이업엔터테인먼트 글로벌 비즈니스 실장</strong><br />
+                                <span style={{ color: 'var(--color-text-sub)' }}>STAYC 월드투어 총괄 및 글로벌 앨범 유통 전략 수립</span>
+                            </div>
                         </div>
                     </div>
 
