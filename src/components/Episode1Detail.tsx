@@ -32,8 +32,7 @@ const Episode1Detail = () => {
                         </h2>
 
                         <div className="detail-speaker-card">
-                            <div className="ds-image bg-blue">
-                                <div className="placeholder-text">반도체 전문가<br />이미지 준비중</div>
+                            <div className="ds-image bg-blue" style={{ backgroundImage: 'url(/kwon_icon.png)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.9 }}>
                             </div>
                             <div className="ds-info">
                                 <span className="field-tag">Semiconductor</span>
@@ -49,8 +48,7 @@ const Episode1Detail = () => {
                         </div>
 
                         <div className="detail-speaker-card reverse">
-                            <div className="ds-image bg-neon">
-                                <div className="placeholder-text text-dark">마케팅 전문가<br />이미지 준비중</div>
+                            <div className="ds-image bg-neon" style={{ backgroundImage: 'url(/lee_icon.png)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.9 }}>
                             </div>
                             <div className="ds-info">
                                 <span className="field-tag">Marketing</span>
