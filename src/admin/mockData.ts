@@ -4,8 +4,9 @@ export interface Applicant {
     school: string;
     phone: string;
     email: string;
-    major: string;
-    reason: string;
+    careerReason: string;
+    motivation: string;
+    questionForYoon: string;
     status: 'Pending' | 'Selected' | 'Waitlist';
     date: string;
 }
@@ -17,8 +18,9 @@ const initialMockApplicants: Applicant[] = [
         school: "홍천고등학교",
         phone: "010-1234-5678",
         email: "minsu@email.com",
-        major: "반도체 공학",
-        reason: "저는 어릴 때부터 전자기기의 원리에 관심이 많았습니다. 특히 반도체가 현대 문명의 쌀이라고 불리는 점에 깊은 인상을 받았고, 이번 펠로우십을 통해 현직 전문가님의 조언을 듣고 제 꿈을 구체화하고 싶습니다.",
+        careerReason: "반도체 설계 엔지니어 - 전자기기 원리에 관심이 많고 시스템반도체가 미래라고 생각합니다.",
+        motivation: "현직 전문가님의 조언을 듣고 진로 계획을 구체화하고 싶습니다.",
+        questionForYoon: "이과 최상위권의 생기부는 어떤 차별점이 있는지 궁금합니다.",
         status: 'Pending',
         date: "2026-03-01"
     },
@@ -28,8 +30,9 @@ const initialMockApplicants: Applicant[] = [
         school: "홍천여자고등학교",
         phone: "010-2345-6789",
         email: "seoyeon@email.com",
-        major: "콘텐츠 마케팅",
-        reason: "유튜브와 틱톡 같은 뉴미디어 시대에 사람들의 마음을 움직이는 콘텐츠의 힘에 매료되었습니다. 마케팅 전문가님의 강연을 통해 실제 실무에서는 어떤 역량이 필요한지 직접 배우고 싶어 지원하게 되었습니다.",
+        careerReason: "콘텐츠 마케터 - 사람들의 마음을 움직이는 콘텐츠의 힘에 매료되었습니다.",
+        motivation: "마케팅 전문가님의 강연을 통해 실제 실무 역량을 배우고 싶습니다.",
+        questionForYoon: "문과생으로서 차별화된 스토리텔링을 어떻게 어필할 수 있을까요?",
         status: 'Selected',
         date: "2026-03-02"
     },
@@ -39,8 +42,9 @@ const initialMockApplicants: Applicant[] = [
         school: "양덕중고등학교",
         phone: "010-3456-7890",
         email: "junyoung@email.com",
-        major: "반도체 공학",
-        reason: "물리학 동아리 활동을 하며 반도체 소자의 특성에 대해 공부했습니다. 단순한 지식을 넘어 실제 산업 현장에서는 어떤 어려움이 있고 어떤 보람을 느끼시는지 알고 싶습니다.",
+        careerReason: "물리학 연구원 - 반도체 소자의 근원적인 특성에 관심이 큽니다.",
+        motivation: "단순 지식을 넘어 산업 현장의 실제 분위기와 어려움을 알고 싶습니다.",
+        questionForYoon: "순수 학문(물리)과 공학(응용) 사이에서 생기부 방향을 어떻게 잡을까요?",
         status: 'Waitlist',
         date: "2026-03-03"
     },
@@ -50,8 +54,9 @@ const initialMockApplicants: Applicant[] = [
         school: "홍천여자고등학교",
         phone: "010-4567-8901",
         email: "jiwoo@email.com",
-        major: "콘텐츠 마케팅",
-        reason: "저는 학교 신문사에서 활동하며 기획의 중요성을 깨달았습니다. 사람들에게 긍정적인 영향력을 미치는 마케터가 되고 싶습니다.",
+        careerReason: "영업/서비스 기획자 - 사람들과 소통하고 가치를 전달하는 데 보람을 느낍니다.",
+        motivation: "새로운 분야의 사람들을 만나 시야를 넓히고 싶습니다.",
+        questionForYoon: "지원하려는 학과가 모호할 때, 무엇을 기준으로 대학을 선택해야 할까요?",
         status: 'Pending',
         date: "2026-03-04"
     }

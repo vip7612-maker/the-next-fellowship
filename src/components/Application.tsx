@@ -11,8 +11,9 @@ const Application = () => {
         school: '',
         phone: '',
         email: '',
-        major: '',
-        reason: ''
+        careerReason: '',
+        motivation: '',
+        questionForYoon: ''
     });
 
     useEffect(() => {
@@ -27,15 +28,15 @@ const Application = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!formData.name || !formData.phone || !formData.reason) {
-            alert("이름, 연락처, 지원 이유는 필수 항목입니다.");
+        if (!formData.name || !formData.phone || !formData.careerReason || !formData.motivation || !formData.questionForYoon) {
+            alert("필수 항목(이름, 연락처, 진로이유, 지원동기, 질문)을 모두 입력해주세요.");
             return;
         }
 
         addApplicant(formData);
 
         alert("신청이 완료되었습니다. 정성스러운 이야기 감사합니다!");
-        setFormData({ name: '', school: '', phone: '', email: '', major: '', reason: '' });
+        setFormData({ name: '', school: '', phone: '', email: '', careerReason: '', motivation: '', questionForYoon: '' });
         setApplicantCount(getApplicants().length);
     };
 
@@ -93,12 +94,16 @@ const Application = () => {
                             </div>
                         </div>
                         <div className="form-field">
-                            <label>꿈꾸는 전공이나 학과가 있나요?</label>
-                            <input type="text" name="major" placeholder="예: 인공지능, 영상 미디어..." value={formData.major} onChange={handleChange} />
+                            <label>희망하는 진로와 그 진로를 희망하게 된 이유 *</label>
+                            <textarea name="careerReason" placeholder="어떤 진로를 꿈꾸고 있고, 왜 그 길을 선택했는지 관련 경험을 들려주세요." value={formData.careerReason} onChange={handleChange} required style={{ minHeight: '80px' }}></textarea>
                         </div>
                         <div className="form-field">
-                            <label>펠로우십에 합류하고 싶은 진짜 이유는? *</label>
-                            <textarea name="reason" placeholder="당신만의 이야기를 들려주세요 (최소 100자)" value={formData.reason} onChange={handleChange} required></textarea>
+                            <label>이 프로그램에 지원하게 된 동기 *</label>
+                            <textarea name="motivation" placeholder="넥스트 펠로우십에서 어떤 경험과 배움을 얻어가고 싶으신가요?" value={formData.motivation} onChange={handleChange} required style={{ minHeight: '80px' }}></textarea>
+                        </div>
+                        <div className="form-field">
+                            <label>윤여정 선생님께 하고 싶은 질문 *</label>
+                            <textarea name="questionForYoon" placeholder="진학 리포트나 학생부 준비, 입시 전략 등 윤여정 전문가님께 묻고 싶은 질문을 자유롭게 적어주세요." value={formData.questionForYoon} onChange={handleChange} required style={{ minHeight: '80px' }}></textarea>
                         </div>
                         <button type="submit" className="cta-button-main full-width">지금 참가신청하기</button>
                         <p className="waitlist-info">

@@ -23,7 +23,7 @@ const ApplicantList = () => {
     const filteredApplicants = applicants.filter(a =>
         a.name.includes(searchTerm) ||
         a.school.includes(searchTerm) ||
-        a.major.includes(searchTerm)
+        (a.careerReason && a.careerReason.includes(searchTerm))
     );
 
     const toggleStatus = (id: number, newStatus: Applicant['status']) => {
@@ -37,11 +37,13 @@ const ApplicantList = () => {
     };
 
     const downloadCSV = () => {
-        const headers = ["이름,학교,연락처,이메일,지원전공,지원동기,상태,신청일"];
+        const headers = ["이름,학교,연락처,이메일,희망진로/이유,지원동기,사전질문,상태,신청일"];
         const rows = filteredApplicants.map(app => {
-            // Escape quotes and commas in the reason field
-            const escapedReason = `"${app.reason.replace(/"/g, '""')}"`;
-            return `${app.name},${app.school},${app.phone},${app.email},${app.major},${escapedReason},${app.status},${app.date || ''}`;
+            // Escape quotes and commas in texts
+            const escapedCareerReason = `"${(app.careerReason || '').replace(/"/g, '""')}"`;
+            const escapedMotivation = `"${(app.motivation || '').replace(/"/g, '""')}"`;
+            const escapedQuestion = `"${(app.questionForYoon || '').replace(/"/g, '""')}"`;
+            return `${app.name},${app.school},${app.phone},${app.email},${escapedCareerReason},${escapedMotivation},${escapedQuestion},${app.status},${app.date || ''}`;
         });
 
         const csvContent = headers.concat(rows).join("\n");
@@ -96,7 +98,7 @@ const ApplicantList = () => {
                         <th>학교</th>
                         <th>연락처</th>
                         <th>이메일</th>
-                        <th>지원전공</th>
+                        <th>희망진로/동기/질문 요약</th>
                         <th>상태</th>
                         <th>관리</th>
                     </tr>
@@ -108,7 +110,11 @@ const ApplicantList = () => {
                             <td>{app.school}</td>
                             <td style={{ fontSize: '0.85rem' }}>{app.phone}</td>
                             <td style={{ fontSize: '0.85rem' }}>{app.email}</td>
-                            <td><span className="field-tag-small">{app.major}</span></td>
+                            <td>
+                                <div style={{ fontSize: '0.8rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }} title={app.careerReason}><strong>진로:</strong> {app.careerReason}</div>
+                                <div style={{ fontSize: '0.8rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }} title={app.motivation}><strong>동기:</strong> {app.motivation}</div>
+                                <div style={{ fontSize: '0.8rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }} title={app.questionForYoon}><strong>질문:</strong> {app.questionForYoon}</div>
+                            </td>
                             <td><span className={`badge ${app.status}`}>{app.status}</span></td>
                             <td>
                                 <select
