@@ -52,7 +52,7 @@ const Application = () => {
 
                 <div className="application-box">
                     <div className="application-info">
-                        <div className="session-meta-new" style={{ marginBottom: '30px' }}>
+                        <div className="session-meta-new" style={{ marginBottom: '30px', fontSize: '1.15rem', lineHeight: '1.6' }}>
                             <p style={{ margin: 0 }}><strong>📆 일시:</strong> 4월 5일 (일) 14:00-18:00</p>
                             <p style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
                                 <strong>📍 장소:</strong> 홍천 신장대리 꽃신
