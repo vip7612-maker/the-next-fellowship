@@ -8,7 +8,7 @@ import Episode from './components/Episode';
 import Consulting from './components/Consulting';
 import Application from './components/Application';
 import Vote from './components/Vote';
-import Gallery from './components/Gallery';
+// import Gallery from './components/Gallery';
 import Episode1Detail from './components/Episode1Detail';
 import AdminLayout from './admin/AdminLayout';
 import AdminLogin from './admin/AdminLogin';
