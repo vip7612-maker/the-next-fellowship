@@ -30,16 +30,11 @@ const Episode = () => {
                         <div className="card-icon">멘토</div>
                         <h3 className="card-title">함께 고민을 나눌 대학생 멘토</h3>
 
-                        <div className="person-item">
-                            <div className="person-role">Mentor</div>
-                            <div className="person-name">서울대 연주원</div>
-                            <div className="person-desc">전자공학</div>
-                        </div>
-
-                        <div className="person-item">
-                            <div className="person-role">Mentor</div>
-                            <div className="person-name">연세대 한가람</div>
-                            <div className="person-desc">경영학</div>
+                        <div className="person-item" style={{ borderBottom: 'none', paddingTop: '20px' }}>
+                            <div className="person-name" style={{ color: 'var(--color-text-sub)', fontSize: '1.1rem', fontWeight: 500, lineHeight: '1.6' }}>
+                                참가자들의 꿈과 목표에 가장 잘 맞는<br />
+                                <strong style={{ color: 'var(--color-white)' }}>최적의 멘토를 매칭중입니다.</strong>
+                            </div>
                         </div>
                     </div>
 
