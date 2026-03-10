@@ -17,7 +17,11 @@ const Application = () => {
     });
 
     useEffect(() => {
-        setApplicantCount(getApplicants().length);
+        const loadCount = async () => {
+            const applicants = await getApplicants();
+            setApplicantCount(applicants.length);
+        };
+        loadCount();
         setTargetCapacity(getTargetCapacity());
     }, []);
 
@@ -26,18 +30,23 @@ const Application = () => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!formData.name || !formData.phone || !formData.careerReason || !formData.motivation || !formData.questionForYoon) {
             alert("필수 항목(이름, 연락처, 진로이유, 지원동기, 질문)을 모두 입력해주세요.");
             return;
         }
 
-        addApplicant(formData);
+        try {
+            await addApplicant(formData);
+            alert("신청이 완료되었습니다. 정성스러운 이야기 감사합니다!");
+            setFormData({ name: '', school: '', phone: '', email: '', careerReason: '', motivation: '', questionForYoon: '' });
 
-        alert("신청이 완료되었습니다. 정성스러운 이야기 감사합니다!");
-        setFormData({ name: '', school: '', phone: '', email: '', careerReason: '', motivation: '', questionForYoon: '' });
-        setApplicantCount(getApplicants().length);
+            const applicants = await getApplicants();
+            setApplicantCount(applicants.length);
+        } catch (error: any) {
+            alert(error.message || "오류가 발생했습니다.");
+        }
     };
 
     return (

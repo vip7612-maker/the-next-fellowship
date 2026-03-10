@@ -89,6 +89,12 @@ export const addApplicant = (applicantData: Omit<Applicant, 'id' | 'status' | 'd
     saveApplicants([newApplicant, ...currentApplicants]);
 };
 
+export const updateApplicantStatus = (id: number | string, status: Applicant['status']) => {
+    const applicants = getApplicants();
+    const updated = applicants.map(app => app.id === Number(id) ? { ...app, status } : app);
+    saveApplicants(updated);
+};
+
 export interface Topic {
     id: number;
     title: string;

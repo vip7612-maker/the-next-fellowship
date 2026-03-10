@@ -5,7 +5,7 @@ const AdminLogin = ({ onLogin }: { onLogin: () => void }) => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (password === 'admin1234') { // Mock password
+        if (password === 'next0405') { // Admin password
             onLogin();
         } else {
             alert('비밀번호가 틀렸습니다.');
@@ -25,9 +25,6 @@ const AdminLogin = ({ onLogin }: { onLogin: () => void }) => {
                     />
                     <button type="submit" className="login-btn">로그인</button>
                 </form>
-                <p style={{ marginTop: '20px', fontSize: '0.8rem', color: '#64748b', textAlign: 'center' }}>
-                    * 테스트용 비밀번호: admin1234
-                </p>
             </div>
         </div>
     );

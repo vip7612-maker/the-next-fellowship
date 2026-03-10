@@ -5,9 +5,21 @@ const VoteAdmin = () => {
     const [topics, setTopics] = useState<Topic[]>([]);
     const [votes, setVotes] = useState<VoteRecord[]>([]);
 
+    const loadData = async () => {
+        try {
+            const [topicsData, votesData] = await Promise.all([
+                getTopics(),
+                getTopicVotes()
+            ]);
+            setTopics(topicsData);
+            setVotes(votesData);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     useEffect(() => {
-        setTopics(getTopics());
-        setVotes(getTopicVotes());
+        loadData();
     }, []);
 
     const totalVotes = topics.reduce((sum, item) => sum + item.votes, 0);

@@ -7,7 +7,7 @@ const Vote = () => {
     const [targetCapacity, setTargetCapacity] = useState(10);
     const [viewAll, setViewAll] = useState(false);
     const [voteModalOpen, setVoteModalOpen] = useState(false);
-    const [selectedTopic, setSelectedTopic] = useState<number | null>(null);
+    const [selectedTopic, setSelectedTopic] = useState<number | string | null>(null);
     const [proposeModalOpen, setProposeModalOpen] = useState(false);
 
     // Form states
@@ -16,37 +16,42 @@ const Vote = () => {
     const [newTitle, setNewTitle] = useState('');
     const [newDesc, setNewDesc] = useState('');
 
-    const loadTopics = () => {
-        setTopics(getTopics());
-        setTargetCapacity(getTargetCapacity());
+    const loadTopics = async () => {
+        try {
+            const data = await getTopics();
+            setTopics(data);
+            setTargetCapacity(getTargetCapacity());
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     useEffect(() => {
         loadTopics();
     }, []);
 
-    const handleVoteSubmit = (e: React.FormEvent) => {
+    const handleVoteSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (selectedTopic === null) return;
         try {
-            addTopicVote(selectedTopic, name, phone);
+            await addTopicVote(Number(selectedTopic), name, phone);
             alert("주제 신청이 완료되었습니다!");
             setVoteModalOpen(false);
             setName(''); setPhone('');
-            loadTopics();
+            await loadTopics();
         } catch (error: any) {
             alert(error.message);
         }
     };
 
-    const handleProposeSubmit = (e: React.FormEvent) => {
+    const handleProposeSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            addTopic({ title: newTitle, description: newDesc, authorName: name, authorPhone: phone });
+            await addTopic({ title: newTitle, description: newDesc, authorName: name, authorPhone: phone });
             alert("새 주제 제안이 완료되었습니다!");
             setProposeModalOpen(false);
             setName(''); setPhone(''); setNewTitle(''); setNewDesc('');
-            loadTopics();
+            await loadTopics();
         } catch (error: any) {
             alert(error.message);
         }
