@@ -14,54 +14,6 @@ export interface Applicant {
 const initialMockApplicants: Applicant[] = [
     {
         id: 1,
-        name: "김민수",
-        school: "홍천고등학교",
-        phone: "010-1234-5678",
-        email: "minsu@email.com",
-        careerReason: "반도체 설계 엔지니어 - 전자기기 원리에 관심이 많고 시스템반도체가 미래라고 생각합니다.",
-        motivation: "현직 전문가님의 조언을 듣고 진로 계획을 구체화하고 싶습니다.",
-        questionForYoon: "이과 최상위권의 생기부는 어떤 차별점이 있는지 궁금합니다.",
-        status: 'Pending',
-        date: "2026-03-01"
-    },
-    {
-        id: 2,
-        name: "이서연",
-        school: "홍천여자고등학교",
-        phone: "010-2345-6789",
-        email: "seoyeon@email.com",
-        careerReason: "콘텐츠 마케터 - 사람들의 마음을 움직이는 콘텐츠의 힘에 매료되었습니다.",
-        motivation: "마케팅 전문가님의 강연을 통해 실제 실무 역량을 배우고 싶습니다.",
-        questionForYoon: "문과생으로서 차별화된 스토리텔링을 어떻게 어필할 수 있을까요?",
-        status: 'Selected',
-        date: "2026-03-02"
-    },
-    {
-        id: 3,
-        name: "박준영",
-        school: "양덕중고등학교",
-        phone: "010-3456-7890",
-        email: "junyoung@email.com",
-        careerReason: "물리학 연구원 - 반도체 소자의 근원적인 특성에 관심이 큽니다.",
-        motivation: "단순 지식을 넘어 산업 현장의 실제 분위기와 어려움을 알고 싶습니다.",
-        questionForYoon: "순수 학문(물리)과 공학(응용) 사이에서 생기부 방향을 어떻게 잡을까요?",
-        status: 'Waitlist',
-        date: "2026-03-03"
-    },
-    {
-        id: 4,
-        name: "최지우",
-        school: "홍천여자고등학교",
-        phone: "010-4567-8901",
-        email: "jiwoo@email.com",
-        careerReason: "영업/서비스 기획자 - 사람들과 소통하고 가치를 전달하는 데 보람을 느낍니다.",
-        motivation: "새로운 분야의 사람들을 만나 시야를 넓히고 싶습니다.",
-        questionForYoon: "지원하려는 학과가 모호할 때, 무엇을 기준으로 대학을 선택해야 할까요?",
-        status: 'Pending',
-        date: "2026-03-04"
-    },
-    {
-        id: 5,
         name: "정하늘",
         school: "홍천고등학교",
         phone: "010-5678-9012",
@@ -73,7 +25,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-04"
     },
     {
-        id: 6,
+        id: 2,
         name: "한소희",
         school: "홍천여자고등학교",
         phone: "010-6789-0123",
@@ -85,7 +37,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-04"
     },
     {
-        id: 7,
+        id: 3,
         name: "오태양",
         school: "홍천고등학교",
         phone: "010-7890-1234",
@@ -97,7 +49,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-05"
     },
     {
-        id: 8,
+        id: 4,
         name: "윤채원",
         school: "홍천여자고등학교",
         phone: "010-8901-2345",
@@ -109,7 +61,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-05"
     },
     {
-        id: 9,
+        id: 5,
         name: "강도현",
         school: "양덕중고등학교",
         phone: "010-9012-3456",
@@ -121,7 +73,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-05"
     },
     {
-        id: 10,
+        id: 6,
         name: "서예진",
         school: "홍천여자고등학교",
         phone: "010-1122-3344",
@@ -133,7 +85,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-05"
     },
     {
-        id: 11,
+        id: 7,
         name: "문지호",
         school: "홍천고등학교",
         phone: "010-2233-4455",
@@ -145,7 +97,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-06"
     },
     {
-        id: 12,
+        id: 8,
         name: "임수빈",
         school: "홍천여자고등학교",
         phone: "010-3344-5566",
@@ -157,7 +109,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-06"
     },
     {
-        id: 13,
+        id: 9,
         name: "유승호",
         school: "홍천고등학교",
         phone: "010-4455-6677",
@@ -169,7 +121,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-06"
     },
     {
-        id: 14,
+        id: 10,
         name: "배지민",
         school: "양덕중고등학교",
         phone: "010-5566-7788",
@@ -181,7 +133,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-06"
     },
     {
-        id: 15,
+        id: 11,
         name: "조하은",
         school: "홍천여자고등학교",
         phone: "010-6677-8899",
@@ -193,7 +145,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-07"
     },
     {
-        id: 16,
+        id: 12,
         name: "장우진",
         school: "홍천고등학교",
         phone: "010-7788-9900",
@@ -205,7 +157,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-07"
     },
     {
-        id: 17,
+        id: 13,
         name: "신예림",
         school: "홍천여자고등학교",
         phone: "010-8899-0011",
@@ -217,7 +169,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-07"
     },
     {
-        id: 18,
+        id: 14,
         name: "홍성민",
         school: "홍천고등학교",
         phone: "010-9900-1122",
@@ -229,7 +181,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-07"
     },
     {
-        id: 19,
+        id: 15,
         name: "노지현",
         school: "양덕중고등학교",
         phone: "010-1010-2020",
@@ -241,7 +193,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-07"
     },
     {
-        id: 20,
+        id: 16,
         name: "권서준",
         school: "홍천고등학교",
         phone: "010-2020-3030",
@@ -253,7 +205,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-08"
     },
     {
-        id: 21,
+        id: 17,
         name: "안지윤",
         school: "홍천여자고등학교",
         phone: "010-3030-4040",
@@ -265,7 +217,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-08"
     },
     {
-        id: 22,
+        id: 18,
         name: "송태민",
         school: "홍천고등학교",
         phone: "010-4040-5050",
@@ -277,7 +229,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-08"
     },
     {
-        id: 23,
+        id: 19,
         name: "전다은",
         school: "홍천여자고등학교",
         phone: "010-5050-6060",
@@ -289,7 +241,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-08"
     },
     {
-        id: 24,
+        id: 20,
         name: "황도윤",
         school: "양덕중고등학교",
         phone: "010-6060-7070",
@@ -301,7 +253,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-08"
     },
     {
-        id: 25,
+        id: 21,
         name: "류하린",
         school: "홍천여자고등학교",
         phone: "010-7070-8080",
@@ -313,7 +265,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-09"
     },
     {
-        id: 26,
+        id: 22,
         name: "남현우",
         school: "홍천고등학교",
         phone: "010-8080-9090",
@@ -325,7 +277,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-09"
     },
     {
-        id: 27,
+        id: 23,
         name: "구민서",
         school: "홍천여자고등학교",
         phone: "010-9090-1010",
@@ -337,7 +289,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-09"
     },
     {
-        id: 28,
+        id: 24,
         name: "차승재",
         school: "홍천고등학교",
         phone: "010-1111-2222",
@@ -349,7 +301,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-09"
     },
     {
-        id: 29,
+        id: 25,
         name: "고은서",
         school: "홍천여자고등학교",
         phone: "010-2222-3333",
@@ -361,7 +313,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-09"
     },
     {
-        id: 30,
+        id: 26,
         name: "하준혁",
         school: "양덕중고등학교",
         phone: "010-3333-4444",
@@ -373,7 +325,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-10"
     },
     {
-        id: 31,
+        id: 27,
         name: "양수아",
         school: "홍천여자고등학교",
         phone: "010-4444-5555",
@@ -385,7 +337,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-10"
     },
     {
-        id: 32,
+        id: 28,
         name: "민재원",
         school: "홍천고등학교",
         phone: "010-5555-6666",
@@ -397,7 +349,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-10"
     },
     {
-        id: 33,
+        id: 29,
         name: "주하영",
         school: "홍천여자고등학교",
         phone: "010-6666-7777",
@@ -409,7 +361,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-10"
     },
     {
-        id: 34,
+        id: 30,
         name: "피세진",
         school: "홍천고등학교",
         phone: "010-7777-8888",
@@ -421,7 +373,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-10"
     },
     {
-        id: 35,
+        id: 31,
         name: "탁민지",
         school: "홍천여자고등학교",
         phone: "010-8888-9999",
@@ -433,7 +385,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-10"
     },
     {
-        id: 36,
+        id: 32,
         name: "공시후",
         school: "양덕중고등학교",
         phone: "010-1212-3434",
@@ -445,7 +397,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-11"
     },
     {
-        id: 37,
+        id: 33,
         name: "성예나",
         school: "홍천여자고등학교",
         phone: "010-3434-5656",
@@ -457,7 +409,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-11"
     },
     {
-        id: 38,
+        id: 34,
         name: "엄태준",
         school: "홍천고등학교",
         phone: "010-5656-7878",
@@ -469,7 +421,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-11"
     },
     {
-        id: 39,
+        id: 35,
         name: "우서영",
         school: "홍천여자고등학교",
         phone: "010-7878-9090",
@@ -481,7 +433,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-11"
     },
     {
-        id: 40,
+        id: 36,
         name: "봉현서",
         school: "홍천고등학교",
         phone: "010-1313-2424",
@@ -493,7 +445,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-11"
     },
     {
-        id: 41,
+        id: 37,
         name: "표지아",
         school: "홍천여자고등학교",
         phone: "010-2424-3535",
@@ -505,7 +457,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-11"
     },
     {
-        id: 42,
+        id: 38,
         name: "도승원",
         school: "양덕중고등학교",
         phone: "010-3535-4646",
@@ -517,7 +469,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-12"
     },
     {
-        id: 43,
+        id: 39,
         name: "편소율",
         school: "홍천여자고등학교",
         phone: "010-4646-5757",
@@ -529,7 +481,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-12"
     },
     {
-        id: 44,
+        id: 40,
         name: "길준서",
         school: "홍천고등학교",
         phone: "010-5757-6868",
@@ -541,7 +493,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-12"
     },
     {
-        id: 45,
+        id: 41,
         name: "나윤아",
         school: "홍천여자고등학교",
         phone: "010-6868-7979",
@@ -553,7 +505,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-12"
     },
     {
-        id: 46,
+        id: 42,
         name: "진우성",
         school: "홍천고등학교",
         phone: "010-7979-8080",
@@ -565,7 +517,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-12"
     },
     {
-        id: 47,
+        id: 43,
         name: "빈예원",
         school: "홍천여자고등학교",
         phone: "010-8080-9191",
@@ -577,7 +529,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-13"
     },
     {
-        id: 48,
+        id: 44,
         name: "석한결",
         school: "양덕중고등학교",
         phone: "010-9191-0202",
@@ -589,7 +541,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-13"
     },
     {
-        id: 49,
+        id: 45,
         name: "채서하",
         school: "홍천여자고등학교",
         phone: "010-0202-1313",
@@ -601,7 +553,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-13"
     },
     {
-        id: 50,
+        id: 46,
         name: "마경민",
         school: "홍천고등학교",
         phone: "010-1414-2525",
@@ -613,7 +565,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-13"
     },
     {
-        id: 51,
+        id: 47,
         name: "방시윤",
         school: "홍천여자고등학교",
         phone: "010-2525-3636",
@@ -625,7 +577,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-13"
     },
     {
-        id: 52,
+        id: 48,
         name: "윤기범",
         school: "홍천고등학교",
         phone: "010-3636-4747",
@@ -637,7 +589,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-14"
     },
     {
-        id: 53,
+        id: 49,
         name: "태소정",
         school: "홍천여자고등학교",
         phone: "010-4747-5858",
@@ -649,7 +601,7 @@ const initialMockApplicants: Applicant[] = [
         date: "2026-03-14"
     },
     {
-        id: 54,
+        id: 50,
         name: "복한솔",
         school: "양덕중고등학교",
         phone: "010-5858-6969",
