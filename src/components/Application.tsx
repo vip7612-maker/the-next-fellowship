@@ -19,7 +19,9 @@ const Application = () => {
     useEffect(() => {
         const loadCount = async () => {
             const applicants = await getApplicants();
-            setApplicantCount(applicants.length);
+            // 이름+전화번호 기준으로 중복 제거하여 고유 인원수 계산 (관리자 페이지와 동일)
+            const uniqueKeys = new Set(applicants.map(a => `${a.name}_${a.phone}`));
+            setApplicantCount(uniqueKeys.size);
         };
         loadCount();
         setTargetCapacity(getTargetCapacity());
@@ -43,7 +45,8 @@ const Application = () => {
             setFormData({ name: '', school: '', phone: '', email: '', careerReason: '', motivation: '', questionForYoon: '' });
 
             const applicants = await getApplicants();
-            setApplicantCount(applicants.length);
+            const uniqueKeys = new Set(applicants.map(a => `${a.name}_${a.phone}`));
+            setApplicantCount(uniqueKeys.size);
         } catch (error: any) {
             alert(error.message || "오류가 발생했습니다.");
         }
