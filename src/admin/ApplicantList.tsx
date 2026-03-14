@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getApplicants, getTargetCapacity, saveTargetCapacity, updateApplicantStatus } from './mockData';
+import { getApplicants, getTargetCapacity, saveTargetCapacity, updateApplicantStatus, softDeleteApplicant, restoreApplicant, getDeletedApplicants } from './mockData';
 import type { Applicant } from './mockData';
 
 interface GroupedApplicant extends Applicant {
@@ -14,13 +14,16 @@ interface GroupedApplicant extends Applicant {
 
 const ApplicantList = () => {
     const [applicants, setApplicants] = useState<Applicant[]>([]);
+    const [deletedApplicants, setDeletedApplicants] = useState<Applicant[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [targetCapacity, setTargetCapacity] = useState(10);
     const [selectedApplicant, setSelectedApplicant] = useState<GroupedApplicant | null>(null);
+    const [showDeleted, setShowDeleted] = useState(false);
 
     const loadApplicants = async () => {
         const apps = await getApplicants();
         setApplicants(apps);
+        setDeletedApplicants(getDeletedApplicants());
     };
 
     useEffect(() => {
@@ -78,6 +81,18 @@ const ApplicantList = () => {
         }
     };
 
+    const handleDelete = (app: GroupedApplicant) => {
+        if (!confirm(`"${app.name}" 신청자를 삭제하시겠습니까?\n삭제된 신청자는 삭제자 목록에서 관리됩니다.`)) return;
+        softDeleteApplicant(app.id);
+        loadApplicants();
+    };
+
+    const handleRestore = (app: Applicant) => {
+        if (!confirm(`"${app.name}" 신청자를 복원하시겠습니까?`)) return;
+        restoreApplicant(app.id);
+        loadApplicants();
+    };
+
     const downloadCSV = () => {
         const headers = ["이름,학교,연락처,이메일,신청횟수,희망진로/이유(최신),지원동기(최신),사전질문(최신),상태,최근신청일"];
         const rows = filteredApplicants.map(app => {
@@ -105,6 +120,7 @@ const ApplicantList = () => {
     const pendingCount = groupedApplicants.filter(a => a.status === 'Pending').length;
     const selectedCount = groupedApplicants.filter(a => a.status === 'Selected').length;
     const waitlistCount = groupedApplicants.filter(a => a.status === 'Waitlist').length;
+    const deletedCount = deletedApplicants.length;
     const capacityPercent = Math.min((totalUniqueApplicants / targetCapacity) * 100, 100);
 
     // Date-by-date stats (using raw applicants for accurate daily counts)
@@ -150,6 +166,13 @@ const ApplicantList = () => {
                         <div className="stat-info">
                             <div className="stat-number">{waitlistCount}</div>
                             <div className="stat-label">예비</div>
+                        </div>
+                    </div>
+                    <div className="stat-card stat-card-deleted">
+                        <div className="stat-icon">🗑️</div>
+                        <div className="stat-info">
+                            <div className="stat-number">{deletedCount}</div>
+                            <div className="stat-label">삭제됨</div>
                         </div>
                     </div>
                 </div>
@@ -281,6 +304,12 @@ const ApplicantList = () => {
                                         <option value="Selected">선발</option>
                                         <option value="Waitlist">예비</option>
                                     </select>
+                                    <button
+                                        className="btn-delete"
+                                        onClick={() => handleDelete(app)}
+                                    >
+                                        삭제
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -346,6 +375,61 @@ const ApplicantList = () => {
                     </div>
                 </div>
             )}
+            </div>
+
+            {/* Deleted Applicants Section */}
+            <div className="admin-card deleted-section" style={{ marginTop: '30px' }}>
+                <div
+                    className="deleted-section-header"
+                    onClick={() => setShowDeleted(!showDeleted)}
+                    style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', userSelect: 'none' }}
+                >
+                    <h3 style={{ margin: 0 }}>🗑️ 삭제자 관리 ({deletedCount}명)</h3>
+                    <span style={{ fontSize: '1.2rem', transition: 'transform 0.2s', transform: showDeleted ? 'rotate(180deg)' : 'rotate(0deg)' }}>▼</span>
+                </div>
+                {showDeleted && (
+                    <div style={{ marginTop: '20px' }}>
+                        {deletedApplicants.length === 0 ? (
+                            <p style={{ color: '#94a3b8', textAlign: 'center', padding: '30px 0' }}>삭제된 신청자가 없습니다.</p>
+                        ) : (
+                            <table className="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>이름</th>
+                                        <th>학교</th>
+                                        <th>연락처</th>
+                                        <th>이메일</th>
+                                        <th>삭제 전 상태</th>
+                                        <th>삭제일시</th>
+                                        <th>관리</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {deletedApplicants.map(app => (
+                                        <tr key={app.id} style={{ opacity: 0.7 }}>
+                                            <td style={{ fontWeight: '600' }}>{app.name}</td>
+                                            <td>{app.school}</td>
+                                            <td style={{ fontSize: '0.85rem' }}>{app.phone}</td>
+                                            <td style={{ fontSize: '0.85rem' }}>{app.email}</td>
+                                            <td><span className={`badge ${app.status}`}>{app.status}</span></td>
+                                            <td style={{ fontSize: '0.82rem', color: '#64748b' }}>
+                                                {app.deletedAt ? new Date(app.deletedAt).toLocaleString('ko-KR') : '-'}
+                                            </td>
+                                            <td>
+                                                <button
+                                                    className="btn-restore"
+                                                    onClick={() => handleRestore(app)}
+                                                >
+                                                    복원
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -9,6 +9,7 @@ export interface Applicant {
     questionForYoon: string;
     status: 'Pending' | 'Selected' | 'Waitlist';
     date: string;
+    deletedAt?: string;
 }
 
 const initialMockApplicants: Applicant[] = [
@@ -645,6 +646,55 @@ export const updateApplicantStatus = (id: number | string, status: Applicant['st
     const applicants = getApplicants();
     const updated = applicants.map(app => app.id === Number(id) ? { ...app, status } : app);
     saveApplicants(updated);
+};
+
+// ===== Soft Delete Management =====
+
+export const getDeletedApplicants = (): Applicant[] => {
+    const saved = localStorage.getItem('fellowship_deleted_applicants');
+    if (saved) {
+        try {
+            return JSON.parse(saved);
+        } catch (e) {
+            console.error('Failed to parse deleted applicants', e);
+        }
+    }
+    return [];
+};
+
+export const saveDeletedApplicants = (applicants: Applicant[]) => {
+    localStorage.setItem('fellowship_deleted_applicants', JSON.stringify(applicants));
+};
+
+export const softDeleteApplicant = (id: number | string) => {
+    const applicants = getApplicants();
+    const target = applicants.find(app => app.id === Number(id));
+    if (!target) return;
+
+    // Add to deleted list with timestamp
+    const deleted = getDeletedApplicants();
+    deleted.unshift({ ...target, deletedAt: new Date().toISOString() });
+    saveDeletedApplicants(deleted);
+
+    // Remove from active list
+    const updated = applicants.filter(app => app.id !== Number(id));
+    saveApplicants(updated);
+};
+
+export const restoreApplicant = (id: number | string) => {
+    const deleted = getDeletedApplicants();
+    const target = deleted.find(app => app.id === Number(id));
+    if (!target) return;
+
+    // Remove deletedAt and add back to active list
+    const { deletedAt: _, ...restoredApplicant } = target;
+    const applicants = getApplicants();
+    applicants.unshift(restoredApplicant as Applicant);
+    saveApplicants(applicants);
+
+    // Remove from deleted list
+    const updatedDeleted = deleted.filter(app => app.id !== Number(id));
+    saveDeletedApplicants(updatedDeleted);
 };
 
 export interface Topic {

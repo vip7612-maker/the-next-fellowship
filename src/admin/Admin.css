@@ -161,7 +161,7 @@
 
 .stats-cards {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 16px;
     margin-bottom: 20px;
 }
@@ -198,6 +198,7 @@
 .stat-card-pending::before { background: #ef4444; }
 .stat-card-selected::before { background: #22c55e; }
 .stat-card-waitlist::before { background: #f59e0b; }
+.stat-card-deleted::before { background: #6b7280; }
 
 .stat-icon {
     font-size: 2rem;
@@ -334,4 +335,51 @@
     .stats-detail-row {
         grid-template-columns: 1fr;
     }
+}
+
+/* Delete & Restore Buttons */
+.btn-delete {
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid #fca5a5;
+    background: #fef2f2;
+    color: #dc2626;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-delete:hover {
+    background: #dc2626;
+    color: white;
+    border-color: #dc2626;
+}
+
+.btn-restore {
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid #86efac;
+    background: #f0fdf4;
+    color: #16a34a;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-restore:hover {
+    background: #16a34a;
+    color: white;
+    border-color: #16a34a;
+}
+
+/* Deleted Section */
+.deleted-section {
+    border: 1px dashed #cbd5e1;
+    background: #fafafa;
+}
+
+.deleted-section-header:hover h3 {
+    color: #3b82f6;
 }
