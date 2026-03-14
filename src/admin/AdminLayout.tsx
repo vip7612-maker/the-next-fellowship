@@ -14,6 +14,9 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                         <Link to="/admin" className={`menu-item ${location.pathname === '/admin' ? 'active' : ''}`}>
                             신청자 목록
                         </Link>
+                        <Link to="/admin/dashboard" className={`menu-item ${location.pathname === '/admin/dashboard' ? 'active' : ''}`}>
+                            📊 대시보드
+                        </Link>
                         <Link to="/admin/vote" className={`menu-item ${location.pathname === '/admin/vote' ? 'active' : ''}`}>
                             주제신청 현황
                         </Link>

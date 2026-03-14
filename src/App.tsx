@@ -16,6 +16,7 @@ import AdminLogin from './admin/AdminLogin';
 import ApplicantList from './admin/ApplicantList';
 import VoteAdmin from './admin/VoteAdmin';
 import GalleryAdmin from './admin/GalleryAdmin';
+import Dashboard from './admin/Dashboard';
 import './App.css';
 
 const LandingPage = () => (
@@ -67,6 +68,7 @@ function App() {
           <Route path="/episode/1" element={<Episode1Detail />} />
           <Route path="/staff" element={<Staff />} />
           <Route path="/admin" element={<ProtectedAdmin><ApplicantList /></ProtectedAdmin>} />
+          <Route path="/admin/dashboard" element={<ProtectedAdmin><Dashboard /></ProtectedAdmin>} />
           <Route path="/admin/vote" element={<ProtectedAdmin><VoteAdmin /></ProtectedAdmin>} />
           <Route path="/admin/gallery" element={<ProtectedAdmin><GalleryAdmin /></ProtectedAdmin>} />
           <Route path="*" element={<Navigate to="/" />} />
