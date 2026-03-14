@@ -6,6 +6,87 @@ interface GroupedApplicant extends Applicant {
     applyCount: number;
 }
 
+// ===== 진로 키워드 추출 함수 =====
+// 긴 careerReason에서 핵심 진로 키워드만 추출
+const extractCareerKeyword = (raw: string): string => {
+    if (!raw || raw.trim() === '') return '미기재';
+
+    // " - " 앞부분만 추출
+    const dashIdx = raw.indexOf(' - ');
+    let keyword = dashIdx > 0 ? raw.substring(0, dashIdx).trim() : raw.trim();
+
+    // "~을 희망함" 같은 패턴 처리
+    if (keyword.includes('희망')) {
+        const parts = keyword.split(/을\s*희망|를\s*희망/);
+        if (parts[0]) keyword = parts[0].trim();
+    }
+
+    // 너무 긴 경우 (15자 초과) 첫 구분자 기준으로 자르기
+    if (keyword.length > 15) {
+        const parts = keyword.split(/[,/·]/);
+        keyword = parts[0].trim();
+    }
+
+    // 아직도 길면 15자로 자르기
+    if (keyword.length > 18) {
+        keyword = keyword.substring(0, 18) + '…';
+    }
+
+    return keyword;
+};
+
+// ===== 분야별 분류 =====
+type FieldCategory = '공학계열' | '의학·보건' | '인문·사회' | '교육계열' | '미디어·예술' | '자연과학' | '군사·안보' | '기타';
+
+const categoryColors: Record<FieldCategory, string> = {
+    '공학계열': '#3b82f6',
+    '의학·보건': '#ef4444',
+    '인문·사회': '#8b5cf6',
+    '교육계열': '#22c55e',
+    '미디어·예술': '#f59e0b',
+    '자연과학': '#06b6d4',
+    '군사·안보': '#64748b',
+    '기타': '#94a3b8'
+};
+
+const categoryIcons: Record<FieldCategory, string> = {
+    '공학계열': '⚙️',
+    '의학·보건': '🏥',
+    '인문·사회': '📚',
+    '교육계열': '🎓',
+    '미디어·예술': '🎬',
+    '자연과학': '🔬',
+    '군사·안보': '🛡️',
+    '기타': '📋'
+};
+
+const classifyCareer = (careerReason: string): FieldCategory => {
+    const text = careerReason.toLowerCase();
+
+    // 공학계열
+    if (/반도체|신소재|전기|전자|ai|인공지능|컴퓨터|공학|건축|항공|우주|게임.*개발|it|로봇/.test(text)) return '공학계열';
+
+    // 의학·보건
+    if (/의사|의대|간호|수의|보건|내과|약학|치의|한의/.test(text)) return '의학·보건';
+
+    // 교육계열
+    if (/교사|교육|교대|사범/.test(text)) return '교육계열';
+
+    // 미디어·예술
+    if (/방송|pd|미디어|커뮤니케이션|광고|기획|공연|영상|편집|연출|예체능/.test(text)) return '미디어·예술';
+
+    // 인문·사회
+    if (/경제|경영|외교|심리|사회|정치|행정|법|경찰|사학|역사|인문|일어|일문|문학|마케팅/.test(text)) return '인문·사회';
+
+    // 자연과학
+    if (/생명|생물|화학|식품|과학|이과|수학/.test(text)) return '자연과학';
+
+    // 군사·안보
+    if (/군|사관|조종사|공군|비행/.test(text)) return '군사·안보';
+
+    return '기타';
+};
+
 const Dashboard = () => {
     const [applicants, setApplicants] = useState<Applicant[]>([]);
 
@@ -13,7 +94,7 @@ const Dashboard = () => {
         setApplicants(getApplicants());
     }, []);
 
-    // Deduplicate by name+phone
+    // 이름+연락처 기준 중복 제거
     const groupedMap = applicants.reduce((acc, app) => {
         const key = `${app.name}_${app.phone}`;
         if (!acc[key]) {
@@ -24,8 +105,9 @@ const Dashboard = () => {
         return acc;
     }, {} as Record<string, GroupedApplicant>);
     const unique = Object.values(groupedMap);
+    const total = unique.length;
 
-    // ===== 1. School Stats =====
+    // ===== 1. 학교별 통계 =====
     const schoolMap: Record<string, number> = {};
     unique.forEach(app => {
         const school = app.school?.trim() || '미기재';
@@ -34,9 +116,7 @@ const Dashboard = () => {
     const schoolSorted = Object.entries(schoolMap).sort((a, b) => b[1] - a[1]);
     const maxSchool = Math.max(...Object.values(schoolMap), 1);
 
-    // ===== 2. Gender Stats (inferred from name patterns) =====
-    // Note: Korean names ending in certain characters can hint at gender, but it's unreliable.
-    // We'll use school name patterns: 여자고등학교 = female, else = male
+    // ===== 2. 남녀 통계 (학교명 기준) =====
     let maleCount = 0;
     let femaleCount = 0;
     unique.forEach(app => {
@@ -46,40 +126,42 @@ const Dashboard = () => {
             maleCount++;
         }
     });
-
-    // ===== 3. Career Path Stats =====
-    const careerMap: Record<string, number> = {};
-    unique.forEach(app => {
-        // Extract the career keyword before the first " - " or "/"
-        let career = app.careerReason || '미기재';
-        // Try to extract just the career name
-        const dashIdx = career.indexOf(' - ');
-        if (dashIdx > 0) {
-            career = career.substring(0, dashIdx).trim();
-        }
-        // Normalize common keywords
-        if (career.length > 15) {
-            // Try splitting by common separators
-            const parts = career.split(/[-–,/]/);
-            career = parts[0].trim();
-        }
-        careerMap[career] = (careerMap[career] || 0) + 1;
-    });
-    const careerSorted = Object.entries(careerMap).sort((a, b) => b[1] - a[1]);
-    const maxCareer = Math.max(...Object.values(careerMap), 1);
-
-    // Color palette for pie chart
-    const pieColors = ['#3b82f6', '#ef4444', '#22c55e', '#f59e0b', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316', '#6366f1', '#06b6d4'];
-
-    const total = unique.length;
     const femalePercent = total > 0 ? ((femaleCount / total) * 100).toFixed(1) : '0';
     const malePercent = total > 0 ? ((maleCount / total) * 100).toFixed(1) : '0';
 
+    // ===== 3. 분야별 진로 통계 =====
+    const categoryMap: Record<FieldCategory, { count: number; careers: Record<string, number> }> = {
+        '공학계열': { count: 0, careers: {} },
+        '의학·보건': { count: 0, careers: {} },
+        '인문·사회': { count: 0, careers: {} },
+        '교육계열': { count: 0, careers: {} },
+        '미디어·예술': { count: 0, careers: {} },
+        '자연과학': { count: 0, careers: {} },
+        '군사·안보': { count: 0, careers: {} },
+        '기타': { count: 0, careers: {} }
+    };
+
+    unique.forEach(app => {
+        const category = classifyCareer(app.careerReason);
+        const keyword = extractCareerKeyword(app.careerReason);
+        categoryMap[category].count += 1;
+        categoryMap[category].careers[keyword] = (categoryMap[category].careers[keyword] || 0) + 1;
+    });
+
+    // 인원 순 정렬, 0명인 분야 제외
+    const categorySorted = (Object.entries(categoryMap) as [FieldCategory, typeof categoryMap[FieldCategory]][])
+        .filter(([, data]) => data.count > 0)
+        .sort((a, b) => b[1].count - a[1].count);
+
+    const maxCategory = Math.max(...categorySorted.map(([, d]) => d.count), 1);
+
     return (
         <div className="dashboard-page">
-            <h2 style={{ marginBottom: '30px', color: '#0f172a', fontSize: '1.6rem' }}>📊 대시보드</h2>
+            <h2 style={{ marginBottom: '28px', color: '#0f172a', fontSize: '1.5rem', fontWeight: 800 }}>
+                📊 대시보드
+            </h2>
 
-            {/* Summary Cards */}
+            {/* 요약 카드 */}
             <div className="dashboard-summary">
                 <div className="dash-summary-card">
                     <div className="dash-summary-icon" style={{ background: '#eff6ff', color: '#3b82f6' }}>👥</div>
@@ -98,14 +180,14 @@ const Dashboard = () => {
                 <div className="dash-summary-card">
                     <div className="dash-summary-icon" style={{ background: '#f0fdf4', color: '#22c55e' }}>🎯</div>
                     <div>
-                        <div className="dash-summary-number">{careerSorted.length}</div>
-                        <div className="dash-summary-label">관심 진로 수</div>
+                        <div className="dash-summary-number">{categorySorted.length}</div>
+                        <div className="dash-summary-label">관심 분야</div>
                     </div>
                 </div>
             </div>
 
             <div className="dashboard-grid">
-                {/* School Breakdown */}
+                {/* 학교별 구성 */}
                 <div className="admin-card dashboard-card">
                     <h4 className="dash-card-title">🏫 학교별 구성</h4>
                     <div className="dash-bar-list">
@@ -128,7 +210,7 @@ const Dashboard = () => {
                     </div>
                 </div>
 
-                {/* Gender Breakdown */}
+                {/* 남녀 구성 */}
                 <div className="admin-card dashboard-card">
                     <h4 className="dash-card-title">👫 남녀 구성</h4>
                     <div className="gender-chart">
@@ -177,28 +259,42 @@ const Dashboard = () => {
                     </div>
                 </div>
 
-                {/* Career Path Breakdown */}
+                {/* 분야별 진로 통계 */}
                 <div className="admin-card dashboard-card dashboard-card-full">
-                    <h4 className="dash-card-title">🎯 관심 진로별 구성</h4>
-                    <div className="career-grid">
-                        {careerSorted.map(([career, count], idx) => (
-                            <div className="career-item" key={career}>
-                                <div className="career-item-header">
-                                    <span className="career-dot" style={{ background: pieColors[idx % pieColors.length] }}></span>
-                                    <span className="career-name">{career}</span>
-                                    <span className="career-count">{count}명</span>
+                    <h4 className="dash-card-title">🎯 관심 분야별 구성</h4>
+                    <div className="field-category-list">
+                        {categorySorted.map(([category, data]) => {
+                            const color = categoryColors[category];
+                            const icon = categoryIcons[category];
+                            const careersSorted = Object.entries(data.careers).sort((a, b) => b[1] - a[1]);
+                            return (
+                                <div className="field-category-item" key={category}>
+                                    <div className="field-category-header">
+                                        <div className="field-category-left">
+                                            <span className="field-category-icon">{icon}</span>
+                                            <span className="field-category-name">{category}</span>
+                                        </div>
+                                        <div className="field-category-right">
+                                            <span className="field-category-count" style={{ color }}>{data.count}명</span>
+                                            <span className="field-category-pct">{((data.count / total) * 100).toFixed(0)}%</span>
+                                        </div>
+                                    </div>
+                                    <div className="field-category-bar-track">
+                                        <div
+                                            className="field-category-bar-fill"
+                                            style={{ width: `${(data.count / maxCategory) * 100}%`, background: color }}
+                                        />
+                                    </div>
+                                    <div className="field-category-careers">
+                                        {careersSorted.map(([career, cnt]) => (
+                                            <span className="field-career-tag" key={career} style={{ borderColor: color, color }}>
+                                                {career} {cnt > 1 ? `×${cnt}` : ''}
+                                            </span>
+                                        ))}
+                                    </div>
                                 </div>
-                                <div className="career-bar-track">
-                                    <div
-                                        className="career-bar-fill"
-                                        style={{
-                                            width: `${(count / maxCareer) * 100}%`,
-                                            background: pieColors[idx % pieColors.length]
-                                        }}
-                                    />
-                                </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </div>
             </div>
