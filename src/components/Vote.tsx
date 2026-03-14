@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getTopics, addTopic, addTopicVote, type Topic, getTargetCapacity } from '../admin/mockData';
+import { autoFormatPhone } from '../utils/formatPhone';
 import './Vote.css';
 
 const Vote = () => {
@@ -106,7 +107,7 @@ const Vote = () => {
                             <p>중복 방지를 위해 성함과 연락처를 입력해주세요.</p>
                             <form onSubmit={handleVoteSubmit}>
                                 <input type="text" placeholder="이름" value={name} onChange={(e) => setName(e.target.value)} required />
-                                <input type="tel" placeholder="연락처 (예: 010-1234-5678)" value={phone} onChange={(e) => setPhone(e.target.value)} required />
+                                <input type="tel" placeholder="연락처 (예: 010-1234-5678)" value={phone} onChange={(e) => setPhone(autoFormatPhone(e.target.value))} required />
                                 <div className="modal-actions">
                                     <button type="button" className="cancel-btn" onClick={() => setVoteModalOpen(false)}>취소</button>
                                     <button type="submit" className="submit-btn" style={{ background: 'var(--color-neon-lime)', color: 'var(--color-navy)', border: 'none' }}>신청하기</button>
@@ -123,7 +124,7 @@ const Vote = () => {
                             <p>원하시는 강연/토론 주제를 직접 제안해주세요.</p>
                             <form onSubmit={handleProposeSubmit}>
                                 <input type="text" placeholder="제안자 이름" value={name} onChange={(e) => setName(e.target.value)} required />
-                                <input type="tel" placeholder="연락처 (예: 010-1234-5678)" value={phone} onChange={(e) => setPhone(e.target.value)} required />
+                                <input type="tel" placeholder="연락처 (예: 010-1234-5678)" value={phone} onChange={(e) => setPhone(autoFormatPhone(e.target.value))} required />
                                 <input type="text" placeholder="제안할 주제명" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} required />
                                 <textarea placeholder="이 주제를 듣고 싶은 사연이나 이유를 적어주세요." value={newDesc} onChange={(e) => setNewDesc(e.target.value)} required style={{ width: '100%', padding: '15px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.2)', color: 'white', borderRadius: '4px', minHeight: '100px', marginBottom: '20px', fontFamily: 'inherit' }}></textarea>
                                 <div className="modal-actions">

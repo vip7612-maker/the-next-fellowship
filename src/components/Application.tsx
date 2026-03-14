@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { addApplicant, getApplicants, getTargetCapacity } from '../admin/mockData';
+import { autoFormatPhone } from '../utils/formatPhone';
 import './Application.css';
 
 const Application = () => {
@@ -29,7 +30,11 @@ const Application = () => {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        if (name === 'phone') {
+            setFormData(prev => ({ ...prev, phone: autoFormatPhone(value) }));
+        } else {
+            setFormData(prev => ({ ...prev, [name]: value }));
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
