@@ -99,8 +99,105 @@ const ApplicantList = () => {
         document.body.removeChild(link);
     };
 
+    // Statistics calculations
+    const totalUniqueApplicants = groupedApplicants.length;
+    const totalRawApplications = applicants.length;
+    const pendingCount = groupedApplicants.filter(a => a.status === 'Pending').length;
+    const selectedCount = groupedApplicants.filter(a => a.status === 'Selected').length;
+    const waitlistCount = groupedApplicants.filter(a => a.status === 'Waitlist').length;
+    const capacityPercent = Math.min((totalUniqueApplicants / targetCapacity) * 100, 100);
+
+    // Date-by-date stats (using raw applicants for accurate daily counts)
+    const dateMap = applicants.reduce((acc, app) => {
+        const d = app.date || '날짜없음';
+        acc[d] = (acc[d] || 0) + 1;
+        return acc;
+    }, {} as Record<string, number>);
+    const dateSorted = Object.entries(dateMap).sort((a, b) => b[0].localeCompare(a[0]));
+    const maxDateCount = Math.max(...Object.values(dateMap), 1);
+
     return (
-        <div className="admin-card">
+        <div>
+            {/* Statistics Dashboard */}
+            <div className="stats-dashboard">
+                <div className="stats-cards">
+                    <div className="stat-card stat-card-total">
+                        <div className="stat-icon">👥</div>
+                        <div className="stat-info">
+                            <div className="stat-number">{totalUniqueApplicants}</div>
+                            <div className="stat-label">총 신청자 (고유)</div>
+                        </div>
+                        {totalRawApplications !== totalUniqueApplicants && (
+                            <div className="stat-sub">총 {totalRawApplications}건 접수</div>
+                        )}
+                    </div>
+                    <div className="stat-card stat-card-pending">
+                        <div className="stat-icon">⏳</div>
+                        <div className="stat-info">
+                            <div className="stat-number">{pendingCount}</div>
+                            <div className="stat-label">대기중</div>
+                        </div>
+                    </div>
+                    <div className="stat-card stat-card-selected">
+                        <div className="stat-icon">✅</div>
+                        <div className="stat-info">
+                            <div className="stat-number">{selectedCount}</div>
+                            <div className="stat-label">선발</div>
+                        </div>
+                    </div>
+                    <div className="stat-card stat-card-waitlist">
+                        <div className="stat-icon">📋</div>
+                        <div className="stat-info">
+                            <div className="stat-number">{waitlistCount}</div>
+                            <div className="stat-label">예비</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="stats-detail-row">
+                    {/* Capacity Progress */}
+                    <div className="admin-card capacity-card">
+                        <h4>모집 현황</h4>
+                        <div className="capacity-bar-wrap">
+                            <div className="capacity-bar">
+                                <div
+                                    className="capacity-fill"
+                                    style={{
+                                        width: `${capacityPercent}%`,
+                                        background: capacityPercent >= 100 ? '#ef4444' : capacityPercent >= 70 ? '#f59e0b' : '#22c55e'
+                                    }}
+                                />
+                            </div>
+                            <div className="capacity-text">
+                                <span>{totalUniqueApplicants}명</span>
+                                <span>/ {targetCapacity}명 ({capacityPercent.toFixed(0)}%)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Date Breakdown */}
+                    <div className="admin-card date-card">
+                        <h4>날짜별 신청 현황</h4>
+                        <div className="date-bars">
+                            {dateSorted.map(([date, count]) => (
+                                <div className="date-bar-row" key={date}>
+                                    <span className="date-label">{date}</span>
+                                    <div className="date-bar-track">
+                                        <div
+                                            className="date-bar-fill"
+                                            style={{ width: `${(count / maxDateCount) * 100}%` }}
+                                        />
+                                    </div>
+                                    <span className="date-count">{count}건</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Applicant List */}
+            <div className="admin-card">
             <div className="admin-header" style={{ flexWrap: 'wrap', gap: '20px' }}>
                 <h3>신청자 관리 ({filteredApplicants.length}명)</h3>
                 <div style={{ display: 'flex', gap: '15px', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -249,6 +346,7 @@ const ApplicantList = () => {
                     </div>
                 </div>
             )}
+            </div>
         </div>
     );
 };
