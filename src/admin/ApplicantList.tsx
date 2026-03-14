@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getApplicants, getTargetCapacity, saveTargetCapacity, updateApplicantStatus, softDeleteApplicant, restoreApplicant, getDeletedApplicants } from './mockData';
 import type { Applicant } from './mockData';
+import { formatPhone } from '../utils/formatPhone';
 
 interface GroupedApplicant extends Applicant {
     applyCount: number;
@@ -110,7 +111,7 @@ const ApplicantList = () => {
             const escapedCareerReason = `"${(app.careerReason || '').replace(/"/g, '""')}"`;
             const escapedMotivation = `"${(app.motivation || '').replace(/"/g, '""')}"`;
             const escapedQuestion = `"${(app.questionForYoon || '').replace(/"/g, '""')}"`;
-            return `${app.name},${app.school},${app.phone},${app.email},${app.applyCount},${escapedCareerReason},${escapedMotivation},${escapedQuestion},${app.status},${app.date || ''}`;
+            return `${app.name},${app.school},${formatPhone(app.phone)},${app.email},${app.applyCount},${escapedCareerReason},${escapedMotivation},${escapedQuestion},${app.status},${app.date || ''}`;
         });
 
         const csvContent = headers.concat(rows).join("\n");
@@ -248,7 +249,7 @@ const ApplicantList = () => {
                                 )}
                             </td>
                             <td>{app.school}</td>
-                            <td style={{ fontSize: '0.85rem' }}>{app.phone}</td>
+                            <td style={{ fontSize: '0.85rem' }}>{formatPhone(app.phone)}</td>
                             <td style={{ fontSize: '0.85rem' }}>{app.email}</td>
                             <td>
                                 <div style={{ fontSize: '0.8rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }} title={app.careerReason}><strong>진로:</strong> {app.careerReason}</div>
@@ -301,7 +302,7 @@ const ApplicantList = () => {
                             <div style={{ color: '#0f172a' }}>{selectedApplicant.school}</div>
 
                             <div style={{ fontWeight: 'bold', color: '#64748b' }}>연락처</div>
-                            <div style={{ color: '#0f172a' }}>{selectedApplicant.phone}</div>
+                            <div style={{ color: '#0f172a' }}>{formatPhone(selectedApplicant.phone)}</div>
 
                             <div style={{ fontWeight: 'bold', color: '#64748b' }}>이메일</div>
                             <div style={{ color: '#0f172a' }}>{selectedApplicant.email || '-'}</div>
@@ -378,7 +379,7 @@ const ApplicantList = () => {
                                         <tr key={app.id} style={{ opacity: 0.7 }}>
                                             <td style={{ fontWeight: '600' }}>{app.name}</td>
                                             <td>{app.school}</td>
-                                            <td style={{ fontSize: '0.85rem' }}>{app.phone}</td>
+                                            <td style={{ fontSize: '0.85rem' }}>{formatPhone(app.phone)}</td>
                                             <td style={{ fontSize: '0.85rem' }}>{app.email}</td>
                                             <td><span className={`badge ${app.status}`}>{app.status}</span></td>
                                             <td style={{ fontSize: '0.82rem', color: '#64748b' }}>
