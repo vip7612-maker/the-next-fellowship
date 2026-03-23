@@ -1,4 +1,9 @@
-import { db } from './db.js';
+import { createClient } from '@libsql/client';
+
+const db = createClient({
+    url: process.env.TURSO_DATABASE_URL as string,
+    authToken: process.env.TURSO_AUTH_TOKEN as string,
+});
 
 export default async function handler(req: any, res: any) {
     if (req.method === 'GET') {
