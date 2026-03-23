@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getTopics, addTopic, addTopicVote, type Topic, getTargetCapacity } from '../admin/mockData';
+import { fetchTopics, submitTopic, submitVote, getTargetCapacity, type Topic } from '../utils/apiClient';
 import { autoFormatPhone } from '../utils/formatPhone';
 import './Vote.css';
 
@@ -19,7 +19,7 @@ const Vote = () => {
 
     const loadTopics = async () => {
         try {
-            const data = await getTopics();
+            const data = await fetchTopics();
             setTopics(data);
             setTargetCapacity(getTargetCapacity());
         } catch (error) {
@@ -35,7 +35,7 @@ const Vote = () => {
         e.preventDefault();
         if (selectedTopic === null) return;
         try {
-            await addTopicVote(Number(selectedTopic), name, phone);
+            await submitVote(selectedTopic, name, phone);
             alert("주제 신청이 완료되었습니다!");
             setVoteModalOpen(false);
             setName(''); setPhone('');
@@ -48,7 +48,7 @@ const Vote = () => {
     const handleProposeSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await addTopic({ title: newTitle, description: newDesc, authorName: name, authorPhone: phone });
+            await submitTopic({ title: newTitle, description: newDesc, authorName: name, authorPhone: phone });
             alert("새 주제 제안이 완료되었습니다!");
             setProposeModalOpen(false);
             setName(''); setPhone(''); setNewTitle(''); setNewDesc('');

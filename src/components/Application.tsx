@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { addApplicant, getApplicants, getTargetCapacity } from '../admin/mockData';
+import { submitApplicant, fetchApplicants, getTargetCapacity } from '../utils/apiClient';
 import { autoFormatPhone } from '../utils/formatPhone';
 import './Application.css';
 
@@ -19,9 +19,9 @@ const Application = () => {
 
     useEffect(() => {
         const loadCount = async () => {
-            const applicants = await getApplicants();
+            const applicants = await fetchApplicants();
             // 이름+전화번호 기준으로 중복 제거하여 고유 인원수 계산 (관리자 페이지와 동일)
-            const uniqueKeys = new Set(applicants.map(a => `${a.name}_${a.phone}`));
+            const uniqueKeys = new Set(applicants.map((a: { name: string; phone: string }) => `${a.name}_${a.phone}`));
             setApplicantCount(uniqueKeys.size);
         };
         loadCount();
@@ -45,12 +45,12 @@ const Application = () => {
         }
 
         try {
-            await addApplicant(formData);
+            await submitApplicant(formData);
             alert("신청이 완료되었습니다. 정성스러운 이야기 감사합니다!");
             setFormData({ name: '', school: '', phone: '', email: '', careerReason: '', motivation: '', questionForYoon: '' });
 
-            const applicants = await getApplicants();
-            const uniqueKeys = new Set(applicants.map(a => `${a.name}_${a.phone}`));
+            const applicants = await fetchApplicants();
+            const uniqueKeys = new Set(applicants.map((a: { name: string; phone: string }) => `${a.name}_${a.phone}`));
             setApplicantCount(uniqueKeys.size);
         } catch (error: any) {
             alert(error.message || "오류가 발생했습니다.");

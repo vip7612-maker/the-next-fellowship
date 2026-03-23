@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { getApplicants, getTargetCapacity, saveTargetCapacity, updateApplicantStatus, softDeleteApplicant, restoreApplicant, getDeletedApplicants } from './mockData';
-import type { Applicant } from './mockData';
+import { fetchApplicants, getTargetCapacity, saveTargetCapacity, updateApplicantStatus } from '../utils/apiClient';
+import type { Applicant } from '../utils/apiClient';
 import { formatPhone } from '../utils/formatPhone';
 
 interface GroupedApplicant extends Applicant {
@@ -22,9 +22,23 @@ const ApplicantList = () => {
     const [showDeleted, setShowDeleted] = useState(false);
     const [statusFilter, setStatusFilter] = useState<string | null>(null);
 
+    // 삭제된 신청자 관리 (localStorage fallback)
+    const getDeletedApplicants = (): Applicant[] => {
+        const saved = localStorage.getItem('fellowship_deleted_applicants');
+        if (saved) { try { return JSON.parse(saved); } catch { } }
+        return [];
+    };
+    const saveDeletedApplicants = (apps: Applicant[]) => {
+        localStorage.setItem('fellowship_deleted_applicants', JSON.stringify(apps));
+    };
+
     const loadApplicants = async () => {
-        const apps = await getApplicants();
-        setApplicants(apps);
+        try {
+            const apps = await fetchApplicants();
+            setApplicants(apps);
+        } catch (error) {
+            console.error('신청자 목록 로드 실패:', error);
+        }
         setDeletedApplicants(getDeletedApplicants());
     };
 
@@ -94,13 +108,21 @@ const ApplicantList = () => {
 
     const handleDelete = (app: GroupedApplicant) => {
         if (!confirm(`"${app.name}" 신청자를 삭제하시겠습니까?\n삭제된 신청자는 삭제자 목록에서 관리됩니다.`)) return;
-        softDeleteApplicant(app.id);
-        loadApplicants();
+        // soft delete: localStorage에 보관
+        const deleted = getDeletedApplicants();
+        deleted.unshift({ ...app, deletedAt: new Date().toISOString() });
+        saveDeletedApplicants(deleted);
+        // 화면에서 제거 (DB에서는 유지)
+        setApplicants(prev => prev.filter(a => a.id !== app.id));
+        setDeletedApplicants(deleted);
     };
 
     const handleRestore = (app: Applicant) => {
         if (!confirm(`"${app.name}" 신청자를 복원하시겠습니까?`)) return;
-        restoreApplicant(app.id);
+        // 삭제자 목록에서 제거
+        const deleted = getDeletedApplicants().filter(a => a.id !== app.id);
+        saveDeletedApplicants(deleted);
+        setDeletedApplicants(deleted);
         loadApplicants();
     };
 

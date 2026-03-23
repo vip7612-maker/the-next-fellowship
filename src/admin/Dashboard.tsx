@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { getApplicants } from './mockData';
-import type { Applicant } from './mockData';
+import { fetchApplicants } from '../utils/apiClient';
+import type { Applicant } from '../utils/apiClient';
 
 interface GroupedApplicant extends Applicant {
     applyCount: number;
@@ -91,7 +91,15 @@ const Dashboard = () => {
     const [applicants, setApplicants] = useState<Applicant[]>([]);
 
     useEffect(() => {
-        setApplicants(getApplicants());
+        const load = async () => {
+            try {
+                const data = await fetchApplicants();
+                setApplicants(data);
+            } catch (error) {
+                console.error('대시보드 데이터 로드 실패:', error);
+            }
+        };
+        load();
     }, []);
 
     // 이름+연락처 기준 중복 제거

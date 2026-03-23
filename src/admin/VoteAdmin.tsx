@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getTopics, getTopicVotes, type Topic, type VoteRecord } from './mockData';
+import { fetchTopics, fetchVotes, type Topic, type VoteRecord } from '../utils/apiClient';
 
 const VoteAdmin = () => {
     const [topics, setTopics] = useState<Topic[]>([]);
@@ -8,8 +8,8 @@ const VoteAdmin = () => {
     const loadData = async () => {
         try {
             const [topicsData, votesData] = await Promise.all([
-                getTopics(),
-                getTopicVotes()
+                fetchTopics(),
+                fetchVotes()
             ]);
             setTopics(topicsData);
             setVotes(votesData);
