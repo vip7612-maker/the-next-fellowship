@@ -1,4 +1,4 @@
-import { db } from './db';
+import { db } from './db.js';
 
 export default async function handler(req: any, res: any) {
     if (req.method === 'GET') {
@@ -12,11 +12,11 @@ export default async function handler(req: any, res: any) {
 
     if (req.method === 'POST') {
         try {
-            const { id, name, school, phone, email, careerReason, motivation, questionForYoon, status, date } = req.body;
+            const { id, name, school, phone, email, careerReason, motivation, questionForYoon, status, date, role } = req.body;
             await db.execute({
-                sql: `INSERT INTO applicants (id, name, school, phone, email, careerReason, motivation, questionForYoon, status, date)
-                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-                args: [id, name, school, phone, email, careerReason, motivation, questionForYoon, status || 'Pending', date]
+                sql: `INSERT INTO applicants (id, name, school, phone, email, careerReason, motivation, questionForYoon, status, date, role)
+                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                args: [id, name, school, phone, email, careerReason, motivation, questionForYoon, status || 'Pending', date, role || '학생']
             });
             return res.status(200).json({ success: true });
         } catch (error: any) {
