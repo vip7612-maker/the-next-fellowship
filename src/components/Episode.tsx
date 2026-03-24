@@ -15,7 +15,7 @@ const Episode = () => {
                         <div className="person-item">
                             <div className="person-role">Consulting Group</div>
                             <div className="person-name">윤여정 대표</div>
-                            <div className="person-desc">윤앤고 입시전략팀<br />개인별 생기부 분석 및 밀착 입시 컨설팅</div>
+                            <div className="person-desc">윤앤고 입시전략팀<br />입시트랜드와 진학관련 이슈를 단번에 정리하는 임팩트 특강<br />현장에서 직접 질문하며 생기부 및 진학궁금증을 해결할 수 있는 미니컨설팅</div>
                         </div>
 
 
