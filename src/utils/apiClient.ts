@@ -15,6 +15,7 @@ export interface Applicant {
     questionForYoon: string;
     status: 'Pending' | 'Selected' | 'Waitlist';
     date: string;
+    role: string;
     deletedAt?: string;
 }
 
@@ -44,7 +45,7 @@ export const fetchApplicants = async (): Promise<Applicant[]> => {
     return res.json();
 };
 
-export const submitApplicant = async (data: Omit<Applicant, 'id' | 'status' | 'date'>): Promise<void> => {
+export const submitApplicant = async (data: Omit<Applicant, 'id' | 'status' | 'date' | 'deletedAt'>): Promise<void> => {
     const body = {
         id: String(Date.now()),
         ...data,

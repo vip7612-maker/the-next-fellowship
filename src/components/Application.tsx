@@ -1,34 +1,23 @@
-import { useState, useEffect } from 'react';
-import { submitApplicant, fetchApplicants, getTargetCapacity } from '../utils/apiClient';
+import { useState } from 'react';
+import { submitApplicant } from '../utils/apiClient';
 import { autoFormatPhone } from '../utils/formatPhone';
 import './Application.css';
 
 const Application = () => {
-    const [applicantCount, setApplicantCount] = useState(0);
-    const [targetCapacity, setTargetCapacity] = useState(50);
     const [isMapOpen, setIsMapOpen] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         school: '',
         phone: '',
         email: '',
+        role: '학생',
+        roleCustom: '',
         careerReason: '',
         motivation: '',
         questionForYoon: ''
     });
 
-    useEffect(() => {
-        const loadCount = async () => {
-            const applicants = await fetchApplicants();
-            // 이름+전화번호 기준으로 중복 제거하여 고유 인원수 계산 (관리자 페이지와 동일)
-            const uniqueKeys = new Set(applicants.map((a: { name: string; phone: string }) => `${a.name}_${a.phone}`));
-            setApplicantCount(uniqueKeys.size);
-        };
-        loadCount();
-        setTargetCapacity(getTargetCapacity());
-    }, []);
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         if (name === 'phone') {
             setFormData(prev => ({ ...prev, phone: autoFormatPhone(value) }));
@@ -45,13 +34,11 @@ const Application = () => {
         }
 
         try {
-            await submitApplicant(formData);
+            const roleValue = formData.role === '기타' ? (formData.roleCustom || '기타') : formData.role;
+            const { roleCustom, ...rest } = formData;
+            await submitApplicant({ ...rest, role: roleValue });
             alert("신청이 완료되었습니다. 정성스러운 이야기 감사합니다!");
-            setFormData({ name: '', school: '', phone: '', email: '', careerReason: '', motivation: '', questionForYoon: '' });
-
-            const applicants = await fetchApplicants();
-            const uniqueKeys = new Set(applicants.map((a: { name: string; phone: string }) => `${a.name}_${a.phone}`));
-            setApplicantCount(uniqueKeys.size);
+            setFormData({ name: '', school: '', phone: '', email: '', role: '학생', roleCustom: '', careerReason: '', motivation: '', questionForYoon: '' });
         } catch (error: any) {
             alert(error.message || "오류가 발생했습니다.");
         }
@@ -69,8 +56,20 @@ const Application = () => {
 
                 <div className="application-box">
                     <div className="application-info">
+
+                        <h2 className="section-title" style={{ fontSize: '2.2rem' }}>속도보다는 방향,<br />우리의 기준은 <br className="mobile-only-br" /><span className="neon-text">당신의 진심</span>입니다</h2>
+                        <p style={{ marginBottom: '30px' }}>학생 보드 멤버들이 당신의 고민과 신청 이유를 신중히 읽고 함께할 동료를 선발합니다.<br />지금 바로 신청하세요!</p>
+                        <ul className="criteria-list" style={{ marginBottom: '40px' }}>
+                            <li>신청 기간: ~ 3월 20일 18:00까지</li>
+                            <li>선발 인원: 홍천지역 고등학생 50명</li>
+                            <li>발표: 3월 27일 개별 연락</li>
+                        </ul>
+
+                        <div style={{ marginTop: '20px', marginBottom: '20px' }}>
+                            <a href="#/episode/1" className="secondary-button" style={{ display: 'inline-block', textDecoration: 'none', textAlign: 'center' }}>1회차 프로그램 더 알아보기 ➔</a>
+                        </div>
                         <div className="session-meta-new" style={{
-                            marginBottom: '30px',
+                            marginBottom: '40px',
                             fontSize: '1.4rem',
                             lineHeight: '1.6',
                             border: '1px solid rgba(255, 255, 255, 0.15)',
@@ -88,17 +87,6 @@ const Application = () => {
                                 <strong>장소:</strong> 홍천 신장대리 꽃신
                                 <button className="map-btn" onClick={() => setIsMapOpen(true)} style={{ marginLeft: '12px', padding: '5px 12px', fontSize: '0.9rem' }}>지도보기</button>
                             </p>
-                        </div>
-                        <h2 className="section-title" style={{ fontSize: '2.2rem' }}>속도보다는 방향,<br />우리의 기준은 <br className="mobile-only-br" /><span className="neon-text">당신의 진심</span>입니다</h2>
-                        <p style={{ marginBottom: '30px' }}>학생 보드 멤버들이 당신의 고민과 신청 이유를 신중히 읽고 함께할 동료를 선발합니다.<br />지금 바로 신청하세요!</p>
-                        <ul className="criteria-list" style={{ marginBottom: '40px' }}>
-                            <li>신청 기간: ~ 3월 20일 18:00까지</li>
-                            <li>선발 인원: 홍천지역 고등학생 50명</li>
-                            <li>발표: 3월 27일 개별 연락</li>
-                        </ul>
-
-                        <div style={{ marginTop: '20px', marginBottom: '40px' }}>
-                            <a href="#/episode/1" className="secondary-button" style={{ display: 'inline-block', textDecoration: 'none', textAlign: 'center' }}>1회차 프로그램 더 알아보기 ➔</a>
                         </div>
                     </div>
 
@@ -123,6 +111,24 @@ const Application = () => {
                                 <input type="email" name="email" placeholder="example@email.com" value={formData.email} onChange={handleChange} />
                             </div>
                         </div>
+                        <div className="form-row">
+                            <div className="form-field">
+                                <label>신청자 유형 *</label>
+                                <select name="role" value={formData.role} onChange={handleChange} required
+                                    style={{ width: '100%', padding: '12px 15px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.2)', color: 'white', borderRadius: '8px', fontSize: '1rem', appearance: 'none', cursor: 'pointer' }}>
+                                    <option value="학생">학생</option>
+                                    <option value="교사">교사</option>
+                                    <option value="학부모">학부모</option>
+                                    <option value="기타">기타</option>
+                                </select>
+                            </div>
+                            {formData.role === '기타' && (
+                                <div className="form-field">
+                                    <label>기타 (직접 입력) *</label>
+                                    <input type="text" name="roleCustom" placeholder="예: 대학생, 직장인 등" value={formData.roleCustom} onChange={handleChange} required />
+                                </div>
+                            )}
+                        </div>
                         <div className="form-field">
                             <label>희망하는 진로와 그 진로를 희망하게 된 이유 *</label>
                             <textarea name="careerReason" placeholder="어떤 진로를 꿈꾸고 있고, 왜 그 길을 선택했는지 관련 경험을 들려주세요." value={formData.careerReason} onChange={handleChange} required style={{ minHeight: '80px' }}></textarea>
@@ -136,11 +142,6 @@ const Application = () => {
                             <textarea name="questionForYoon" placeholder="진학 리포트나 학생부 준비, 입시 전략 등 윤여정 전문가님께 묻고 싶은 질문을 자유롭게 적어주세요." value={formData.questionForYoon} onChange={handleChange} required style={{ minHeight: '80px' }}></textarea>
                         </div>
                         <button type="submit" className="cta-button-main full-width">지금 참가신청하기</button>
-                        <p className="waitlist-info">
-                            {applicantCount > targetCapacity
-                                ? `현재 ${applicantCount - targetCapacity}명의 대기자가 있습니다 (신청률 ${Math.round((applicantCount / targetCapacity) * 100)}%)`
-                                : `현재 ${applicantCount}명이 신청을 완료했습니다 (목표 정원 ${targetCapacity}명)`}
-                        </p>
                     </form>
                 </div>
             </div>

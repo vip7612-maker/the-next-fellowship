@@ -13,7 +13,7 @@ const Pipeline = () => {
                         <div className="step-indicator">STEP 01</div>
                         <div className="step-content">
                             <h3>실행과 전략 <span className="step-subtitle">Actionable Strategy</span></h3>
-                            <h4 className="step-role purple-text">윤앤고 윤주용 대표의 진학 컨설팅</h4>
+                            <h4 className="step-role purple-text">윤앤고 윤여정 대표의 진학 컨설팅</h4>
                             <p>내가 원하는 학교와 학과에 진학하기 위해 지금 당장 필요한 것이 무엇인지, 윤앤고 입시전략팀이 체계적이고 현실적인 맞춤형 진학 컨설팅을 제공합니다.</p>
                         </div>
                     </div>

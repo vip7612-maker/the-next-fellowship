@@ -40,7 +40,7 @@ const Navbar = () => {
 
         <div className={`nav-links ${isMobileMenuOpen ? 'mobile-active' : ''}`}>
           <a href="/#intro" onClick={closeMobileMenu}>소개</a>
-          <a href="/#episode" onClick={closeMobileMenu}>현재 회차</a>
+          <a href="#/episode/1" onClick={closeMobileMenu}>현재 회차</a>
           <a href="/#vote" onClick={closeMobileMenu}>주제신청</a>
           <Link to="/staff" onClick={closeMobileMenu}>운영팀소개</Link>
           <a href="/#application" className="cta-button-sticky" style={{ textDecoration: 'none' }} onClick={closeMobileMenu}>참가신청하기</a>
