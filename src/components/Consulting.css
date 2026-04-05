@@ -1,44 +1,256 @@
 .consulting {
-    background: var(--color-navy);
+    background: linear-gradient(180deg, var(--color-navy) 0%, #0d1f3c 50%, var(--color-navy) 100%);
+    position: relative;
+    overflow: hidden;
 }
 
-.consulting-content {
-    max-width: 900px;
+.consulting::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0, 240, 255, 0.04) 0%, transparent 70%);
+    pointer-events: none;
 }
 
-.process-grid {
+/* Badge */
+.consulting-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    background: rgba(0, 240, 255, 0.08);
+    border: 1px solid rgba(0, 240, 255, 0.2);
+    border-radius: 100px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--color-electric-blue);
+    text-transform: uppercase;
+    margin-bottom: 40px;
+    animation: badgePulse 3s ease-in-out infinite;
+}
+
+.badge-icon {
+    font-size: 1rem;
+}
+
+@keyframes badgePulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0, 240, 255, 0.1); }
+    50% { box-shadow: 0 0 20px 4px rgba(0, 240, 255, 0.08); }
+}
+
+/* Title */
+.consulting-title {
+    font-size: 2.6rem;
+    font-weight: 800;
+    line-height: 1.35;
+    color: var(--color-text-main);
+    margin-bottom: 30px;
+    max-width: 800px;
+}
+
+.consulting-highlight {
+    position: relative;
+    color: var(--color-neon-lime);
+    display: inline-block;
+}
+
+.consulting-highlight::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-neon-lime), transparent);
+    border-radius: 2px;
+}
+
+/* Description */
+.consulting-desc {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--color-text-sub);
+    margin-bottom: 60px;
+    max-width: 700px;
+}
+
+.consulting-accent {
+    color: var(--color-electric-blue);
+    font-weight: 700;
+}
+
+/* Cards Grid */
+.consulting-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
-    margin-top: 60px;
+    gap: 24px;
+    margin-bottom: 50px;
 }
 
-.process-step {
-    background: var(--color-navy-light);
-    padding: 40px;
-    border-radius: 12px;
-    border-bottom: 2px solid var(--color-electric-blue);
+.consulting-card {
+    position: relative;
+    background: rgba(17, 34, 64, 0.8);
+    border: 1px solid rgba(0, 240, 255, 0.1);
+    border-radius: 16px;
+    padding: 40px 30px 35px;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.step-num {
-    font-size: 3rem;
+.consulting-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(0, 240, 255, 0.3);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 240, 255, 0.05);
+}
+
+.card-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--color-electric-blue), transparent);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.consulting-card:hover .card-glow {
+    opacity: 1;
+}
+
+.card-number {
+    font-size: 3.5rem;
     font-weight: 900;
-    color: rgba(0, 240, 255, 0.1);
-    margin-bottom: 20px;
+    color: rgba(0, 240, 255, 0.06);
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    user-select: none;
+    line-height: 1;
 }
 
-.process-step h4 {
-    font-size: 1.25rem;
-    margin-bottom: 10px;
+.card-icon {
+    font-size: 2rem;
+    margin-bottom: 18px;
+    display: inline-block;
+    width: 48px;
+    height: 48px;
+    line-height: 48px;
+    text-align: center;
+    background: rgba(0, 240, 255, 0.08);
+    border-radius: 12px;
 }
 
-.process-step p {
+.consulting-card h4 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--color-text-main);
+}
+
+.consulting-card p {
     font-size: 0.9rem;
+    line-height: 1.7;
     color: var(--color-text-sub);
 }
 
+/* Features */
+.consulting-features {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 50px;
+    padding: 20px 0;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.95rem;
+    color: var(--color-text-sub);
+}
+
+.feature-check {
+    color: var(--color-neon-lime);
+    font-weight: 900;
+    font-size: 1.1rem;
+}
+
+/* CTA */
+.consulting-cta {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.consulting-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 40px;
+    background: linear-gradient(135deg, var(--color-electric-blue), #0088cc);
+    color: var(--color-navy);
+    font-size: 1.05rem;
+    font-weight: 700;
+    border-radius: 100px;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px rgba(0, 240, 255, 0.2);
+}
+
+.consulting-cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 240, 255, 0.35);
+}
+
+.cta-arrow {
+    transition: transform 0.3s ease;
+}
+
+.consulting-cta-btn:hover .cta-arrow {
+    transform: translateX(4px);
+}
+
+.cta-sub {
+    margin-top: 14px;
+    font-size: 0.85rem;
+    color: var(--color-text-sub);
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-    .process-grid {
+    .consulting-title {
+        font-size: 1.6rem;
+        line-height: 1.45;
+    }
+
+    .consulting-desc {
+        font-size: 0.95rem;
+        margin-bottom: 40px;
+    }
+
+    .consulting-grid {
         grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .consulting-card {
+        padding: 30px 24px;
+    }
+
+    .consulting-features {
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .consulting-cta-btn {
+        padding: 14px 32px;
+        font-size: 1rem;
     }
 }

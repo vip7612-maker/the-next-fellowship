@@ -5,7 +5,7 @@ import Hero from './components/Hero';
 import Intro from './components/Intro';
 import Pipeline from './components/Pipeline';
 import Episode from './components/Episode';
-// import Consulting from './components/Consulting';
+import Consulting from './components/Consulting';
 import Application from './components/Application';
 import Vote from './components/Vote';
 // import Gallery from './components/Gallery';
@@ -17,6 +17,8 @@ import ApplicantList from './admin/ApplicantList';
 import VoteAdmin from './admin/VoteAdmin';
 import GalleryAdmin from './admin/GalleryAdmin';
 import Dashboard from './admin/Dashboard';
+import SurveyAdmin from './admin/SurveyAdmin';
+import Survey from './components/Survey';
 import './App.css';
 
 const LandingPage = () => (
@@ -28,7 +30,7 @@ const LandingPage = () => (
       <Episode />
       <Intro />
       <Pipeline />
-      {/* <Consulting /> */}
+      <Consulting />
       <Vote />
       {/* <Gallery /> */}
     </main>
@@ -71,6 +73,8 @@ function App() {
           <Route path="/admin/dashboard" element={<ProtectedAdmin><Dashboard /></ProtectedAdmin>} />
           <Route path="/admin/vote" element={<ProtectedAdmin><VoteAdmin /></ProtectedAdmin>} />
           <Route path="/admin/gallery" element={<ProtectedAdmin><GalleryAdmin /></ProtectedAdmin>} />
+          <Route path="/survey" element={<Survey />} />
+          <Route path="/admin/survey" element={<ProtectedAdmin><SurveyAdmin /></ProtectedAdmin>} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>

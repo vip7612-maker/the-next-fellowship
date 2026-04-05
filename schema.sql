@@ -39,3 +39,14 @@ INSERT OR IGNORE INTO topics (id, title, description, votes, createdAt, authorNa
 ('6', '건축', '사람의 시간과 공간을 잇고 새로운 뼈대를 세우는 건축의 본질.', 0, '2026-03-09', '운영진', '000-0000-0000'),
 ('7', '예체능(음악,미술,체육)', '한계를 극복하는 열정과 창의성으로 세상에 감동을 전합니다.', 0, '2026-03-09', '운영진', '000-0000-0000'),
 ('8', '보건(간호)', '생명의 가장 가까이에서 돌봄과 헌신의 가치를 실천하는 의료 복지.', 0, '2026-03-09', '운영진', '000-0000-0000');
+
+CREATE TABLE IF NOT EXISTS surveys (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    phone TEXT,
+    satisfaction INTEGER NOT NULL,
+    helpfulness INTEGER NOT NULL,
+    feedback TEXT NOT NULL,
+    constructiveOpinion TEXT NOT NULL,
+    createdAt TEXT NOT NULL
+);

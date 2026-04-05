@@ -13,7 +13,7 @@ export interface Applicant {
     careerReason: string;
     motivation: string;
     questionForYoon: string;
-    status: 'Pending' | 'Selected' | 'Waitlist';
+    status: 'Pending' | 'Selected' | 'Waitlist' | 'Deleted';
     date: string;
     role: string;
     deletedAt?: string;
@@ -37,10 +37,21 @@ export interface VoteRecord {
     createdAt: string;
 }
 
+export interface Survey {
+    id: string;
+    name: string;
+    phone: string;
+    satisfaction: number;
+    helpfulness: number;
+    feedback: string;
+    constructiveOpinion: string;
+    createdAt: string;
+}
+
 // ===== Applicants =====
 
 export const fetchApplicants = async (): Promise<Applicant[]> => {
-    const res = await fetch(`${API_BASE}/applicants`);
+    const res = await fetch(`${API_BASE}/applicants?t=${Date.now()}`, { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });
     if (!res.ok) throw new Error('신청자 목록을 불러오는데 실패했습니다.');
     return res.json();
 };
@@ -78,7 +89,7 @@ export const updateApplicantStatus = async (id: number | string, status: Applica
 // ===== Topics =====
 
 export const fetchTopics = async (): Promise<Topic[]> => {
-    const res = await fetch(`${API_BASE}/topics`);
+    const res = await fetch(`${API_BASE}/topics?t=${Date.now()}`, { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });
     if (!res.ok) throw new Error('주제 목록을 불러오는데 실패했습니다.');
     return res.json();
 };
@@ -107,8 +118,8 @@ export const submitTopic = async (data: { title: string; description: string; au
 // ===== Votes =====
 
 export const fetchVotes = async (topicId?: number | string): Promise<VoteRecord[]> => {
-    const url = topicId ? `${API_BASE}/votes?topicId=${topicId}` : `${API_BASE}/votes`;
-    const res = await fetch(url);
+    const url = topicId ? `${API_BASE}/votes?topicId=${topicId}&t=${Date.now()}` : `${API_BASE}/votes?t=${Date.now()}`;
+    const res = await fetch(url, { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });
     if (!res.ok) throw new Error('투표 목록을 불러오는데 실패했습니다.');
     return res.json();
 };
@@ -144,4 +155,44 @@ export const getTargetCapacity = (): number => {
 
 export const saveTargetCapacity = (capacity: number) => {
     localStorage.setItem('fellowship_target_capacity', capacity.toString());
+};
+
+// ===== SMS =====
+
+export const sendSms = async (messages: { to: string, text: string }[]): Promise<any> => {
+    const res = await fetch(`${API_BASE}/sms`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages })
+    });
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || '문자 발송에 실패했습니다.');
+    }
+    return res.json();
+};
+
+// ===== Surveys =====
+
+export const fetchSurveys = async (): Promise<Survey[]> => {
+    const res = await fetch(`${API_BASE}/surveys?t=${Date.now()}`, { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });
+    if (!res.ok) throw new Error('설문 목록을 불러오는데 실패했습니다.');
+    return res.json();
+};
+
+export const submitSurvey = async (data: Omit<Survey, 'id' | 'createdAt'>): Promise<void> => {
+    const body = {
+        id: String(Date.now()),
+        ...data,
+        createdAt: new Date().toISOString()
+    };
+    const res = await fetch(`${API_BASE}/surveys`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+    });
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || '설문 제출에 실패했습니다.');
+    }
 };

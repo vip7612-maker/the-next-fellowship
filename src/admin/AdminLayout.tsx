@@ -23,6 +23,9 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                         <Link to="/admin/gallery" className={`menu-item ${location.pathname === '/admin/gallery' ? 'active' : ''}`}>
                             갤러리 관리
                         </Link>
+                        <Link to="/admin/survey" className={`menu-item ${location.pathname === '/admin/survey' ? 'active' : ''}`}>
+                            📝 설문 및 QR 관리
+                        </Link>
                         <Link to="/" className="menu-item" style={{ marginTop: 'auto', opacity: 0.5 }}>
                             홈으로 가기
                         </Link>

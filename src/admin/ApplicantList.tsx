@@ -22,24 +22,19 @@ const ApplicantList = () => {
     const [showDeleted, setShowDeleted] = useState(false);
     const [statusFilter, setStatusFilter] = useState<string | null>(null);
 
-    // 삭제된 신청자 관리 (localStorage fallback)
-    const getDeletedApplicants = (): Applicant[] => {
-        const saved = localStorage.getItem('fellowship_deleted_applicants');
-        if (saved) { try { return JSON.parse(saved); } catch { } }
-        return [];
-    };
-    const saveDeletedApplicants = (apps: Applicant[]) => {
-        localStorage.setItem('fellowship_deleted_applicants', JSON.stringify(apps));
-    };
+
 
     const loadApplicants = async () => {
         try {
             const apps = await fetchApplicants();
-            setApplicants(apps);
+            const activeApps = apps.filter(a => a.status !== 'Deleted');
+            const deletedApps = apps.filter(a => a.status === 'Deleted').map(a => ({ ...a, deletedAt: a.date }));
+            
+            setApplicants(activeApps);
+            setDeletedApplicants(deletedApps);
         } catch (error) {
             console.error('신청자 목록 로드 실패:', error);
         }
-        setDeletedApplicants(getDeletedApplicants());
     };
 
     useEffect(() => {
@@ -106,24 +101,38 @@ const ApplicantList = () => {
         }
     };
 
-    const handleDelete = (app: GroupedApplicant) => {
+    const handleDelete = async (app: GroupedApplicant) => {
         if (!confirm(`"${app.name}" 신청자를 삭제하시겠습니까?\n삭제된 신청자는 삭제자 목록에서 관리됩니다.`)) return;
-        // soft delete: localStorage에 보관
-        const deleted = getDeletedApplicants();
-        deleted.unshift({ ...app, deletedAt: new Date().toISOString() });
-        saveDeletedApplicants(deleted);
-        // 화면에서 제거 (DB에서는 유지)
-        setApplicants(prev => prev.filter(a => a.id !== app.id));
-        setDeletedApplicants(deleted);
+        
+        try {
+            const matchingApps = applicants.filter(a => a.name === app.name && a.phone === app.phone);
+            
+            // 데이터베이스 상태를 'Deleted'로 업데이트
+            for (const matchingApp of matchingApps) {
+                await updateApplicantStatus(matchingApp.id, 'Deleted');
+            }
+            
+            await loadApplicants(); // 최신 DB 상태로 화면 갱신
+        } catch (error: any) {
+            alert('삭제 업데이트 실패: ' + error.message);
+        }
     };
 
-    const handleRestore = (app: Applicant) => {
+    const handleRestore = async (app: Applicant) => {
         if (!confirm(`"${app.name}" 신청자를 복원하시겠습니까?`)) return;
-        // 삭제자 목록에서 제거
-        const deleted = getDeletedApplicants().filter(a => a.id !== app.id);
-        saveDeletedApplicants(deleted);
-        setDeletedApplicants(deleted);
-        loadApplicants();
+        
+        try {
+            // DB에 동일 인물의 모든 복원 대상 찾기 (deletedApplicants에서 찾음)
+            const matchingApps = deletedApplicants.filter(a => a.name === app.name && a.phone === app.phone);
+            
+            for (const matchingApp of matchingApps) {
+                await updateApplicantStatus(matchingApp.id, 'Pending');
+            }
+            
+            await loadApplicants();
+        } catch (error: any) {
+            alert('복원 업데이트 실패: ' + error.message);
+        }
     };
 
     const downloadCSV = () => {
