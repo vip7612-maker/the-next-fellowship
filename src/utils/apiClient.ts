@@ -37,6 +37,7 @@ export interface Applicant {
     status: 'Pending' | 'Selected' | 'Waitlist' | 'Deleted';
     date: string;
     role: string;
+    round: number;
     deletedAt?: string;
 }
 

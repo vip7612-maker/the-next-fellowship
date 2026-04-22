@@ -4,7 +4,13 @@ const Episode = () => {
     return (
         <section className="episode" id="episode">
             <div className="container">
-
+                <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+                    <span style={{ display: 'inline-block', padding: '6px 20px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.2)', color: 'var(--color-text-sub)', fontSize: '0.95rem', marginBottom: '16px' }}>PAST EPISODE</span>
+                    <h2 style={{ fontSize: '2.4rem', fontWeight: 800, color: 'var(--color-white)', margin: 0 }}>
+                        지난 회차 보기 — <span className="neon-text">1회차</span>
+                    </h2>
+                    <p style={{ marginTop: '12px', color: 'var(--color-text-sub)', fontSize: '1.1rem' }}>Semiconductor X Marketing · 2026년 4월 5일</p>
+                </div>
 
                 <div className="episode-grid">
                     {/* Card 1: Consulting */}

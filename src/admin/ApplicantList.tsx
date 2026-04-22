@@ -22,6 +22,7 @@ const ApplicantList = () => {
     const [showDeleted, setShowDeleted] = useState(false);
     const [statusFilter, setStatusFilter] = useState<string | null>(null);
     const [loadError, setLoadError] = useState('');
+    const [activeRound, setActiveRound] = useState<1 | 2>(2);
 
     const loadApplicants = async () => {
         setLoadError('');
@@ -51,7 +52,8 @@ const ApplicantList = () => {
     };
 
     const groupedApplicants = useMemo(() => {
-        const map = applicants.reduce((acc, app) => {
+        const roundFiltered = applicants.filter(a => (a.round ?? 1) === activeRound);
+        const map = roundFiltered.reduce((acc, app) => {
             const key = `${app.name}_${app.phone}`;
             if (!acc[key]) {
                 acc[key] = {
@@ -76,7 +78,12 @@ const ApplicantList = () => {
             return acc;
         }, {} as Record<string, GroupedApplicant>);
         return Object.values(map);
-    }, [applicants]);
+    }, [applicants, activeRound]);
+
+    const deletedByRound = useMemo(
+        () => deletedApplicants.filter(a => (a.round ?? 1) === activeRound),
+        [deletedApplicants, activeRound]
+    );
 
     const filteredApplicants = useMemo(() => groupedApplicants.filter(a => {
         if (statusFilter && statusFilter !== 'all') {
@@ -155,13 +162,16 @@ const ApplicantList = () => {
         document.body.removeChild(link);
     };
 
-    // Statistics calculations
+    // Statistics calculations (현재 선택된 회차 기준)
     const totalUniqueApplicants = groupedApplicants.length;
-    const totalRawApplications = applicants.length;
+    const totalRawApplications = applicants.filter(a => (a.round ?? 1) === activeRound).length;
     const pendingCount = groupedApplicants.filter(a => a.status === 'Pending').length;
     const selectedCount = groupedApplicants.filter(a => a.status === 'Selected').length;
     const waitlistCount = groupedApplicants.filter(a => a.status === 'Waitlist').length;
-    const deletedCount = deletedApplicants.length;
+    const deletedCount = deletedByRound.length;
+
+    const round1Count = applicants.filter(a => (a.round ?? 1) === 1).length;
+    const round2Count = applicants.filter(a => (a.round ?? 1) === 2).length;
 
     const handleStatClick = (filter: string | null) => {
         setStatusFilter(prev => prev === filter ? null : filter);
@@ -175,6 +185,33 @@ const ApplicantList = () => {
                     <button onClick={loadApplicants} style={{ background: 'none', border: '1px solid #dc2626', borderRadius: '4px', color: '#dc2626', padding: '4px 10px', cursor: 'pointer', fontSize: '0.85rem' }}>다시 시도</button>
                 </div>
             )}
+
+            {/* 회차 탭 */}
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
+                {([1, 2] as const).map(r => (
+                    <button
+                        key={r}
+                        onClick={() => { setActiveRound(r); setStatusFilter(null); }}
+                        style={{
+                            padding: '10px 28px',
+                            borderRadius: '8px',
+                            border: activeRound === r ? 'none' : '1px solid var(--admin-border)',
+                            background: activeRound === r ? '#3b82f6' : 'white',
+                            color: activeRound === r ? 'white' : '#64748b',
+                            fontWeight: activeRound === r ? '700' : '400',
+                            fontSize: '1rem',
+                            cursor: 'pointer',
+                            transition: 'all 0.15s',
+                        }}
+                    >
+                        {r}회차
+                        <span style={{ marginLeft: '8px', fontSize: '0.8rem', opacity: 0.8 }}>
+                            ({r === 1 ? round1Count : round2Count}명)
+                        </span>
+                    </button>
+                ))}
+            </div>
+
             {/* Statistics Cards - Clickable Filters */}
             <div className="stats-dashboard">
                 <div className="stats-cards">
@@ -228,7 +265,7 @@ const ApplicantList = () => {
             {/* Applicant List */}
             <div className="admin-card">
             <div className="admin-header" style={{ flexWrap: 'wrap', gap: '20px' }}>
-                <h3>신청자 관리 ({filteredApplicants.length}명)</h3>
+                <h3>{activeRound}회차 신청자 관리 ({filteredApplicants.length}명)</h3>
                 <div style={{ display: 'flex', gap: '15px', alignItems: 'center', flexWrap: 'wrap' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'var(--admin-bg)', padding: '5px 15px', borderRadius: '4px', border: '1px solid var(--admin-border)' }}>
                         <label style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 'bold' }}>목표 정원:</label>
@@ -390,12 +427,12 @@ const ApplicantList = () => {
                     onClick={() => setShowDeleted(!showDeleted)}
                     style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', userSelect: 'none' }}
                 >
-                    <h3 style={{ margin: 0 }}>🗑️ 삭제자 관리 ({deletedCount}명)</h3>
+                    <h3 style={{ margin: 0 }}>🗑️ 삭제자 관리 — {activeRound}회차 ({deletedCount}명)</h3>
                     <span style={{ fontSize: '1.2rem', transition: 'transform 0.2s', transform: showDeleted ? 'rotate(180deg)' : 'rotate(0deg)' }}>▼</span>
                 </div>
                 {showDeleted && (
                     <div style={{ marginTop: '20px' }}>
-                        {deletedApplicants.length === 0 ? (
+                        {deletedByRound.length === 0 ? (
                             <p style={{ color: '#94a3b8', textAlign: 'center', padding: '30px 0' }}>삭제된 신청자가 없습니다.</p>
                         ) : (
                             <table className="admin-table">
@@ -411,7 +448,7 @@ const ApplicantList = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {deletedApplicants.map(app => (
+                                    {deletedByRound.map(app => (
                                         <tr key={app.id} style={{ opacity: 0.7 }}>
                                             <td style={{ fontWeight: '600' }}>{app.name}</td>
                                             <td>{app.school}</td>

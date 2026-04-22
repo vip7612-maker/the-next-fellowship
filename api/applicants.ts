@@ -34,9 +34,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             const date = new Date().toISOString().split('T')[0];
 
             await db.execute({
-                sql: `INSERT INTO applicants (id, name, school, phone, email, careerReason, motivation, questionForYoon, status, date, role)
-                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-                args: [id, name, school, phone, email, careerReason, motivation, questionForYoon, 'Pending', date, role || '학생']
+                sql: `INSERT INTO applicants (id, name, school, phone, email, careerReason, motivation, questionForYoon, status, date, role, round)
+                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                args: [id, name, school, phone, email, careerReason, motivation, questionForYoon, 'Pending', date, role || '학생', 2]
             });
 
             try {
@@ -44,7 +44,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 const chatId = process.env.TELEGRAM_CHAT_ID;
                 if (botToken && chatId) {
                     const message =
-                        `🔔 새로운 신청자가 등록되었습니다\\!\n\n` +
+                        `🔔 새로운 신청자가 등록되었습니다\\! \\[2회차\\]\n\n` +
                         `👤 이름: ${escapeTg(name)}\n` +
                         `🏫 소속: ${escapeTg(school || '미입력')}\n` +
                         `📱 연락처: ${escapeTg(phone)}\n` +

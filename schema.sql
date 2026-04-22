@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS applicants (
     questionForYoon TEXT NOT NULL,
     status TEXT DEFAULT 'Pending',
     date TEXT NOT NULL,
-    role TEXT DEFAULT '학생'
+    role TEXT DEFAULT '학생',
+    round INTEGER NOT NULL DEFAULT 2
 );
 
 CREATE TABLE IF NOT EXISTS topics (

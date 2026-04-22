@@ -36,7 +36,7 @@ const Application = () => {
         try {
             const roleValue = formData.role === '기타' ? (formData.roleCustom || '기타') : formData.role;
             const { roleCustom, ...rest } = formData;
-            await submitApplicant({ ...rest, role: roleValue });
+            await submitApplicant({ ...rest, role: roleValue, round: 2 });
             alert("신청이 완료되었습니다. 정성스러운 이야기 감사합니다!");
             setFormData({ name: '', school: '', phone: '', email: '', role: '학생', roleCustom: '', careerReason: '', motivation: '', questionForYoon: '' });
         } catch (error: any) {
@@ -49,9 +49,9 @@ const Application = () => {
             <div className="container">
                 <div className="session-header-top" style={{ textAlign: 'center', marginBottom: '60px' }}>
                     <h3 className="session-title-top" style={{ fontSize: '3.5rem', lineHeight: '1.3', marginBottom: '20px' }}>
-                        1회차: <span className="neon-text">Semiconductor X Marketing</span>
+                        2회차: <span className="neon-text">Coming Soon</span>
                     </h3>
-                    <p className="session-desc-top" style={{ fontSize: '1.3rem', color: 'var(--color-text-sub)' }}>미래 산업의 핵심 기술과, 시장을 움직이는 전략을 함께 탐구합니다.</p>
+                    <p className="session-desc-top" style={{ fontSize: '1.3rem', color: 'var(--color-text-sub)' }}>2회차 주제와 세부 일정은 곧 공개됩니다. 지금 미리 신청해두세요!</p>
                 </div>
 
                 <div className="application-box">
@@ -60,13 +60,13 @@ const Application = () => {
                         <h2 className="section-title" style={{ fontSize: '2.2rem' }}>속도보다는 방향,<br />우리의 기준은 <br className="mobile-only-br" /><span className="neon-text">당신의 진심</span>입니다</h2>
                         <p style={{ marginBottom: '30px' }}>학생 보드 멤버들이 당신의 고민과 신청 이유를 신중히 읽고 함께할 동료를 선발합니다.<br />지금 바로 신청하세요!</p>
                         <ul className="criteria-list" style={{ marginBottom: '40px' }}>
-                            <li>신청 기간: ~ 3월 20일 18:00까지</li>
+                            <li>신청 기간: 추후 공개 예정</li>
                             <li>선발 인원: 홍천지역 고등학생 50명</li>
-                            <li>발표: 3월 27일 개별 연락</li>
+                            <li>발표: 추후 개별 연락</li>
                         </ul>
 
                         <div style={{ marginTop: '20px', marginBottom: '20px' }}>
-                            <a href="#/episode/1" className="secondary-button" style={{ display: 'inline-block', textDecoration: 'none', textAlign: 'center' }}>1회차 프로그램 더 알아보기 ➔</a>
+                            <a href="#/episode/1" className="secondary-button" style={{ display: 'inline-block', textDecoration: 'none', textAlign: 'center' }}>1회차 지난 프로그램 보기 ➔</a>
                         </div>
                         <div className="session-meta-new" style={{
                             marginBottom: '40px',
@@ -80,12 +80,11 @@ const Application = () => {
                         }}>
                             <p style={{ margin: '0 0 10px 0', display: 'flex', alignItems: 'center', gap: '10px' }}>
                                 <span style={{ fontSize: '1.6rem' }}>📆</span>
-                                <strong>일시:</strong> 4월 5일 (일) 14:00-18:00
+                                <strong>일시:</strong> 추후 공개 예정
                             </p>
                             <p style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
                                 <span style={{ fontSize: '1.6rem' }}>📍</span>
-                                <strong>장소:</strong> 홍천 신장대리 꽃신
-                                <button className="map-btn" onClick={() => setIsMapOpen(true)} style={{ marginLeft: '12px', padding: '5px 12px', fontSize: '0.9rem' }}>지도보기</button>
+                                <strong>장소:</strong> 추후 공개 예정
                             </p>
                         </div>
                     </div>
