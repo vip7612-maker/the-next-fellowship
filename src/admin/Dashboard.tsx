@@ -90,6 +90,7 @@ const classifyCareer = (careerReason: string): FieldCategory => {
 const Dashboard = () => {
     const [applicants, setApplicants] = useState<Applicant[]>([]);
     const [loadError, setLoadError] = useState('');
+    const [activeRound, setActiveRound] = useState<number | null>(null);
 
     const load = async () => {
         setLoadError('');
@@ -104,9 +105,30 @@ const Dashboard = () => {
 
     useEffect(() => { load(); }, []);
 
-    // 이름+연락처 기준 중복 제거
+    // 사용 가능한 회차 목록 + 최신 회차(당회차) 계산
+    const { availableRounds, latestRound } = useMemo(() => {
+        const roundSet = new Set<number>();
+        applicants.forEach(a => roundSet.add(a.round ?? 1));
+        const list = Array.from(roundSet).sort((a, b) => a - b);
+        return {
+            availableRounds: list.length > 0 ? list : [2],
+            latestRound: list.length > 0 ? Math.max(...list) : 2,
+        };
+    }, [applicants]);
+
+    // 데이터 로드 후 당회차를 기본 선택
+    useEffect(() => {
+        if (activeRound === null && applicants.length > 0) {
+            setActiveRound(latestRound);
+        }
+    }, [applicants, latestRound, activeRound]);
+
+    const currentRound = activeRound ?? latestRound;
+
+    // 당회차 필터링 + 이름+연락처 기준 중복 제거
     const unique = useMemo(() => {
-        const map = applicants.reduce((acc, app) => {
+        const roundFiltered = applicants.filter(a => (a.round ?? 1) === currentRound);
+        const map = roundFiltered.reduce((acc, app) => {
             const key = `${app.name}_${app.phone}`;
             if (!acc[key]) {
                 acc[key] = { ...app, applyCount: 1 };
@@ -116,7 +138,7 @@ const Dashboard = () => {
             return acc;
         }, {} as Record<string, GroupedApplicant>);
         return Object.values(map);
-    }, [applicants]);
+    }, [applicants, currentRound]);
 
     const total = unique.length;
 
@@ -175,7 +197,7 @@ const Dashboard = () => {
 
     return (
         <div className="dashboard-page">
-            <h2 style={{ marginBottom: '28px', color: '#0f172a', fontSize: '1.5rem', fontWeight: 800 }}>
+            <h2 style={{ marginBottom: '20px', color: '#0f172a', fontSize: '1.5rem', fontWeight: 800 }}>
                 📊 대시보드
             </h2>
             {loadError && (
@@ -184,6 +206,36 @@ const Dashboard = () => {
                     <button onClick={load} style={{ background: 'none', border: '1px solid #dc2626', borderRadius: '4px', color: '#dc2626', padding: '4px 10px', cursor: 'pointer', fontSize: '0.85rem' }}>다시 시도</button>
                 </div>
             )}
+
+            {/* 회차 탭 (기본: 당회차) */}
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', flexWrap: 'wrap' }}>
+                {availableRounds.map(r => {
+                    const count = applicants.filter(a => (a.round ?? 1) === r).length;
+                    const isCurrent = r === latestRound;
+                    return (
+                        <button
+                            key={r}
+                            onClick={() => setActiveRound(r)}
+                            style={{
+                                padding: '10px 28px',
+                                borderRadius: '8px',
+                                border: currentRound === r ? 'none' : '1px solid var(--admin-border)',
+                                background: currentRound === r ? '#3b82f6' : 'white',
+                                color: currentRound === r ? 'white' : '#64748b',
+                                fontWeight: currentRound === r ? 700 : 400,
+                                fontSize: '1rem',
+                                cursor: 'pointer',
+                                transition: 'all 0.15s',
+                            }}
+                        >
+                            {r}회차{isCurrent && ' (당회차)'}
+                            <span style={{ marginLeft: '8px', fontSize: '0.8rem', opacity: 0.8 }}>
+                                ({count}명)
+                            </span>
+                        </button>
+                    );
+                })}
+            </div>
 
             {/* 요약 카드 */}
             <div className="dashboard-summary">
