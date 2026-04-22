@@ -1,6 +1,14 @@
 import { SolapiMessageService } from 'solapi';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireAdmin } from './_requireAdmin';
+
+const requireAdmin = (req: VercelRequest, res: VercelResponse): boolean => {
+    const auth = req.headers.authorization;
+    if (!auth || auth !== `Bearer ${process.env.ADMIN_SECRET}`) {
+        res.status(401).json({ error: '인증이 필요합니다.' });
+        return false;
+    }
+    return true;
+};
 
 const messageService = new SolapiMessageService(
     process.env.SOLAPI_API_KEY as string,
