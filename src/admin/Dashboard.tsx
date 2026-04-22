@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { fetchApplicants } from '../utils/apiClient';
 import type { Applicant } from '../utils/apiClient';
 
@@ -89,85 +89,101 @@ const classifyCareer = (careerReason: string): FieldCategory => {
 
 const Dashboard = () => {
     const [applicants, setApplicants] = useState<Applicant[]>([]);
+    const [loadError, setLoadError] = useState('');
 
-    useEffect(() => {
-        const load = async () => {
-            try {
-                const data = await fetchApplicants();
-                setApplicants(data);
-            } catch (error) {
-                console.error('대시보드 데이터 로드 실패:', error);
-            }
-        };
-        load();
-    }, []);
+    const load = async () => {
+        setLoadError('');
+        try {
+            const data = await fetchApplicants();
+            setApplicants(data);
+        } catch (error) {
+            console.error('대시보드 데이터 로드 실패:', error);
+            setLoadError('데이터를 불러오지 못했습니다. 새로고침 해주세요.');
+        }
+    };
+
+    useEffect(() => { load(); }, []);
 
     // 이름+연락처 기준 중복 제거
-    const groupedMap = applicants.reduce((acc, app) => {
-        const key = `${app.name}_${app.phone}`;
-        if (!acc[key]) {
-            acc[key] = { ...app, applyCount: 1 };
-        } else {
-            acc[key].applyCount += 1;
-        }
-        return acc;
-    }, {} as Record<string, GroupedApplicant>);
-    const unique = Object.values(groupedMap);
+    const unique = useMemo(() => {
+        const map = applicants.reduce((acc, app) => {
+            const key = `${app.name}_${app.phone}`;
+            if (!acc[key]) {
+                acc[key] = { ...app, applyCount: 1 };
+            } else {
+                acc[key].applyCount += 1;
+            }
+            return acc;
+        }, {} as Record<string, GroupedApplicant>);
+        return Object.values(map);
+    }, [applicants]);
+
     const total = unique.length;
 
     // ===== 1. 학교별 통계 =====
-    const schoolMap: Record<string, number> = {};
-    unique.forEach(app => {
-        const school = app.school?.trim() || '미기재';
-        schoolMap[school] = (schoolMap[school] || 0) + 1;
-    });
-    const schoolSorted = Object.entries(schoolMap).sort((a, b) => b[1] - a[1]);
-    const maxSchool = Math.max(...Object.values(schoolMap), 1);
+    const { schoolSorted, maxSchool } = useMemo(() => {
+        const schoolMap: Record<string, number> = {};
+        unique.forEach(app => {
+            const school = app.school?.trim() || '미기재';
+            schoolMap[school] = (schoolMap[school] || 0) + 1;
+        });
+        return {
+            schoolSorted: Object.entries(schoolMap).sort((a, b) => b[1] - a[1]),
+            maxSchool: Math.max(...Object.values(schoolMap), 1)
+        };
+    }, [unique]);
 
     // ===== 2. 남녀 통계 (학교명 기준) =====
-    let maleCount = 0;
-    let femaleCount = 0;
-    unique.forEach(app => {
-        if (app.school.includes('여자') || app.school.includes('여고')) {
-            femaleCount++;
-        } else {
-            maleCount++;
-        }
-    });
-    const femalePercent = total > 0 ? ((femaleCount / total) * 100).toFixed(1) : '0';
-    const malePercent = total > 0 ? ((maleCount / total) * 100).toFixed(1) : '0';
+    const { maleCount, femaleCount, malePercent, femalePercent } = useMemo(() => {
+        let male = 0;
+        let female = 0;
+        unique.forEach(app => {
+            if (app.school.includes('여자') || app.school.includes('여고')) female++;
+            else male++;
+        });
+        return {
+            maleCount: male,
+            femaleCount: female,
+            malePercent: total > 0 ? ((male / total) * 100).toFixed(1) : '0',
+            femalePercent: total > 0 ? ((female / total) * 100).toFixed(1) : '0'
+        };
+    }, [unique, total]);
 
     // ===== 3. 분야별 진로 통계 =====
-    const categoryMap: Record<FieldCategory, { count: number; careers: Record<string, number> }> = {
-        '공학계열': { count: 0, careers: {} },
-        '의학·보건': { count: 0, careers: {} },
-        '인문·사회': { count: 0, careers: {} },
-        '교육계열': { count: 0, careers: {} },
-        '미디어·예술': { count: 0, careers: {} },
-        '자연과학': { count: 0, careers: {} },
-        '군사·안보': { count: 0, careers: {} },
-        '기타': { count: 0, careers: {} }
-    };
-
-    unique.forEach(app => {
-        const category = classifyCareer(app.careerReason);
-        const keyword = extractCareerKeyword(app.careerReason);
-        categoryMap[category].count += 1;
-        categoryMap[category].careers[keyword] = (categoryMap[category].careers[keyword] || 0) + 1;
-    });
-
-    // 인원 순 정렬, 0명인 분야 제외
-    const categorySorted = (Object.entries(categoryMap) as [FieldCategory, typeof categoryMap[FieldCategory]][])
-        .filter(([, data]) => data.count > 0)
-        .sort((a, b) => b[1].count - a[1].count);
-
-    const maxCategory = Math.max(...categorySorted.map(([, d]) => d.count), 1);
+    const { categorySorted, maxCategory } = useMemo(() => {
+        const categoryMap: Record<FieldCategory, { count: number; careers: Record<string, number> }> = {
+            '공학계열': { count: 0, careers: {} },
+            '의학·보건': { count: 0, careers: {} },
+            '인문·사회': { count: 0, careers: {} },
+            '교육계열': { count: 0, careers: {} },
+            '미디어·예술': { count: 0, careers: {} },
+            '자연과학': { count: 0, careers: {} },
+            '군사·안보': { count: 0, careers: {} },
+            '기타': { count: 0, careers: {} }
+        };
+        unique.forEach(app => {
+            const category = classifyCareer(app.careerReason);
+            const keyword = extractCareerKeyword(app.careerReason);
+            categoryMap[category].count += 1;
+            categoryMap[category].careers[keyword] = (categoryMap[category].careers[keyword] || 0) + 1;
+        });
+        const sorted = (Object.entries(categoryMap) as [FieldCategory, typeof categoryMap[FieldCategory]][])
+            .filter(([, data]) => data.count > 0)
+            .sort((a, b) => b[1].count - a[1].count);
+        return { categorySorted: sorted, maxCategory: Math.max(...sorted.map(([, d]) => d.count), 1) };
+    }, [unique]);
 
     return (
         <div className="dashboard-page">
             <h2 style={{ marginBottom: '28px', color: '#0f172a', fontSize: '1.5rem', fontWeight: 800 }}>
                 📊 대시보드
             </h2>
+            {loadError && (
+                <div style={{ padding: '12px 16px', marginBottom: '16px', background: '#fee2e2', border: '1px solid #fca5a5', borderRadius: '8px', color: '#dc2626', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span>⚠️ {loadError}</span>
+                    <button onClick={load} style={{ background: 'none', border: '1px solid #dc2626', borderRadius: '4px', color: '#dc2626', padding: '4px 10px', cursor: 'pointer', fontSize: '0.85rem' }}>다시 시도</button>
+                </div>
+            )}
 
             {/* 요약 카드 */}
             <div className="dashboard-summary">

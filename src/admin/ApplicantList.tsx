@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { fetchApplicants, getTargetCapacity, saveTargetCapacity, updateApplicantStatus } from '../utils/apiClient';
 import type { Applicant } from '../utils/apiClient';
 import { formatPhone } from '../utils/formatPhone';
@@ -21,19 +21,19 @@ const ApplicantList = () => {
     const [selectedApplicant, setSelectedApplicant] = useState<GroupedApplicant | null>(null);
     const [showDeleted, setShowDeleted] = useState(false);
     const [statusFilter, setStatusFilter] = useState<string | null>(null);
-
-
+    const [loadError, setLoadError] = useState('');
 
     const loadApplicants = async () => {
+        setLoadError('');
         try {
             const apps = await fetchApplicants();
             const activeApps = apps.filter(a => a.status !== 'Deleted');
             const deletedApps = apps.filter(a => a.status === 'Deleted').map(a => ({ ...a, deletedAt: a.date }));
-            
             setApplicants(activeApps);
             setDeletedApplicants(deletedApps);
-        } catch (error) {
+        } catch (error: any) {
             console.error('신청자 목록 로드 실패:', error);
+            setLoadError('신청자 목록을 불러오지 못했습니다. 새로고침 해주세요.');
         }
     };
 
@@ -50,47 +50,46 @@ const ApplicantList = () => {
         }
     };
 
-    const groupedMap = applicants.reduce((acc, app) => {
-        const key = `${app.name}_${app.phone}`;
-        if (!acc[key]) {
-            acc[key] = {
-                ...app,
-                applyCount: 1,
-                responses: [{
+    const groupedApplicants = useMemo(() => {
+        const map = applicants.reduce((acc, app) => {
+            const key = `${app.name}_${app.phone}`;
+            if (!acc[key]) {
+                acc[key] = {
+                    ...app,
+                    applyCount: 1,
+                    responses: [{
+                        careerReason: app.careerReason,
+                        motivation: app.motivation,
+                        questionForYoon: app.questionForYoon,
+                        date: app.date || ''
+                    }]
+                };
+            } else {
+                acc[key].applyCount += 1;
+                acc[key].responses.push({
                     careerReason: app.careerReason,
                     motivation: app.motivation,
                     questionForYoon: app.questionForYoon,
                     date: app.date || ''
-                }]
-            };
-        } else {
-            acc[key].applyCount += 1;
-            acc[key].responses.push({
-                careerReason: app.careerReason,
-                motivation: app.motivation,
-                questionForYoon: app.questionForYoon,
-                date: app.date || ''
-            });
-        }
-        return acc;
-    }, {} as Record<string, GroupedApplicant>);
+                });
+            }
+            return acc;
+        }, {} as Record<string, GroupedApplicant>);
+        return Object.values(map);
+    }, [applicants]);
 
-    const groupedApplicants = Object.values(groupedMap);
-
-    const filteredApplicants = groupedApplicants.filter(a => {
-        // Status filter from clicking stat cards
+    const filteredApplicants = useMemo(() => groupedApplicants.filter(a => {
         if (statusFilter && statusFilter !== 'all') {
-            if (statusFilter === 'deleted') return false; // deleted shown separately
+            if (statusFilter === 'deleted') return false;
             if (a.status !== statusFilter) return false;
         }
-        // Search filter
         if (searchTerm) {
             return a.name.includes(searchTerm) ||
                 a.school.includes(searchTerm) ||
                 a.responses.some(r => (r.careerReason && r.careerReason.includes(searchTerm)) || (r.motivation && r.motivation.includes(searchTerm)));
         }
         return true;
-    });
+    }), [groupedApplicants, statusFilter, searchTerm]);
 
     const toggleStatus = async (id: number | string, newStatus: Applicant['status']) => {
         try {
@@ -170,6 +169,12 @@ const ApplicantList = () => {
 
     return (
         <div>
+            {loadError && (
+                <div style={{ padding: '12px 16px', marginBottom: '16px', background: '#fee2e2', border: '1px solid #fca5a5', borderRadius: '8px', color: '#dc2626', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span>⚠️ {loadError}</span>
+                    <button onClick={loadApplicants} style={{ background: 'none', border: '1px solid #dc2626', borderRadius: '4px', color: '#dc2626', padding: '4px 10px', cursor: 'pointer', fontSize: '0.85rem' }}>다시 시도</button>
+                </div>
+            )}
             {/* Statistics Cards - Clickable Filters */}
             <div className="stats-dashboard">
                 <div className="stats-cards">

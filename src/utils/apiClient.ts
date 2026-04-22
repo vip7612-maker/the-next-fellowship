@@ -16,6 +16,15 @@ const adminHeaders = (): Record<string, string> => {
     return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
+const apiFetch = async (input: RequestInfo, init?: RequestInit): Promise<Response> => {
+    const res = await fetch(input, init);
+    if (res.status === 401) {
+        clearAdminToken();
+        window.location.reload();
+    }
+    return res;
+};
+
 export interface Applicant {
     id: number | string;
     name: string;
@@ -63,7 +72,7 @@ export interface Survey {
 // ===== Applicants =====
 
 export const fetchApplicants = async (): Promise<Applicant[]> => {
-    const res = await fetch(`${API_BASE}/applicants?t=${Date.now()}`, {
+    const res = await apiFetch(`${API_BASE}/applicants?t=${Date.now()}`, {
         cache: 'no-store',
         headers: { 'Cache-Control': 'no-cache', ...adminHeaders() }
     });
@@ -84,7 +93,7 @@ export const submitApplicant = async (data: Omit<Applicant, 'id' | 'status' | 'd
 };
 
 export const updateApplicantStatus = async (id: number | string, status: Applicant['status']): Promise<void> => {
-    const res = await fetch(`${API_BASE}/applicants`, {
+    const res = await apiFetch(`${API_BASE}/applicants`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', ...adminHeaders() },
         body: JSON.stringify({ id: String(id), status })
@@ -150,7 +159,7 @@ export const saveTargetCapacity = (capacity: number) => {
 // ===== SMS =====
 
 export const sendSms = async (messages: { to: string, text: string }[]): Promise<any> => {
-    const res = await fetch(`${API_BASE}/sms`, {
+    const res = await apiFetch(`${API_BASE}/sms`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...adminHeaders() },
         body: JSON.stringify({ messages })
@@ -165,7 +174,7 @@ export const sendSms = async (messages: { to: string, text: string }[]): Promise
 // ===== Surveys =====
 
 export const fetchSurveys = async (): Promise<Survey[]> => {
-    const res = await fetch(`${API_BASE}/surveys?t=${Date.now()}`, {
+    const res = await apiFetch(`${API_BASE}/surveys?t=${Date.now()}`, {
         cache: 'no-store',
         headers: { 'Cache-Control': 'no-cache', ...adminHeaders() }
     });

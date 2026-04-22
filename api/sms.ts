@@ -1,11 +1,15 @@
 import { SolapiMessageService } from 'solapi';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { requireAdmin } from './_requireAdmin';
 
 const messageService = new SolapiMessageService(
     process.env.SOLAPI_API_KEY as string,
     process.env.SOLAPI_API_SECRET as string
 );
 
-export default async function handler(req: any, res: any) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+    if (!requireAdmin(req, res)) return;
+
     if (req.method !== 'POST') {
         res.setHeader('Allow', ['POST']);
         return res.status(405).end(`Method ${req.method} Not Allowed`);

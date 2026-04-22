@@ -51,3 +51,16 @@ CREATE TABLE IF NOT EXISTS surveys (
     constructiveOpinion TEXT NOT NULL,
     createdAt TEXT NOT NULL
 );
+
+-- 인덱스 (신규 DB에는 아래를 함께 실행, 기존 DB는 migration_indexes.sql 참고)
+CREATE INDEX IF NOT EXISTS idx_applicants_date ON applicants(date DESC);
+CREATE INDEX IF NOT EXISTS idx_applicants_status ON applicants(status);
+CREATE INDEX IF NOT EXISTS idx_topic_votes_topicId ON topic_votes(topicId);
+CREATE INDEX IF NOT EXISTS idx_topics_votes ON topics(votes DESC);
+CREATE INDEX IF NOT EXISTS idx_surveys_createdAt ON surveys(createdAt DESC);
+
+-- topic_votes 중복 투표 방지: 현재 앱 레벨(votes.ts)에서 검증 중.
+-- DB 레벨 UNIQUE 제약 추가 시 테이블 재생성 필요:
+--   CREATE TABLE topic_votes_new (..., UNIQUE(topicId, name, phone));
+--   INSERT INTO topic_votes_new SELECT * FROM topic_votes;
+--   DROP TABLE topic_votes; ALTER TABLE topic_votes_new RENAME TO topic_votes;
