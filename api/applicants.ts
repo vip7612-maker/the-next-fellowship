@@ -1,6 +1,11 @@
+import { createClient } from '@libsql/client/http';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { requireAdmin } from './_requireAdmin';
-import { db } from './db';
+
+const db = createClient({
+    url: process.env.TURSO_DATABASE_URL as string,
+    authToken: process.env.TURSO_AUTH_TOKEN as string,
+});
 
 const escapeTg = (text: string) =>
     String(text).replace(/[_*[\]()~`>#+=|{}.!-]/g, '\\$&');

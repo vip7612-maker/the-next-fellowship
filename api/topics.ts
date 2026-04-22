@@ -1,5 +1,10 @@
+import { createClient } from '@libsql/client/http';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { db } from './db';
+
+const db = createClient({
+    url: process.env.TURSO_DATABASE_URL as string,
+    authToken: process.env.TURSO_AUTH_TOKEN as string,
+});
 
 const isValidPhone = (phone: string) => /^\d{9,11}$/.test(phone.replace(/[^0-9]/g, ''));
 
