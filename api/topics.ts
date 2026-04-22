@@ -1,11 +1,12 @@
 import { createClient } from '@libsql/client/http';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 const db = createClient({
     url: process.env.TURSO_DATABASE_URL as string,
     authToken: process.env.TURSO_AUTH_TOKEN as string,
 });
 
-export default async function handler(req: any, res: any) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (req.method === 'GET') {
         try {
             const { rows } = await db.execute('SELECT * FROM topics ORDER BY votes DESC');
@@ -17,12 +18,23 @@ export default async function handler(req: any, res: any) {
 
     if (req.method === 'POST') {
         try {
-            const { id, title, description, votes, createdAt, authorName, authorPhone } = req.body;
+            const { title, description, authorName, authorPhone } = req.body;
+            const id = crypto.randomUUID();
+            const createdAt = new Date().toISOString().split('T')[0];
+
             await db.execute({
                 sql: `INSERT INTO topics (id, title, description, votes, createdAt, authorName, authorPhone)
                       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-                args: [id, title, description, votes || 1, createdAt, authorName, authorPhone]
+                args: [id, title, description, 1, createdAt, authorName, authorPhone]
             });
+
+            // 작성자를 자동으로 첫 투표자로 등록
+            const voteId = crypto.randomUUID();
+            await db.execute({
+                sql: `INSERT INTO topic_votes (id, topicId, name, phone, createdAt) VALUES (?, ?, ?, ?, ?)`,
+                args: [voteId, id, authorName, authorPhone, new Date().toISOString()]
+            });
+
             return res.status(200).json({ success: true });
         } catch (error: any) {
             return res.status(500).json({ error: error.message });

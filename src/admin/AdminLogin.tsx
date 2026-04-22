@@ -1,14 +1,32 @@
 import { useState } from 'react';
+import { setAdminToken } from '../utils/apiClient';
 
 const AdminLogin = ({ onLogin }: { onLogin: () => void }) => {
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (password === 'next0405') { // Admin password
+        setLoading(true);
+        setError('');
+        try {
+            const res = await fetch('/api/auth', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password })
+            });
+            if (!res.ok) {
+                setError('비밀번호가 틀렸습니다.');
+                return;
+            }
+            const { token } = await res.json();
+            setAdminToken(token);
             onLogin();
-        } else {
-            alert('비밀번호가 틀렸습니다.');
+        } catch {
+            setError('로그인 중 오류가 발생했습니다.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -23,7 +41,10 @@ const AdminLogin = ({ onLogin }: { onLogin: () => void }) => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
-                    <button type="submit" className="login-btn">로그인</button>
+                    {error && <p style={{ color: '#ff6b6b', margin: '8px 0 0', fontSize: '0.9rem' }}>{error}</p>}
+                    <button type="submit" className="login-btn" disabled={loading}>
+                        {loading ? '로그인 중...' : '로그인'}
+                    </button>
                 </form>
             </div>
         </div>

@@ -1,8 +1,20 @@
-// API Client - Turso DB와 통신하는 유틸리티
-// Vercel 서버리스 함수를 통해 데이터베이스에 접근합니다.
-
-// Vite proxy가 /api 요청을 Vercel 서버로 프록시합니다.
 const API_BASE = '/api';
+
+const ADMIN_TOKEN_KEY = 'fellowship_admin_token';
+
+export const getAdminToken = (): string | null =>
+    sessionStorage.getItem(ADMIN_TOKEN_KEY);
+
+export const setAdminToken = (token: string) =>
+    sessionStorage.setItem(ADMIN_TOKEN_KEY, token);
+
+export const clearAdminToken = () =>
+    sessionStorage.removeItem(ADMIN_TOKEN_KEY);
+
+const adminHeaders = (): Record<string, string> => {
+    const token = getAdminToken();
+    return token ? { Authorization: `Bearer ${token}` } : {};
+};
 
 export interface Applicant {
     id: number | string;
@@ -51,22 +63,19 @@ export interface Survey {
 // ===== Applicants =====
 
 export const fetchApplicants = async (): Promise<Applicant[]> => {
-    const res = await fetch(`${API_BASE}/applicants?t=${Date.now()}`, { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });
+    const res = await fetch(`${API_BASE}/applicants?t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache', ...adminHeaders() }
+    });
     if (!res.ok) throw new Error('신청자 목록을 불러오는데 실패했습니다.');
     return res.json();
 };
 
 export const submitApplicant = async (data: Omit<Applicant, 'id' | 'status' | 'date' | 'deletedAt'>): Promise<void> => {
-    const body = {
-        id: String(Date.now()),
-        ...data,
-        status: 'Pending',
-        date: new Date().toISOString().split('T')[0]
-    };
     const res = await fetch(`${API_BASE}/applicants`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
+        body: JSON.stringify(data)
     });
     if (!res.ok) {
         const err = await res.json().catch(() => ({}));
@@ -77,7 +86,7 @@ export const submitApplicant = async (data: Omit<Applicant, 'id' | 'status' | 'd
 export const updateApplicantStatus = async (id: number | string, status: Applicant['status']): Promise<void> => {
     const res = await fetch(`${API_BASE}/applicants`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...adminHeaders() },
         body: JSON.stringify({ id: String(id), status })
     });
     if (!res.ok) {
@@ -95,24 +104,15 @@ export const fetchTopics = async (): Promise<Topic[]> => {
 };
 
 export const submitTopic = async (data: { title: string; description: string; authorName: string; authorPhone: string }): Promise<void> => {
-    const id = String(Date.now());
-    const body = {
-        id,
-        ...data,
-        votes: 1,
-        createdAt: new Date().toISOString().split('T')[0]
-    };
     const res = await fetch(`${API_BASE}/topics`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
+        body: JSON.stringify(data)
     });
     if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.error || '주제 제안에 실패했습니다.');
     }
-    // 작성자를 자동으로 첫 투표자로 등록
-    await submitVote(id, data.authorName, data.authorPhone);
 };
 
 // ===== Votes =====
@@ -125,17 +125,10 @@ export const fetchVotes = async (topicId?: number | string): Promise<VoteRecord[
 };
 
 export const submitVote = async (topicId: number | string, name: string, phone: string): Promise<void> => {
-    const body = {
-        id: String(Date.now()),
-        topicId: String(topicId),
-        name,
-        phone,
-        createdAt: new Date().toISOString()
-    };
     const res = await fetch(`${API_BASE}/votes`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
+        body: JSON.stringify({ topicId: String(topicId), name, phone })
     });
     if (!res.ok) {
         const err = await res.json().catch(() => ({}));
@@ -143,14 +136,11 @@ export const submitVote = async (topicId: number | string, name: string, phone: 
     }
 };
 
-// ===== Target Capacity (localStorage 유지 - 관리자 설정) =====
+// ===== Target Capacity =====
 
 export const getTargetCapacity = (): number => {
     const saved = localStorage.getItem('fellowship_target_capacity');
-    if (saved) {
-        return parseInt(saved, 10) || 50;
-    }
-    return 50;
+    return saved ? parseInt(saved, 10) || 50 : 50;
 };
 
 export const saveTargetCapacity = (capacity: number) => {
@@ -162,7 +152,7 @@ export const saveTargetCapacity = (capacity: number) => {
 export const sendSms = async (messages: { to: string, text: string }[]): Promise<any> => {
     const res = await fetch(`${API_BASE}/sms`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...adminHeaders() },
         body: JSON.stringify({ messages })
     });
     if (!res.ok) {
@@ -175,21 +165,19 @@ export const sendSms = async (messages: { to: string, text: string }[]): Promise
 // ===== Surveys =====
 
 export const fetchSurveys = async (): Promise<Survey[]> => {
-    const res = await fetch(`${API_BASE}/surveys?t=${Date.now()}`, { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });
+    const res = await fetch(`${API_BASE}/surveys?t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache', ...adminHeaders() }
+    });
     if (!res.ok) throw new Error('설문 목록을 불러오는데 실패했습니다.');
     return res.json();
 };
 
 export const submitSurvey = async (data: Omit<Survey, 'id' | 'createdAt'>): Promise<void> => {
-    const body = {
-        id: String(Date.now()),
-        ...data,
-        createdAt: new Date().toISOString()
-    };
     const res = await fetch(`${API_BASE}/surveys`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
+        body: JSON.stringify(data)
     });
     if (!res.ok) {
         const err = await res.json().catch(() => ({}));

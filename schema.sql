@@ -8,7 +8,8 @@ CREATE TABLE IF NOT EXISTS applicants (
     motivation TEXT NOT NULL,
     questionForYoon TEXT NOT NULL,
     status TEXT DEFAULT 'Pending',
-    date TEXT NOT NULL
+    date TEXT NOT NULL,
+    role TEXT DEFAULT '학생'
 );
 
 CREATE TABLE IF NOT EXISTS topics (

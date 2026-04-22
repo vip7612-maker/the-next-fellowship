@@ -1,12 +1,15 @@
 import { createClient } from '@libsql/client/http';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { requireAdmin } from './_requireAdmin';
 
 const db = createClient({
     url: process.env.TURSO_DATABASE_URL as string,
     authToken: process.env.TURSO_AUTH_TOKEN as string,
 });
 
-export default async function handler(req: any, res: any) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (req.method === 'GET') {
+        if (!requireAdmin(req, res)) return;
         try {
             const { rows } = await db.execute('SELECT * FROM surveys ORDER BY createdAt DESC');
             return res.status(200).json(rows);
@@ -17,11 +20,14 @@ export default async function handler(req: any, res: any) {
 
     if (req.method === 'POST') {
         try {
-            const { id, name, phone, satisfaction, helpfulness, feedback, constructiveOpinion, createdAt } = req.body;
+            const { name, phone, satisfaction, helpfulness, feedback, constructiveOpinion } = req.body;
+            const id = crypto.randomUUID();
+            const createdAt = new Date().toISOString();
+
             await db.execute({
                 sql: `INSERT INTO surveys (id, name, phone, satisfaction, helpfulness, feedback, constructiveOpinion, createdAt)
                       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-                args: [id, name, phone || '', satisfaction, helpfulness || satisfaction, feedback, constructiveOpinion, createdAt]
+                args: [id, name, phone || '', satisfaction, helpfulness ?? satisfaction, feedback, constructiveOpinion, createdAt]
             });
             return res.status(200).json({ success: true });
         } catch (error: any) {

@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './Admin.css';
 
-const AdminLayout = ({ children }: { children: React.ReactNode }) => {
+const AdminLayout = ({ children, onLogout }: { children: React.ReactNode; onLogout?: () => void }) => {
     const location = useLocation();
 
     return (
@@ -29,6 +29,11 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                         <Link to="/" className="menu-item" style={{ marginTop: 'auto', opacity: 0.5 }}>
                             홈으로 가기
                         </Link>
+                        {onLogout && (
+                            <button onClick={onLogout} className="menu-item" style={{ background: 'none', border: 'none', cursor: 'pointer', opacity: 0.5, textAlign: 'left', padding: '10px 15px' }}>
+                                로그아웃
+                            </button>
+                        )}
                     </nav>
                 </aside>
 

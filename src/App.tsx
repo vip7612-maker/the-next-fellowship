@@ -1,5 +1,6 @@
 import { HashRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { useState } from 'react';
+import { getAdminToken, clearAdminToken } from './utils/apiClient';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Intro from './components/Intro';
@@ -8,7 +9,6 @@ import Episode from './components/Episode';
 import Consulting from './components/Consulting';
 import Application from './components/Application';
 import Vote from './components/Vote';
-// import Gallery from './components/Gallery';
 import Episode1Detail from './components/Episode1Detail';
 import Staff from './components/Staff';
 import AdminLayout from './admin/AdminLayout';
@@ -32,7 +32,6 @@ const LandingPage = () => (
       <Pipeline />
       <Consulting />
       <Vote />
-      {/* <Gallery /> */}
     </main>
     <footer>
       <div className="container footer-content">
@@ -49,16 +48,22 @@ const LandingPage = () => (
 );
 
 function App() {
-  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(() => !!getAdminToken());
 
-  // Wrapping protected routes
+  const handleLogin = () => setIsAdminLoggedIn(true);
+
+  const handleLogout = () => {
+    clearAdminToken();
+    setIsAdminLoggedIn(false);
+  };
+
   const ProtectedAdmin = ({ children }: { children: React.ReactNode }) => {
     return isAdminLoggedIn ? (
-      <AdminLayout>
+      <AdminLayout onLogout={handleLogout}>
         {children}
       </AdminLayout>
     ) : (
-      <AdminLogin onLogin={() => setIsAdminLoggedIn(true)} />
+      <AdminLogin onLogin={handleLogin} />
     );
   };
 
