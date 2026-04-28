@@ -84,7 +84,9 @@ const GalleryAdmin = () => {
     const [uploading, setUploading] = useState(false);
     const [isDragOver, setIsDragOver] = useState(false);
 
-    // 미리보기 모달
+    // 썸네일 + 미리보기 캐시
+    const [thumbCache, setThumbCache] = useState<Record<string, string>>({});
+    const [thumbLoading, setThumbLoading] = useState<Record<string, boolean>>({});
     const [previewItemId, setPreviewItemId] = useState<string | null>(null);
     const [previewDataUrl, setPreviewDataUrl] = useState<string | null>(null);
 
@@ -104,6 +106,34 @@ const GalleryAdmin = () => {
     useEffect(() => {
         load();
     }, []);
+
+    // 새로 추가된 이미지의 썸네일을 비동기로 일괄 로드
+    useEffect(() => {
+        const toLoad = items.filter((it) => !thumbCache[it.id] && !thumbLoading[it.id]);
+        if (toLoad.length === 0) return;
+
+        // 동시에 너무 많이 호출하지 않도록 4개씩 슬라이스
+        const batch = toLoad.slice(0, 4);
+        setThumbLoading((prev) => {
+            const next = { ...prev };
+            batch.forEach((it) => { next[it.id] = true; });
+            return next;
+        });
+        batch.forEach(async (it) => {
+            try {
+                const full = await fetchGalleryItem(it.id);
+                setThumbCache((prev) => ({ ...prev, [it.id]: full.dataUrl }));
+            } catch {
+                // 실패 시 placeholder 유지
+            } finally {
+                setThumbLoading((prev) => {
+                    const next = { ...prev };
+                    delete next[it.id];
+                    return next;
+                });
+            }
+        });
+    }, [items, thumbCache, thumbLoading]);
 
     const processFile = async (file: File) => {
         setPickError(null);
@@ -417,7 +447,7 @@ const GalleryAdmin = () => {
                 </form>
             </div>
 
-            {/* 갤러리 목록 */}
+            {/* 갤러리 그리드 */}
             <div className="admin-card">
                 <h3 style={{ marginTop: 0, marginBottom: 16 }}>등록된 이미지 ({items.length}개)</h3>
                 {loading ? (
@@ -427,80 +457,171 @@ const GalleryAdmin = () => {
                 ) : items.length === 0 ? (
                     <div className="empty-state" style={{ padding: 30, textAlign: 'center' }}>아직 등록된 이미지가 없습니다.</div>
                 ) : (
-                    <div className="table-responsive">
-                        <table className="admin-table">
-                            <thead>
-                                <tr>
-                                    <th style={{ width: 80 }}>미리보기</th>
-                                    <th>제목 / 설명</th>
-                                    <th style={{ width: 250 }}>슬롯 (사용 위치)</th>
-                                    <th style={{ width: 120 }}>크기</th>
-                                    <th style={{ width: 100 }}>상태</th>
-                                    <th style={{ width: 140 }}>관리</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {items.map((item) => (
-                                    <tr key={item.id}>
-                                        <td>
-                                            <button
-                                                onClick={() => openPreview(item.id)}
-                                                style={{ background: 'none', border: '1px solid var(--admin-border)', borderRadius: 6, padding: 4, cursor: 'pointer' }}
-                                            >
-                                                <span style={{ fontSize: 11, color: '#666' }}>📷 보기</span>
-                                            </button>
-                                        </td>
-                                        <td>
-                                            <div style={{ fontWeight: 600 }}>{item.title}</div>
-                                            {item.description && <div style={{ fontSize: 12, color: '#666', marginTop: 2 }}>{item.description}</div>}
-                                        </td>
-                                        <td>
-                                            <select
-                                                value={item.slot || ''}
-                                                onChange={(e) => handleUpdateSlot(item, e.target.value)}
-                                                style={{ ...inputStyle, padding: '6px 8px', fontSize: 12 }}
-                                            >
-                                                <option value="">(없음)</option>
-                                                {SLOT_PRESETS.map((s) => (
-                                                    <option key={s.value} value={s.value}>{s.label}</option>
-                                                ))}
-                                                {item.slot && !SLOT_PRESETS.some((s) => s.value === item.slot) && (
-                                                    <option value={item.slot}>{item.slot} (커스텀)</option>
-                                                )}
-                                            </select>
-                                        </td>
-                                        <td style={{ fontSize: 12, color: '#666' }}>
-                                            {item.width && item.height ? `${item.width}×${item.height}` : '-'}
-                                            <br />
-                                            {formatBytes(item.sizeBytes)}
-                                        </td>
-                                        <td>
+                    <div
+                        style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+                            gap: 18
+                        }}
+                    >
+                        {items.map((item) => {
+                            const thumb = thumbCache[item.id];
+                            const isThumbLoading = thumbLoading[item.id];
+                            const isActive = Number(item.isActive) === 1;
+                            const slotLabel = SLOT_PRESETS.find((s) => s.value === item.slot)?.label
+                                || (item.slot ? `${item.slot} (커스텀)` : null);
+
+                            return (
+                                <div
+                                    key={item.id}
+                                    style={{
+                                        border: '1px solid var(--admin-border)',
+                                        borderRadius: 12,
+                                        overflow: 'hidden',
+                                        background: '#fff',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        opacity: isActive ? 1 : 0.55,
+                                        transition: 'transform 0.15s ease, box-shadow 0.15s ease'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.transform = 'translateY(-2px)';
+                                        e.currentTarget.style.boxShadow = '0 8px 22px -10px rgba(0,0,0,0.25)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.transform = '';
+                                        e.currentTarget.style.boxShadow = '';
+                                    }}
+                                >
+                                    {/* 썸네일 */}
+                                    <button
+                                        type="button"
+                                        onClick={() => openPreview(item.id)}
+                                        title="클릭해서 큰 이미지 보기"
+                                        style={{
+                                            position: 'relative',
+                                            width: '100%',
+                                            aspectRatio: '4 / 3',
+                                            background: '#f1f5f9',
+                                            border: 'none',
+                                            cursor: 'pointer',
+                                            padding: 0,
+                                            display: 'block'
+                                        }}
+                                    >
+                                        {thumb ? (
+                                            <img
+                                                src={thumb}
+                                                alt={item.title}
+                                                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                                            />
+                                        ) : (
+                                            <div style={{
+                                                width: '100%', height: '100%',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                color: '#94a3b8', fontSize: 13
+                                            }}>
+                                                {isThumbLoading ? '로딩 중…' : '미리보기 준비 중…'}
+                                            </div>
+                                        )}
+
+                                        {/* 활성/비활성 배지 */}
+                                        <span style={{
+                                            position: 'absolute',
+                                            top: 8,
+                                            left: 8,
+                                            fontSize: 11,
+                                            fontWeight: 700,
+                                            padding: '3px 8px',
+                                            borderRadius: 999,
+                                            background: isActive ? 'rgba(43, 91, 58, 0.92)' : 'rgba(138, 39, 39, 0.85)',
+                                            color: '#fff',
+                                            letterSpacing: '0.04em'
+                                        }}>
+                                            {isActive ? '활성' : '비활성'}
+                                        </span>
+
+                                        {/* 슬롯 배지 */}
+                                        {slotLabel && (
+                                            <span style={{
+                                                position: 'absolute',
+                                                top: 8,
+                                                right: 8,
+                                                fontSize: 10,
+                                                fontWeight: 600,
+                                                padding: '3px 8px',
+                                                borderRadius: 6,
+                                                background: 'rgba(255, 255, 255, 0.92)',
+                                                color: '#2b5b3a',
+                                                maxWidth: '70%',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis',
+                                                whiteSpace: 'nowrap'
+                                            }}>
+                                                🔗 {slotLabel}
+                                            </span>
+                                        )}
+                                    </button>
+
+                                    {/* 본문 */}
+                                    <div style={{ padding: 12, display: 'flex', flexDirection: 'column', gap: 8, flex: 1 }}>
+                                        <div>
+                                            <div style={{ fontSize: 14, fontWeight: 700, color: '#1a1a1a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={item.title}>
+                                                {item.title}
+                                            </div>
+                                            {item.description && (
+                                                <div style={{ fontSize: 12, color: '#666', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={item.description}>
+                                                    {item.description}
+                                                </div>
+                                            )}
+                                            <div style={{ fontSize: 11, color: '#888', marginTop: 4 }}>
+                                                {item.width && item.height ? `${item.width}×${item.height} · ` : ''}{formatBytes(item.sizeBytes)}
+                                            </div>
+                                        </div>
+
+                                        {/* 슬롯 변경 */}
+                                        <select
+                                            value={item.slot || ''}
+                                            onChange={(e) => handleUpdateSlot(item, e.target.value)}
+                                            style={{ ...inputStyle, padding: '6px 8px', fontSize: 12 }}
+                                            title="슬롯 변경"
+                                        >
+                                            <option value="">슬롯: (없음)</option>
+                                            {SLOT_PRESETS.map((s) => (
+                                                <option key={s.value} value={s.value}>{s.label}</option>
+                                            ))}
+                                            {item.slot && !SLOT_PRESETS.some((s) => s.value === item.slot) && (
+                                                <option value={item.slot}>{item.slot} (커스텀)</option>
+                                            )}
+                                        </select>
+
+                                        {/* 액션 */}
+                                        <div style={{ display: 'flex', gap: 6, marginTop: 'auto' }}>
                                             <button
                                                 onClick={() => handleToggleActive(item)}
                                                 className="export-btn"
                                                 style={{
+                                                    flex: 1,
                                                     fontSize: 12,
-                                                    padding: '4px 10px',
-                                                    background: Number(item.isActive) === 1 ? '#eaf1ec' : '#fdecec',
-                                                    color: Number(item.isActive) === 1 ? '#2b5b3a' : '#8a2727'
+                                                    padding: '6px 8px',
+                                                    background: isActive ? '#eaf1ec' : '#fdecec',
+                                                    color: isActive ? '#2b5b3a' : '#8a2727'
                                                 }}
                                             >
-                                                {Number(item.isActive) === 1 ? '✓ 활성' : '⏸ 비활성'}
+                                                {isActive ? '⏸ 비활성' : '▶ 활성'}
                                             </button>
-                                        </td>
-                                        <td>
                                             <button
                                                 onClick={() => handleDelete(item)}
                                                 className="export-btn"
-                                                style={{ fontSize: 12, padding: '4px 10px', background: '#fdecec', color: '#8a2727' }}
+                                                style={{ flex: 1, fontSize: 12, padding: '6px 8px', background: '#fdecec', color: '#8a2727' }}
                                             >
                                                 🗑 삭제
                                             </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
                 )}
             </div>
