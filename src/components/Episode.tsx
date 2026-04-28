@@ -55,30 +55,6 @@ const Episode = () => {
                         <div className="card-icon">컨설팅</div>
                         <h3 className="card-title">데이터 기반 진학 나침반</h3>
 
-                        <div style={{
-                            width: '100%',
-                            padding: '14px 16px',
-                            marginBottom: 18,
-                            background: 'rgba(255, 0, 127, 0.06)',
-                            border: '1px solid rgba(255, 0, 127, 0.25)',
-                            borderRadius: 10,
-                            textAlign: 'left',
-                            fontSize: '0.88rem',
-                            lineHeight: 1.65,
-                            color: 'var(--color-text-main)',
-                            wordBreak: 'keep-all'
-                        }}>
-                            <div style={{ fontSize: '0.72rem', letterSpacing: '0.16em', color: '#ff7eb9', fontWeight: 700, marginBottom: 6 }}>
-                                ABOUT 윤앤고 입시컨설팅
-                            </div>
-                            <p style={{ margin: 0, color: 'var(--color-white)', fontWeight: 600, marginBottom: 4 }}>
-                                "데이터로 길을 찾는 1:1 맞춤 입시 컨설팅 그룹"
-                            </p>
-                            <p style={{ margin: 0, color: 'var(--color-text-sub)', fontSize: '0.83rem' }}>
-                                메가스터디 러셀에서 쌓아온 최상위권 입시 노하우를 바탕으로, 학생 개인의 생기부·내신·관심분야를 정밀 분석합니다. 막연한 진학 고민을 합격으로 이어지는 명확한 실행 로드맵으로 바꾸어 드리는 윤앤고만의 컨설팅 방식입니다.
-                            </p>
-                        </div>
-
                         <div className="person-item" style={{ borderBottom: 'none' }}>
                             <div className="person-role">Consulting Group</div>
                             <div className="person-name">이상연 소장</div>
