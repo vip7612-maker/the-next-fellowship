@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { ChangeEvent, FormEvent } from 'react';
+import type { ChangeEvent, DragEvent, FormEvent } from 'react';
 import {
     fetchGalleryList,
     fetchGalleryItem,
@@ -73,6 +73,7 @@ const GalleryAdmin = () => {
     // 업로드 폼 상태
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [pickedFile, setPickedFile] = useState<{ dataUrl: string; mimeType: string; width: number; height: number; sizeBytes: number } | null>(null);
+    const [pickedFileName, setPickedFileName] = useState<string>('');
     const [pickError, setPickError] = useState<string | null>(null);
     const [uploadForm, setUploadForm] = useState({
         slot: '',
@@ -81,6 +82,7 @@ const GalleryAdmin = () => {
         description: ''
     });
     const [uploading, setUploading] = useState(false);
+    const [isDragOver, setIsDragOver] = useState(false);
 
     // 미리보기 모달
     const [previewItemId, setPreviewItemId] = useState<string | null>(null);
@@ -103,10 +105,8 @@ const GalleryAdmin = () => {
         load();
     }, []);
 
-    const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const processFile = async (file: File) => {
         setPickError(null);
-        const file = e.target.files?.[0];
-        if (!file) return;
         if (!file.type.startsWith('image/')) {
             setPickError('이미지 파일만 업로드할 수 있습니다.');
             return;
@@ -114,12 +114,57 @@ const GalleryAdmin = () => {
         try {
             const result = await resizeImageFile(file);
             setPickedFile(result);
+            setPickedFileName(file.name);
             if (!uploadForm.title) {
                 setUploadForm((prev) => ({ ...prev, title: file.name.replace(/\.[^/.]+$/, '') }));
             }
         } catch (err) {
             setPickError(err instanceof Error ? err.message : '이미지 처리 실패');
         }
+    };
+
+    const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        await processFile(file);
+    };
+
+    const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!isDragOver) setIsDragOver(true);
+    };
+
+    const handleDragLeave = (e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragOver(false);
+    };
+
+    const handleDrop = async (e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragOver(false);
+        const file = e.dataTransfer.files?.[0];
+        if (!file) return;
+        await processFile(file);
+    };
+
+    const handleDropzoneClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleDropzoneKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            fileInputRef.current?.click();
+        }
+    };
+
+    const clearPickedFile = () => {
+        setPickedFile(null);
+        setPickedFileName('');
+        if (fileInputRef.current) fileInputRef.current.value = '';
     };
 
     const handleUpload = async (e: FormEvent) => {
@@ -148,9 +193,8 @@ const GalleryAdmin = () => {
                 width: pickedFile.width,
                 height: pickedFile.height
             });
-            setPickedFile(null);
+            clearPickedFile();
             setUploadForm({ slot: '', slotCustom: '', title: '', description: '' });
-            if (fileInputRef.current) fileInputRef.current.value = '';
             await load();
         } catch (err) {
             alert(err instanceof Error ? err.message : '업로드 실패');
@@ -223,19 +267,83 @@ const GalleryAdmin = () => {
                             type="file"
                             accept="image/*"
                             onChange={handleFileChange}
-                            style={{ width: '100%' }}
+                            style={{ display: 'none' }}
                         />
-                        {pickError && <div style={{ color: '#b14a3a', fontSize: 12, marginTop: 6 }}>{pickError}</div>}
-                        {pickedFile && (
-                            <div style={{ marginTop: 10, display: 'flex', gap: 14, alignItems: 'center' }}>
-                                <img src={pickedFile.dataUrl} alt="미리보기" style={{ width: 100, height: 100, objectFit: 'cover', borderRadius: 8, border: '1px solid var(--admin-border)' }} />
-                                <div style={{ fontSize: 12, color: '#555' }}>
-                                    {pickedFile.width}×{pickedFile.height} · {formatBytes(pickedFile.sizeBytes)} · {pickedFile.mimeType}
-                                    <br />
-                                    <span style={{ color: '#888' }}>큰 이미지는 자동으로 1200px로 리사이즈됩니다.</span>
+
+                        {pickedFile ? (
+                            <div
+                                onDragOver={handleDragOver}
+                                onDragLeave={handleDragLeave}
+                                onDrop={handleDrop}
+                                style={{
+                                    border: `2px ${isDragOver ? 'solid' : 'dashed'} ${isDragOver ? '#2b5b3a' : 'var(--admin-border)'}`,
+                                    background: isDragOver ? '#eaf1ec' : '#fafbfc',
+                                    borderRadius: 12,
+                                    padding: 16,
+                                    display: 'flex',
+                                    gap: 16,
+                                    alignItems: 'center',
+                                    transition: 'all 0.15s ease'
+                                }}
+                            >
+                                <img
+                                    src={pickedFile.dataUrl}
+                                    alt="미리보기"
+                                    style={{ width: 110, height: 110, objectFit: 'cover', borderRadius: 8, border: '1px solid var(--admin-border)', flexShrink: 0 }}
+                                />
+                                <div style={{ flex: 1, minWidth: 0, fontSize: 13, color: '#555' }}>
+                                    <div style={{ fontWeight: 600, color: '#1a1a1a', marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                        {pickedFileName || '선택한 이미지'}
+                                    </div>
+                                    <div style={{ fontSize: 12, color: '#666' }}>
+                                        {pickedFile.width}×{pickedFile.height} · {formatBytes(pickedFile.sizeBytes)} · {pickedFile.mimeType}
+                                    </div>
+                                    <div style={{ fontSize: 11, color: '#888', marginTop: 4 }}>
+                                        다른 파일을 드래그하여 교체하거나, 아래 버튼으로 변경할 수 있습니다.
+                                    </div>
+                                    <div style={{ marginTop: 10, display: 'flex', gap: 8 }}>
+                                        <button type="button" className="export-btn" onClick={handleDropzoneClick} style={{ fontSize: 12, padding: '6px 12px' }}>
+                                            파일 변경
+                                        </button>
+                                        <button type="button" className="export-btn" onClick={clearPickedFile} style={{ fontSize: 12, padding: '6px 12px', background: '#fdecec', color: '#8a2727' }}>
+                                            제거
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div
+                                role="button"
+                                tabIndex={0}
+                                onClick={handleDropzoneClick}
+                                onKeyDown={handleDropzoneKeyDown}
+                                onDragOver={handleDragOver}
+                                onDragLeave={handleDragLeave}
+                                onDrop={handleDrop}
+                                style={{
+                                    border: `2px dashed ${isDragOver ? '#2b5b3a' : 'var(--admin-border)'}`,
+                                    background: isDragOver ? '#eaf1ec' : '#fafbfc',
+                                    borderRadius: 12,
+                                    padding: '36px 20px',
+                                    textAlign: 'center',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.15s ease',
+                                    outline: 'none'
+                                }}
+                            >
+                                <div style={{ fontSize: 40, marginBottom: 8, opacity: isDragOver ? 1 : 0.6 }}>
+                                    {isDragOver ? '⤵️' : '📤'}
+                                </div>
+                                <div style={{ fontSize: 15, fontWeight: 600, color: isDragOver ? '#2b5b3a' : '#1a1a1a', marginBottom: 4 }}>
+                                    {isDragOver ? '여기에 놓아주세요' : '이미지를 끌어다 놓거나 클릭해서 선택'}
+                                </div>
+                                <div style={{ fontSize: 12, color: '#888' }}>
+                                    JPG / PNG / WebP · 큰 이미지는 자동으로 1200px로 리사이즈됩니다
                                 </div>
                             </div>
                         )}
+
+                        {pickError && <div style={{ color: '#b14a3a', fontSize: 12, marginTop: 8 }}>{pickError}</div>}
                     </div>
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
