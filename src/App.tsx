@@ -19,6 +19,7 @@ import GalleryAdmin from './admin/GalleryAdmin';
 import Dashboard from './admin/Dashboard';
 import MentorSurveyAdmin from './admin/MentorSurveyAdmin';
 import MentorSurvey from './components/MentorSurvey';
+import MentorBanner from './components/MentorBanner';
 import './App.css';
 
 const LandingPage = () => (
@@ -32,6 +33,7 @@ const LandingPage = () => (
       <Pipeline />
       <Consulting />
       <Vote />
+      <MentorBanner />
     </main>
     <footer>
       <div className="container footer-content">

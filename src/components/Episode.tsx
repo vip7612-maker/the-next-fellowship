@@ -1,4 +1,12 @@
+import { Link } from 'react-router-dom';
 import './Episode.css';
+
+const EPISODE1_PHOTOS = [
+    { src: '/episode1/1.jpg', alt: '1회차 KickOff – 윤여정 대표 컨설팅 강연' },
+    { src: '/episode1/2.jpg', alt: '1회차 KickOff – 학생 보드 멤버 진행' },
+    { src: '/episode1/3.jpg', alt: '1회차 KickOff – 권정현 개발자 강연' },
+    { src: '/episode1/4.jpg', alt: '1회차 KickOff – 컨설팅 세션 현장' },
+];
 
 const Episode = () => {
     return (
@@ -11,6 +19,26 @@ const Episode = () => {
                     </h2>
                     <p style={{ marginTop: '12px', color: 'var(--color-text-sub)', fontSize: '1.1rem' }}>Semiconductor X Marketing · 2026년 4월 5일</p>
                 </div>
+
+                {/* 1회차 현장 스케치 */}
+                <div className="episode-photos">
+                    {EPISODE1_PHOTOS.map((photo, i) => (
+                        <Link
+                            key={i}
+                            to="/episode/1"
+                            className={`episode-photo episode-photo-${i + 1}`}
+                            aria-label={photo.alt}
+                            style={{ backgroundImage: `url(${photo.src})` }}
+                        >
+                            <div className="episode-photo-overlay">
+                                <span className="episode-photo-caption">{photo.alt}</span>
+                            </div>
+                        </Link>
+                    ))}
+                </div>
+                <p style={{ textAlign: 'center', color: 'var(--color-text-sub)', fontSize: '0.95rem', marginTop: '14px', marginBottom: '48px' }}>
+                    1회차 현장 스케치 — 사진을 클릭하면 1회차 상세 페이지로 이동합니다.
+                </p>
 
                 <div className="episode-grid">
                     {/* Card 1: Consulting */}

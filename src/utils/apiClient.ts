@@ -249,6 +249,17 @@ export const fetchMentorSurvey = async (id: string): Promise<MentorSurvey> => {
     return res.json();
 };
 
+// 메인 페이지 배너용: 현재 활성화된 가장 최신 회차 설문 1건 (공개)
+export const fetchLatestActiveMentorSurvey = async (): Promise<MentorSurvey | null> => {
+    const res = await fetch(`${API_BASE}/mentorSurveys?latest=1&t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache' }
+    });
+    if (res.status === 204) return null;
+    if (!res.ok) return null;
+    return res.json();
+};
+
 export const createMentorSurvey = async (data: {
     round: number;
     title: string;

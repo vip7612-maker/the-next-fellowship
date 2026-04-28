@@ -18,7 +18,7 @@ const db = createClient({
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (req.method === 'GET') {
         try {
-            const { id } = req.query;
+            const { id, latest } = req.query;
 
             // 단건 조회: 공개 라우트 (QR로 진입한 사용자가 메타데이터를 읽기 위함)
             if (id && typeof id === 'string') {
@@ -28,6 +28,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 });
                 if (rows.length === 0) {
                     return res.status(404).json({ error: '설문을 찾을 수 없습니다.' });
+                }
+                return res.status(200).json(rows[0]);
+            }
+
+            // 최신 활성 설문 1건: 메인 페이지 배너용 공개 엔드포인트
+            if (latest === '1') {
+                const { rows } = await db.execute(
+                    'SELECT * FROM mentor_surveys WHERE isActive = 1 ORDER BY round DESC, createdAt DESC LIMIT 1'
+                );
+                if (rows.length === 0) {
+                    return res.status(204).end();
                 }
                 return res.status(200).json(rows[0]);
             }
