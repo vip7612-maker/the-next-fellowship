@@ -96,29 +96,49 @@ const Episode = () => {
                         </div>
                     </div>
 
-                    {/* Card 3: Experts */}
+                    {/* Card 3: Expert (이번 회차 강사 1인) */}
                     <div className="episode-card theme-neon" style={{ display: 'flex', flexDirection: 'column' }}>
                         <div className="card-icon">전문가</div>
-                        <h3 className="card-title">이번 회차를 이끌어갈 강사진</h3>
-
-                        <div className="person-item">
-                            <div className="person-role">Semiconductor</div>
-                            <div className="person-name">권정현 개발자</div>
-                            <div className="person-desc">AI 시대의 핵심, Custom HBM 디지털 설계</div>
-                            <div style={{ marginTop: '12px', fontSize: '0.85rem', color: 'var(--color-neon-lime)', lineHeight: '1.5' }}>
-                                현) SK하이닉스 Custom HBM 개발자, 사내 강사 (CL4)<br />
-                                <strong style={{ color: 'var(--color-white)', fontSize: '0.9rem' }}>"대한민국 3대 기업이 동시에 선택한, 반도체 설계 엔지니어"</strong><br />
-                                <span style={{ color: 'var(--color-text-sub)' }}>삼성전자, SK하이닉스, 현대자동차 3사 모두 최종 합격</span>
-                            </div>
-                        </div>
+                        <h3 className="card-title">이번 회차를 이끌어갈 강사</h3>
 
                         <div className="person-item" style={{ borderBottom: 'none' }}>
-                            <div className="person-role">Marketing</div>
-                            <div className="person-name">이하희 실장</div>
-                            <div className="person-desc">IP 가치를 극대화하는 글로벌 전략 마케팅</div>
-                            <div style={{ marginTop: '12px', fontSize: '0.85rem', color: 'var(--color-white)', lineHeight: '1.5' }}>
-                                <strong style={{ color: 'var(--color-neon-lime)', fontSize: '0.9rem' }}>현) 하이업엔터테인먼트 글로벌 비즈니스 실장</strong><br />
-                                <span style={{ color: 'var(--color-text-sub)' }}>STAYC 월드투어 총괄 및 글로벌 앨범 유통 전략 수립</span>
+                            <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginBottom: '14px' }}>
+                                <img
+                                    src="/kim_daesik.jpg"
+                                    alt="김대식 교수"
+                                    style={{
+                                        width: '120px',
+                                        height: '120px',
+                                        borderRadius: '50%',
+                                        objectFit: 'cover',
+                                        objectPosition: 'center top',
+                                        background: '#e2e8f0',
+                                        border: '2px solid rgba(204, 255, 0, 0.4)'
+                                    }}
+                                />
+                            </div>
+                            <div className="person-role">AI · Brain Science</div>
+                            <div className="person-name">김대식 교수</div>
+                            <div className="person-desc">뇌과학으로 풀어낸 AI 시대, 인간의 다음 진로</div>
+                            <div style={{ marginTop: '14px', fontSize: '0.85rem', color: 'var(--color-neon-lime)', lineHeight: '1.6', textAlign: 'left' }}>
+                                <strong style={{ color: 'var(--color-white)', fontSize: '0.9rem' }}>"AI와 뇌과학을 잇는 한국의 대표 융합 연구자"</strong>
+                                <div style={{ marginTop: '10px', color: 'var(--color-white)', fontSize: '0.83rem', fontWeight: 600 }}>현직</div>
+                                <ul style={{ listStyle: 'none', padding: 0, margin: '4px 0 10px', color: 'var(--color-text-sub)' }}>
+                                    <li>· KAIST 전자및전기공학과 교수</li>
+                                    <li>· 건명원 과학분야 운영위원</li>
+                                </ul>
+                                <div style={{ color: 'var(--color-white)', fontSize: '0.83rem', fontWeight: 600 }}>주요 경력</div>
+                                <ul style={{ listStyle: 'none', padding: 0, margin: '4px 0 10px', color: 'var(--color-text-sub)' }}>
+                                    <li>· MIT 박사후연구원</li>
+                                    <li>· 미네소타대 의대 자기공명연구센터 조교수</li>
+                                    <li>· 보스턴대 생체의학이미지센터 부교수</li>
+                                    <li>· KAIST 전자및전기공학과 부학과장</li>
+                                </ul>
+                                <div style={{ color: 'var(--color-white)', fontSize: '0.83rem', fontWeight: 600 }}>학력</div>
+                                <ul style={{ listStyle: 'none', padding: 0, margin: '4px 0 0', color: 'var(--color-text-sub)' }}>
+                                    <li>· 막스 플랑크 뇌 연구소 (뇌과학 박사)</li>
+                                    <li>· 다름슈타트 공과대 (컴퓨터공학·심리학)</li>
+                                </ul>
                             </div>
                         </div>
                     </div>
