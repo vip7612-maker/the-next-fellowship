@@ -154,8 +154,8 @@ const Application = () => {
                             <textarea name="motivation" placeholder="넥스트 펠로우십에서 어떤 경험과 배움을 얻어가고 싶으신가요?" value={formData.motivation} onChange={handleChange} required style={{ minHeight: '80px' }}></textarea>
                         </div>
                         <div className="form-field">
-                            <label>윤여정 선생님께 하고 싶은 질문 *</label>
-                            <textarea name="questionForYoon" placeholder="진학 리포트나 학생부 준비, 입시 전략 등 윤여정 전문가님께 묻고 싶은 질문을 자유롭게 적어주세요." value={formData.questionForYoon} onChange={handleChange} required style={{ minHeight: '80px' }}></textarea>
+                            <label>윤앤고 이상연 소장님께 하고 싶은 질문 *</label>
+                            <textarea name="questionForYoon" placeholder="학생부 준비, 입시 전략, 합격 전략 등 윤앤고 이상연 소장님께 묻고 싶은 질문을 자유롭게 적어주세요." value={formData.questionForYoon} onChange={handleChange} required style={{ minHeight: '80px' }}></textarea>
                         </div>
                         <button type="submit" className="cta-button-main full-width">지금 참가신청하기</button>
                     </form>
