@@ -194,3 +194,133 @@ export const submitSurvey = async (data: Omit<Survey, 'id' | 'createdAt'>): Prom
         throw new Error(err.error || '설문 제출에 실패했습니다.');
     }
 };
+
+// ===== Mentor Surveys (회차별 멘토 신청 설문) =====
+
+export interface MentorSurvey {
+    id: string;
+    round: number;
+    title: string;
+    eventDate: string;
+    location: string;
+    capacity: string;
+    description: string;
+    isActive: number;
+    createdAt: string;
+}
+
+export interface MentorSurveyResponse {
+    id: string;
+    surveyId: string;
+    name: string;
+    phone: string;
+    email: string;
+    university: string;
+    grade: string;
+    major: string;
+    attendance: string;
+    transport: string;
+    motivation: string;
+    shareStory: string;
+    experience: string;
+    consentPersonal: number;
+    consentImage: number;
+    createdAt: string;
+}
+
+export const fetchMentorSurveys = async (): Promise<MentorSurvey[]> => {
+    const res = await apiFetch(`${API_BASE}/mentorSurveys?t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache', ...adminHeaders() }
+    });
+    if (!res.ok) throw new Error('멘토 설문 목록을 불러오는데 실패했습니다.');
+    return res.json();
+};
+
+export const fetchMentorSurvey = async (id: string): Promise<MentorSurvey> => {
+    const res = await fetch(`${API_BASE}/mentorSurveys?id=${encodeURIComponent(id)}&t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache' }
+    });
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || '설문 정보를 불러올 수 없습니다.');
+    }
+    return res.json();
+};
+
+export const createMentorSurvey = async (data: {
+    round: number;
+    title: string;
+    eventDate?: string;
+    location?: string;
+    capacity?: string;
+    description?: string;
+}): Promise<{ id: string }> => {
+    const res = await apiFetch(`${API_BASE}/mentorSurveys`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...adminHeaders() },
+        body: JSON.stringify(data)
+    });
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || '설문 생성에 실패했습니다.');
+    }
+    return res.json();
+};
+
+export interface MentorSurveyPatch {
+    title?: string;
+    eventDate?: string;
+    location?: string;
+    capacity?: string;
+    description?: string;
+    isActive?: boolean | number;
+}
+
+export const updateMentorSurvey = async (id: string, patch: MentorSurveyPatch): Promise<void> => {
+    const res = await apiFetch(`${API_BASE}/mentorSurveys`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', ...adminHeaders() },
+        body: JSON.stringify({ id, ...patch })
+    });
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || '설문 수정에 실패했습니다.');
+    }
+};
+
+export const deleteMentorSurvey = async (id: string): Promise<void> => {
+    const res = await apiFetch(`${API_BASE}/mentorSurveys?id=${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+        headers: { ...adminHeaders() }
+    });
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || '설문 삭제에 실패했습니다.');
+    }
+};
+
+export const fetchMentorResponses = async (surveyId?: string): Promise<MentorSurveyResponse[]> => {
+    const url = surveyId
+        ? `${API_BASE}/mentorResponses?surveyId=${encodeURIComponent(surveyId)}&t=${Date.now()}`
+        : `${API_BASE}/mentorResponses?t=${Date.now()}`;
+    const res = await apiFetch(url, {
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache', ...adminHeaders() }
+    });
+    if (!res.ok) throw new Error('멘토 응답 목록을 불러오는데 실패했습니다.');
+    return res.json();
+};
+
+export const submitMentorResponse = async (data: Omit<MentorSurveyResponse, 'id' | 'createdAt'>): Promise<void> => {
+    const res = await fetch(`${API_BASE}/mentorResponses`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    });
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || '멘토 신청 제출에 실패했습니다.');
+    }
+};
