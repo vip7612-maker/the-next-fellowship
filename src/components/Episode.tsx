@@ -82,7 +82,17 @@ const Episode = () => {
 
 
                         <div style={{ marginTop: 'auto', paddingTop: '20px', width: '100%', display: 'flex', justifyContent: 'center' }}>
-                            <img src="/mentor_illustration.png" alt="Mentor Logo" style={{ width: '100%', maxHeight: '200px', borderRadius: '12px', opacity: 0.9, objectFit: 'cover' }} />
+                            <img
+                                src="/episode1/2.jpg"
+                                alt="1회차 학생 보드 멤버가 멘토링 세션을 진행하는 모습"
+                                style={{
+                                    width: '100%',
+                                    maxHeight: '220px',
+                                    borderRadius: '12px',
+                                    objectFit: 'cover',
+                                    objectPosition: 'center'
+                                }}
+                            />
                         </div>
                     </div>
 
