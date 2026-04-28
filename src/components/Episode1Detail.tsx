@@ -1,12 +1,23 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from './Navbar';
+import { useGallerySlot } from '../utils/useGallerySlot';
 import './Episode1Detail.css';
 
 const Episode1Detail = () => {
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
+
+    const photo1 = useGallerySlot('episode1_photo_1');
+    const photo2 = useGallerySlot('episode1_photo_2');
+    const photo3 = useGallerySlot('episode1_photo_3');
+    const photo4 = useGallerySlot('episode1_photo_4');
+    const ep1Img = (i: number) => {
+        const map = [photo1, photo2, photo3, photo4];
+        const fb = [`/episode1/1.jpg`, `/episode1/2.jpg`, `/episode1/3.jpg`, `/episode1/4.jpg`];
+        return map[i - 1]?.dataUrl || fb[i - 1];
+    };
 
     return (
         <div className="episode-detail-page">
@@ -116,7 +127,7 @@ const Episode1Detail = () => {
                         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)', gridAutoRows: '240px', gap: '16px' }}>
                             <div
                                 style={{
-                                    backgroundImage: 'url(/episode1/1.jpg)',
+                                    backgroundImage: `url(${ep1Img(1)})`,
                                     backgroundSize: 'cover',
                                     backgroundPosition: 'center',
                                     borderRadius: '16px',
@@ -127,7 +138,7 @@ const Episode1Detail = () => {
                             />
                             <div
                                 style={{
-                                    backgroundImage: 'url(/episode1/2.jpg)',
+                                    backgroundImage: `url(${ep1Img(2)})`,
                                     backgroundSize: 'cover',
                                     backgroundPosition: 'center',
                                     borderRadius: '16px',
@@ -137,7 +148,7 @@ const Episode1Detail = () => {
                             />
                             <div
                                 style={{
-                                    backgroundImage: 'url(/episode1/3.jpg)',
+                                    backgroundImage: `url(${ep1Img(3)})`,
                                     backgroundSize: 'cover',
                                     backgroundPosition: 'center',
                                     borderRadius: '16px',
@@ -147,7 +158,7 @@ const Episode1Detail = () => {
                             />
                             <div
                                 style={{
-                                    backgroundImage: 'url(/episode1/4.jpg)',
+                                    backgroundImage: `url(${ep1Img(4)})`,
                                     backgroundSize: 'cover',
                                     backgroundPosition: 'center',
                                     borderRadius: '16px',

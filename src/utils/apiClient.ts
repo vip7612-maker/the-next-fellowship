@@ -249,6 +249,122 @@ export const fetchMentorSurvey = async (id: string): Promise<MentorSurvey> => {
     return res.json();
 };
 
+// ===== Gallery (관리자 업로드 → 슬롯별 이미지 사용) =====
+
+export interface GalleryImage {
+    id: string;
+    slot: string | null;
+    title: string;
+    description: string;
+    dataUrl: string;
+    mimeType: string;
+    sizeBytes: number | null;
+    width: number | null;
+    height: number | null;
+    isActive: number;
+    createdAt: string;
+}
+
+export interface GalleryListItem {
+    id: string;
+    slot: string | null;
+    title: string;
+    description: string;
+    mimeType: string;
+    sizeBytes: number | null;
+    width: number | null;
+    height: number | null;
+    isActive: number;
+    createdAt: string;
+}
+
+// 공개: 슬롯 키로 활성 이미지 1건 (없으면 null)
+export const fetchGalleryBySlot = async (slot: string): Promise<GalleryImage | null> => {
+    const res = await fetch(`${API_BASE}/gallery?slot=${encodeURIComponent(slot)}&t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache' }
+    });
+    if (res.status === 204) return null;
+    if (!res.ok) return null;
+    return res.json();
+};
+
+// 공개: 모든 슬롯 이미지 매핑
+export const fetchGalleryPublicMap = async (): Promise<Record<string, GalleryImage>> => {
+    const res = await fetch(`${API_BASE}/gallery?list=public&t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache' }
+    });
+    if (!res.ok) return {};
+    return res.json();
+};
+
+export const fetchGalleryList = async (): Promise<GalleryListItem[]> => {
+    const res = await apiFetch(`${API_BASE}/gallery?t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache', ...adminHeaders() }
+    });
+    if (!res.ok) throw new Error('갤러리 목록을 불러오는데 실패했습니다.');
+    return res.json();
+};
+
+export const fetchGalleryItem = async (id: string): Promise<GalleryImage> => {
+    const res = await apiFetch(`${API_BASE}/gallery?id=${encodeURIComponent(id)}&t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache', ...adminHeaders() }
+    });
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || '이미지를 불러올 수 없습니다.');
+    }
+    return res.json();
+};
+
+export const uploadGalleryImage = async (data: {
+    slot?: string;
+    title: string;
+    description?: string;
+    dataUrl: string;
+    mimeType: string;
+    sizeBytes?: number;
+    width?: number;
+    height?: number;
+}): Promise<{ id: string }> => {
+    const res = await apiFetch(`${API_BASE}/gallery`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...adminHeaders() },
+        body: JSON.stringify(data)
+    });
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || '이미지 업로드에 실패했습니다.');
+    }
+    return res.json();
+};
+
+export const updateGalleryImage = async (id: string, patch: { slot?: string | null; title?: string; description?: string; isActive?: boolean }): Promise<void> => {
+    const res = await apiFetch(`${API_BASE}/gallery`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', ...adminHeaders() },
+        body: JSON.stringify({ id, ...patch })
+    });
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || '이미지 수정에 실패했습니다.');
+    }
+};
+
+export const deleteGalleryImage = async (id: string): Promise<void> => {
+    const res = await apiFetch(`${API_BASE}/gallery?id=${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+        headers: { ...adminHeaders() }
+    });
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || '이미지 삭제에 실패했습니다.');
+    }
+};
+
 // 메인 페이지 배너용: 현재 활성화된 가장 최신 회차 설문 1건 (공개)
 export const fetchLatestActiveMentorSurvey = async (): Promise<MentorSurvey | null> => {
     const res = await fetch(`${API_BASE}/mentorSurveys?latest=1&t=${Date.now()}`, {

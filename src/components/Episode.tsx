@@ -1,12 +1,31 @@
 import { Link } from 'react-router-dom';
+import { useGallerySlot } from '../utils/useGallerySlot';
+import GalleryImage from './GalleryImage';
 import './Episode.css';
 
 const EPISODE1_PHOTOS = [
-    { src: '/episode1/1.jpg', alt: '1회차 KickOff – 윤여정 대표 컨설팅 강연' },
-    { src: '/episode1/2.jpg', alt: '1회차 KickOff – 학생 보드 멤버 진행' },
-    { src: '/episode1/3.jpg', alt: '1회차 KickOff – 권정현 개발자 강연' },
-    { src: '/episode1/4.jpg', alt: '1회차 KickOff – 컨설팅 세션 현장' },
+    { slot: 'episode1_photo_1', fallback: '/episode1/1.jpg', alt: '1회차 KickOff – 윤여정 대표 컨설팅 강연' },
+    { slot: 'episode1_photo_2', fallback: '/episode1/2.jpg', alt: '1회차 KickOff – 학생 보드 멤버 진행' },
+    { slot: 'episode1_photo_3', fallback: '/episode1/3.jpg', alt: '1회차 KickOff – 권정현 개발자 강연' },
+    { slot: 'episode1_photo_4', fallback: '/episode1/4.jpg', alt: '1회차 KickOff – 컨설팅 세션 현장' },
 ];
+
+const Episode1PhotoLink = ({ photo, index }: { photo: typeof EPISODE1_PHOTOS[number]; index: number }) => {
+    const dynamic = useGallerySlot(photo.slot);
+    const src = dynamic?.dataUrl || photo.fallback;
+    return (
+        <Link
+            to="/episode/1"
+            className={`episode-photo episode-photo-${index + 1}`}
+            aria-label={photo.alt}
+            style={{ backgroundImage: `url(${src})` }}
+        >
+            <div className="episode-photo-overlay">
+                <span className="episode-photo-caption">{photo.alt}</span>
+            </div>
+        </Link>
+    );
+};
 
 const Episode = () => {
     return (
@@ -23,17 +42,7 @@ const Episode = () => {
                 {/* 1회차 현장 스케치 */}
                 <div className="episode-photos">
                     {EPISODE1_PHOTOS.map((photo, i) => (
-                        <Link
-                            key={i}
-                            to="/episode/1"
-                            className={`episode-photo episode-photo-${i + 1}`}
-                            aria-label={photo.alt}
-                            style={{ backgroundImage: `url(${photo.src})` }}
-                        >
-                            <div className="episode-photo-overlay">
-                                <span className="episode-photo-caption">{photo.alt}</span>
-                            </div>
-                        </Link>
+                        <Episode1PhotoLink key={i} photo={photo} index={i} />
                     ))}
                 </div>
                 <p style={{ textAlign: 'center', color: 'var(--color-text-sub)', fontSize: '0.95rem', marginTop: '14px', marginBottom: '48px' }}>
@@ -54,8 +63,9 @@ const Episode = () => {
 
 
                         <div style={{ marginTop: 'auto', paddingTop: '20px', width: '100%', display: 'flex', justifyContent: 'center' }}>
-                            <img
-                                src="/episode1/4.jpg"
+                            <GalleryImage
+                                slot="episode_card_consulting"
+                                fallback="/episode1/4.jpg"
                                 alt="1회차 윤여정 대표 입시 컨설팅 강연 현장"
                                 style={{
                                     width: '100%',
@@ -82,8 +92,9 @@ const Episode = () => {
 
 
                         <div style={{ marginTop: 'auto', paddingTop: '20px', width: '100%', display: 'flex', justifyContent: 'center' }}>
-                            <img
-                                src="/episode1/2.jpg"
+                            <GalleryImage
+                                slot="episode_card_mentor"
+                                fallback="/episode1/2.jpg"
                                 alt="1회차 학생 보드 멤버가 멘토링 세션을 진행하는 모습"
                                 style={{
                                     width: '100%',
@@ -103,8 +114,9 @@ const Episode = () => {
 
                         <div className="person-item" style={{ borderBottom: 'none' }}>
                             <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginBottom: '14px' }}>
-                                <img
-                                    src="/kim_daesik.jpg"
+                                <GalleryImage
+                                    slot="expert_kim_daesik"
+                                    fallback="/kim_daesik.jpg"
                                     alt="김대식 교수"
                                     style={{
                                         width: '120px',

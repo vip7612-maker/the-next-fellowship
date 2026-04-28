@@ -1,3 +1,4 @@
+import GalleryImage from './GalleryImage';
 import './Pipeline.css';
 
 const Pipeline = () => {
@@ -26,8 +27,9 @@ const Pipeline = () => {
                                 border: '1px solid rgba(255,255,255,0.08)',
                                 borderRadius: '14px'
                             }}>
-                                <img
-                                    src="/lee_sangyeon.jpg"
+                                <GalleryImage
+                                    slot="consultant_lee_sangyeon"
+                                    fallback="/lee_sangyeon.jpg"
                                     alt="이상연 소장"
                                     style={{
                                         width: '92px',
