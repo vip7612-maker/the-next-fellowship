@@ -342,10 +342,9 @@ const Application = () => {
 
                         {/* 생기부 첨부 (선택) */}
                         <div className="form-field">
-                            <label style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                                생기부 첨부
-                                <span style={{ fontSize: '0.75rem', padding: '2px 8px', borderRadius: 999, border: '1px solid rgba(255,255,255,0.2)', color: 'var(--color-text-sub)', fontWeight: 500 }}>선택</span>
-                                <span style={{ fontSize: '0.78rem', color: 'var(--color-neon-lime)' }}>← 좌측 안내의 큰 혜택을 확인해주세요</span>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'nowrap', whiteSpace: 'nowrap' }}>
+                                <span style={{ whiteSpace: 'nowrap' }}>생기부 첨부</span>
+                                <span style={{ fontSize: '0.75rem', padding: '2px 8px', borderRadius: 999, border: '1px solid rgba(255,255,255,0.2)', color: 'var(--color-text-sub)', fontWeight: 500, flexShrink: 0 }}>선택</span>
                             </label>
 
                             <input

@@ -28,8 +28,8 @@ const LandingPage = () => (
     <Navbar />
     <main>
       <Hero />
-      <Episode />
       <Application />
+      <Episode />
       <Intro />
       <Pipeline />
       <Consulting />
