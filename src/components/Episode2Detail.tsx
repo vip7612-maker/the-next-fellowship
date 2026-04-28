@@ -100,6 +100,7 @@ const Episode2Detail = () => {
                                 fallback="/lee_sangyeon.jpg"
                                 asBackground
                                 alt="이상연 소장"
+                                placeholderLabel="이상연 소장"
                                 className="ds-image"
                                 style={{
                                     background: 'linear-gradient(135deg, rgba(255, 0, 127, 0.18), rgba(255, 0, 127, 0.04))',
@@ -120,16 +121,6 @@ const Episode2Detail = () => {
                         </div>
                     </div>
 
-                    <div className="bottom-cta">
-                        <h2 className="section-title">여러분의 진심을 기다립니다.</h2>
-                        <Link
-                            to="/#application"
-                            className="cta-button-main"
-                            style={{ display: 'inline-block', textDecoration: 'none', padding: '15px 40px', fontSize: '1.2rem' }}
-                        >
-                            신청하러 가기
-                        </Link>
-                    </div>
                 </div>
             </main>
 
