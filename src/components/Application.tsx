@@ -48,10 +48,27 @@ const Application = () => {
         <section className="application" id="application">
             <div className="container">
                 <div className="session-header-top" style={{ textAlign: 'center', marginBottom: '60px' }}>
-                    <h3 className="session-title-top" style={{ fontSize: '3.5rem', lineHeight: '1.3', marginBottom: '20px' }}>
-                        2회차: <span className="neon-text">Coming Soon</span>
+                    <span className="session-topic-tag" style={{
+                        display: 'inline-block',
+                        padding: '6px 16px',
+                        borderRadius: '999px',
+                        border: '1px solid rgba(204, 255, 0, 0.4)',
+                        color: 'var(--color-neon-lime)',
+                        fontSize: '0.85rem',
+                        fontWeight: 700,
+                        letterSpacing: '0.12em',
+                        marginBottom: '20px'
+                    }}>
+                        2회차 · AI 융합
+                    </span>
+                    <h3 className="session-title-top" style={{ fontSize: '3.5rem', lineHeight: '1.3', marginBottom: '18px', wordBreak: 'keep-all' }}>
+                        내가 좋아하는 그것에,<br />
+                        <span className="neon-text">AI를 더하는 순간.</span>
                     </h3>
-                    <p className="session-desc-top" style={{ fontSize: '1.3rem', color: 'var(--color-text-sub)' }}>2회차 주제와 세부 일정은 곧 공개됩니다. 지금 미리 신청해두세요!</p>
+                    <p className="session-desc-top" style={{ fontSize: '1.2rem', color: 'var(--color-text-sub)', lineHeight: '1.65', wordBreak: 'keep-all' }}>
+                        그 교차점에서, 한 번도 없던 직업이 태어납니다.<br />
+                        2회차 주제와 세부 일정은 곧 공개됩니다 — 지금 미리 신청해 두세요.
+                    </p>
                 </div>
 
                 <div className="application-box">
