@@ -34,7 +34,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (req.method === 'POST') {
         try {
-            const { name, school, phone, email, careerReason, motivation, questionForYoon, role } = req.body;
+            const {
+                name, school, phone, email, careerReason, motivation, questionForYoon, role,
+                transcriptFileName, transcriptMimeType, transcriptDataUrl, transcriptSizeBytes
+            } = req.body;
 
             if (!name || !phone || !careerReason || !motivation || !questionForYoon) {
                 return res.status(400).json({ error: '필수 항목(이름, 연락처, 진로이유, 지원동기, 질문)을 모두 입력해주세요.' });
@@ -43,29 +46,52 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 return res.status(400).json({ error: '유효한 전화번호 형식이 아닙니다.' });
             }
 
+            // 생기부 파일 검증 (선택)
+            let txFileName: string | null = null;
+            let txMimeType: string | null = null;
+            let txDataUrl: string | null = null;
+            let txSize: number | null = null;
+            if (transcriptDataUrl) {
+                if (typeof transcriptDataUrl !== 'string' || !transcriptDataUrl.startsWith('data:')) {
+                    return res.status(400).json({ error: '첨부 파일 형식이 올바르지 않습니다.' });
+                }
+                if (transcriptDataUrl.length > 4 * 1024 * 1024) {
+                    return res.status(413).json({ error: '첨부 파일이 너무 큽니다. 3MB 이하로 줄여주세요.' });
+                }
+                txFileName = transcriptFileName || '생기부';
+                txMimeType = transcriptMimeType || 'application/octet-stream';
+                txDataUrl = transcriptDataUrl;
+                txSize = typeof transcriptSizeBytes === 'number' ? transcriptSizeBytes : null;
+            }
+
             const id = crypto.randomUUID();
             const date = new Date().toISOString().split('T')[0];
 
             await db.execute({
-                sql: `INSERT INTO applicants (id, name, school, phone, email, careerReason, motivation, questionForYoon, status, date, role, round)
-                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-                args: [id, name, school, phone, email, careerReason, motivation, questionForYoon, 'Pending', date, role || '학생', 2]
+                sql: `INSERT INTO applicants (id, name, school, phone, email, careerReason, motivation, questionForYoon, status, date, role, transcriptFileName, transcriptMimeType, transcriptDataUrl, transcriptSizeBytes)
+                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                args: [id, name, school, phone, email, careerReason, motivation, questionForYoon, 'Pending', date, role || '학생',
+                    txFileName, txMimeType, txDataUrl, txSize]
             });
 
             try {
                 const botToken = process.env.TELEGRAM_BOT_TOKEN;
                 const chatId = process.env.TELEGRAM_CHAT_ID;
                 if (botToken && chatId) {
+                    const transcriptLine = txFileName
+                        ? `\n📎 생기부 첨부: ${escapeTg(txFileName)} (${escapeTg(((txSize || 0) / 1024).toFixed(0))}KB)`
+                        : '';
                     const message =
                         `🔔 새로운 신청자가 등록되었습니다\\! \\[2회차\\]\n\n` +
                         `👤 이름: ${escapeTg(name)}\n` +
                         `🏫 소속: ${escapeTg(school || '미입력')}\n` +
                         `📱 연락처: ${escapeTg(phone)}\n` +
                         `✉️ 이메일: ${escapeTg(email || '미입력')}\n` +
-                        `🏷️ 유형: ${escapeTg(role || '학생')}\n\n` +
+                        `🏷️ 유형: ${escapeTg(role || '학생')}` +
+                        transcriptLine + `\n\n` +
                         `\\[진로 희망 이유\\]\n${escapeTg(careerReason)}\n\n` +
                         `\\[지원 동기\\]\n${escapeTg(motivation)}\n\n` +
-                        `\\[윤여정 선생님께 질문\\]\n${escapeTg(questionForYoon)}`;
+                        `\\[이상연 소장님께 질문\\]\n${escapeTg(questionForYoon)}`;
 
                     await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                         method: 'POST',

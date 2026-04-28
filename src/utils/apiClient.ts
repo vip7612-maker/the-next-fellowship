@@ -39,6 +39,25 @@ export interface Applicant {
     role: string;
     round: number;
     deletedAt?: string;
+    transcriptFileName?: string | null;
+    transcriptMimeType?: string | null;
+    transcriptSizeBytes?: number | null;
+}
+
+export interface ApplicantSubmit {
+    name: string;
+    school?: string;
+    phone: string;
+    email?: string;
+    role: string;
+    round?: number;
+    careerReason: string;
+    motivation: string;
+    questionForYoon: string;
+    transcriptFileName?: string;
+    transcriptMimeType?: string;
+    transcriptDataUrl?: string;
+    transcriptSizeBytes?: number;
 }
 
 export interface Topic {
@@ -81,7 +100,7 @@ export const fetchApplicants = async (): Promise<Applicant[]> => {
     return res.json();
 };
 
-export const submitApplicant = async (data: Omit<Applicant, 'id' | 'status' | 'date' | 'deletedAt'>): Promise<void> => {
+export const submitApplicant = async (data: ApplicantSubmit): Promise<void> => {
     const res = await fetch(`${API_BASE}/applicants`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

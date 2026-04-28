@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import type { ChangeEvent, DragEvent } from 'react';
 import { submitApplicant } from '../utils/apiClient';
 import { autoFormatPhone } from '../utils/formatPhone';
 import './Application.css';
@@ -106,6 +107,17 @@ const EventScheduleHero = () => {
     );
 };
 
+const MAX_TRANSCRIPT_BYTES = 3 * 1024 * 1024; // 3MB
+const ALLOWED_TRANSCRIPT_TYPES = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
+
+const fileToDataUrl = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error('파일 읽기 실패'));
+        reader.onload = () => resolve(reader.result as string);
+        reader.readAsDataURL(file);
+    });
+
 const Application = () => {
     const [isMapOpen, setIsMapOpen] = useState(false);
     const [formData, setFormData] = useState({
@@ -119,6 +131,56 @@ const Application = () => {
         motivation: '',
         questionForYoon: ''
     });
+
+    // 생기부 첨부(선택)
+    const transcriptInputRef = useRef<HTMLInputElement>(null);
+    const [transcript, setTranscript] = useState<{ file: File; dataUrl: string } | null>(null);
+    const [transcriptError, setTranscriptError] = useState<string | null>(null);
+    const [isTxDragOver, setIsTxDragOver] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const acceptTranscriptFile = async (file: File) => {
+        setTranscriptError(null);
+        if (!ALLOWED_TRANSCRIPT_TYPES.includes(file.type)) {
+            setTranscriptError('PDF 또는 이미지(JPG/PNG/WebP) 파일만 첨부할 수 있습니다.');
+            return;
+        }
+        if (file.size > MAX_TRANSCRIPT_BYTES) {
+            setTranscriptError(`파일이 너무 큽니다. (${(file.size / 1024 / 1024).toFixed(1)}MB) 3MB 이하로 줄여주세요.`);
+            return;
+        }
+        try {
+            const dataUrl = await fileToDataUrl(file);
+            setTranscript({ file, dataUrl });
+        } catch (err) {
+            setTranscriptError(err instanceof Error ? err.message : '파일 처리 실패');
+        }
+    };
+
+    const handleTranscriptInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) await acceptTranscriptFile(file);
+    };
+
+    const handleTranscriptDragOver = (e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault(); e.stopPropagation();
+        if (!isTxDragOver) setIsTxDragOver(true);
+    };
+    const handleTranscriptDragLeave = (e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault(); e.stopPropagation();
+        setIsTxDragOver(false);
+    };
+    const handleTranscriptDrop = async (e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault(); e.stopPropagation();
+        setIsTxDragOver(false);
+        const file = e.dataTransfer.files?.[0];
+        if (file) await acceptTranscriptFile(file);
+    };
+    const clearTranscript = () => {
+        setTranscript(null);
+        setTranscriptError(null);
+        if (transcriptInputRef.current) transcriptInputRef.current.value = '';
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -136,14 +198,31 @@ const Application = () => {
             return;
         }
 
+        setIsSubmitting(true);
         try {
             const roleValue = formData.role === '기타' ? (formData.roleCustom || '기타') : formData.role;
-            const { roleCustom, ...rest } = formData;
-            await submitApplicant({ ...rest, role: roleValue, round: 2 });
-            alert("신청이 완료되었습니다. 정성스러운 이야기 감사합니다!");
+            const { roleCustom: _omit, ...rest } = formData;
+            void _omit;
+            await submitApplicant({
+                ...rest,
+                role: roleValue,
+                round: 2,
+                ...(transcript ? {
+                    transcriptFileName: transcript.file.name,
+                    transcriptMimeType: transcript.file.type,
+                    transcriptDataUrl: transcript.dataUrl,
+                    transcriptSizeBytes: transcript.file.size
+                } : {})
+            });
+            alert(transcript
+                ? "신청이 완료되었습니다. 생기부도 함께 접수되었어요. 미니컨설팅 선정 결과는 개별 안내드립니다."
+                : "신청이 완료되었습니다. 정성스러운 이야기 감사합니다!");
             setFormData({ name: '', school: '', phone: '', email: '', role: '학생', roleCustom: '', careerReason: '', motivation: '', questionForYoon: '' });
-        } catch (error: any) {
-            alert(error.message || "오류가 발생했습니다.");
+            clearTranscript();
+        } catch (error) {
+            alert(error instanceof Error ? error.message : "오류가 발생했습니다.");
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -186,10 +265,6 @@ const Application = () => {
                             <li>선발 인원: 홍천지역 고등학생 50명</li>
                             <li>발표: 신청 마감 후 개별 연락</li>
                         </ul>
-
-                        <div style={{ marginTop: '20px', marginBottom: '20px' }}>
-                            <a href="#/episode/1" className="secondary-button" style={{ display: 'inline-block', textDecoration: 'none', textAlign: 'center' }}>1회차 지난 프로그램 보기 ➔</a>
-                        </div>
                     </div>
 
                     <form className="application-form-preview" onSubmit={handleSubmit}>
@@ -243,7 +318,125 @@ const Application = () => {
                             <label>윤앤고 이상연 소장님께 하고 싶은 질문 *</label>
                             <textarea name="questionForYoon" placeholder="학생부 준비, 입시 전략, 합격 전략 등 윤앤고 이상연 소장님께 묻고 싶은 질문을 자유롭게 적어주세요." value={formData.questionForYoon} onChange={handleChange} required style={{ minHeight: '80px' }}></textarea>
                         </div>
-                        <button type="submit" className="cta-button-main full-width">지금 참가신청하기</button>
+
+                        {/* 생기부 첨부 (선택) */}
+                        <div className="form-field">
+                            <label style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                생기부 첨부
+                                <span style={{ fontSize: '0.75rem', padding: '2px 8px', borderRadius: 999, border: '1px solid rgba(255,255,255,0.2)', color: 'var(--color-text-sub)', fontWeight: 500 }}>선택</span>
+                            </label>
+
+                            <div style={{
+                                marginBottom: 12,
+                                padding: '14px 16px',
+                                borderRadius: 10,
+                                background: 'linear-gradient(135deg, rgba(204, 255, 0, 0.10), rgba(255, 0, 127, 0.06))',
+                                border: '1px solid rgba(204, 255, 0, 0.3)',
+                                fontSize: '0.92rem',
+                                lineHeight: 1.65,
+                                color: 'var(--color-text-main)'
+                            }}>
+                                <strong style={{ color: 'var(--color-neon-lime)' }}>🎁 큰 혜택!</strong>{' '}
+                                생기부를 함께 첨부하시면, <strong style={{ color: 'var(--color-white)' }}>윤앤고 이상연 소장님</strong>이 신청자 중 몇 분을 사례로 선정하여 <strong style={{ color: 'var(--color-white)' }}>현장에서 직접 미니 컨설팅</strong>을 진행해 드립니다.
+                                <br />
+                                <span style={{ color: 'var(--color-text-sub)', fontSize: '0.85rem' }}>
+                                    필수는 아니지만, 첨부하실 경우 컨설팅 사례 선정에 큰 가산점이 됩니다.
+                                </span>
+                            </div>
+
+                            <input
+                                ref={transcriptInputRef}
+                                type="file"
+                                accept=".pdf,image/*"
+                                onChange={handleTranscriptInputChange}
+                                style={{ display: 'none' }}
+                            />
+
+                            {transcript ? (
+                                <div
+                                    onDragOver={handleTranscriptDragOver}
+                                    onDragLeave={handleTranscriptDragLeave}
+                                    onDrop={handleTranscriptDrop}
+                                    style={{
+                                        display: 'flex',
+                                        gap: 14,
+                                        alignItems: 'center',
+                                        padding: 14,
+                                        border: `1px solid ${isTxDragOver ? 'var(--color-neon-lime)' : 'rgba(204,255,0,0.4)'}`,
+                                        borderRadius: 10,
+                                        background: 'rgba(204, 255, 0, 0.06)'
+                                    }}
+                                >
+                                    <div style={{ fontSize: 28 }}>{transcript.file.type.startsWith('image/') ? '🖼️' : '📄'}</div>
+                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                        <div style={{ color: 'var(--color-white)', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                            {transcript.file.name}
+                                        </div>
+                                        <div style={{ fontSize: '0.8rem', color: 'var(--color-text-sub)', marginTop: 2 }}>
+                                            {(transcript.file.size / 1024).toFixed(0)}KB · {transcript.file.type}
+                                        </div>
+                                    </div>
+                                    <div style={{ display: 'flex', gap: 8 }}>
+                                        <button
+                                            type="button"
+                                            onClick={() => transcriptInputRef.current?.click()}
+                                            style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.18)', borderRadius: 6, padding: '6px 12px', color: 'var(--color-text-main)', fontSize: 12, cursor: 'pointer' }}
+                                        >
+                                            변경
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={clearTranscript}
+                                            style={{ background: 'rgba(255, 0, 127, 0.12)', border: '1px solid rgba(255, 0, 127, 0.4)', borderRadius: 6, padding: '6px 12px', color: '#ff7eb9', fontSize: 12, cursor: 'pointer' }}
+                                        >
+                                            제거
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div
+                                    role="button"
+                                    tabIndex={0}
+                                    onClick={() => transcriptInputRef.current?.click()}
+                                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); transcriptInputRef.current?.click(); } }}
+                                    onDragOver={handleTranscriptDragOver}
+                                    onDragLeave={handleTranscriptDragLeave}
+                                    onDrop={handleTranscriptDrop}
+                                    style={{
+                                        cursor: 'pointer',
+                                        padding: '24px 18px',
+                                        borderRadius: 10,
+                                        border: `2px dashed ${isTxDragOver ? 'var(--color-neon-lime)' : 'rgba(255,255,255,0.18)'}`,
+                                        background: isTxDragOver ? 'rgba(204, 255, 0, 0.08)' : 'rgba(255,255,255,0.02)',
+                                        textAlign: 'center',
+                                        transition: 'all 0.15s ease',
+                                        outline: 'none'
+                                    }}
+                                >
+                                    <div style={{ fontSize: 28, marginBottom: 6, opacity: isTxDragOver ? 1 : 0.7 }}>
+                                        {isTxDragOver ? '⤵️' : '📎'}
+                                    </div>
+                                    <div style={{ color: isTxDragOver ? 'var(--color-neon-lime)' : 'var(--color-white)', fontWeight: 600, fontSize: '0.95rem', marginBottom: 4 }}>
+                                        {isTxDragOver ? '여기에 놓아주세요' : '생기부 파일을 끌어다 놓거나 클릭해서 선택'}
+                                    </div>
+                                    <div style={{ fontSize: '0.78rem', color: 'var(--color-text-sub)' }}>
+                                        PDF · JPG · PNG · WebP · 최대 3MB
+                                    </div>
+                                </div>
+                            )}
+
+                            {transcriptError && (
+                                <div style={{ marginTop: 8, fontSize: '0.85rem', color: '#ff7eb9' }}>
+                                    {transcriptError}
+                                </div>
+                            )}
+                        </div>
+
+                        <button type="submit" className="cta-button-main full-width" disabled={isSubmitting}>
+                            {isSubmitting
+                                ? (transcript ? '전송 중… (생기부 업로드)' : '전송 중…')
+                                : (transcript ? '지금 참가신청하기 (생기부 포함)' : '지금 참가신청하기')}
+                        </button>
                     </form>
                 </div>
             </div>
