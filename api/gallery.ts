@@ -45,6 +45,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 return res.status(200).json(rowToPublic(rows[0] as Record<string, unknown>));
             }
 
+            // 공개: 슬롯 미지정 활성 이미지 목록 (포토앨범용, dataUrl 포함, 최신순)
+            if (list === 'unslotted') {
+                const { rows } = await db.execute(
+                    `SELECT * FROM gallery_images
+                     WHERE isActive = 1 AND (slot IS NULL OR slot = '')
+                     ORDER BY createdAt DESC`
+                );
+                return res.status(200).json(rows.map((r) => rowToPublic(r as Record<string, unknown>)));
+            }
+
             // 공개: 모든 슬롯 → 이미지 매핑 (dataUrl 포함, 활성만)
             if (list === 'public') {
                 const { rows } = await db.execute(

@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from './Navbar';
 import { useGallerySlot } from '../utils/useGallerySlot';
+import { fetchUnslottedGallery, type GalleryImage } from '../utils/apiClient';
 import './Episode1Detail.css';
 
 const Episode1Detail = () => {
@@ -18,6 +19,48 @@ const Episode1Detail = () => {
         const fb = [`/episode1/1.jpg`, `/episode1/2.jpg`, `/episode1/3.jpg`, `/episode1/4.jpg`];
         return map[i - 1]?.dataUrl || fb[i - 1];
     };
+
+    // 포토앨범(라이트박스)
+    const [albumOpen, setAlbumOpen] = useState(false);
+    const [albumPhotos, setAlbumPhotos] = useState<{ src: string; caption?: string }[]>([]);
+    const [albumLoading, setAlbumLoading] = useState(false);
+    const [activeIdx, setActiveIdx] = useState(0);
+
+    const openAlbum = async () => {
+        setAlbumOpen(true);
+        setAlbumLoading(true);
+        try {
+            const list: GalleryImage[] = await fetchUnslottedGallery();
+            // 메인 4장(episode1_photo_*) + 슬롯 없는 갤러리 이미지들
+            const mains = [1, 2, 3, 4].map((i) => ({
+                src: ep1Img(i),
+                caption: `1회차 메인 사진 ${i}`
+            }));
+            const extras = list.map((g) => ({
+                src: g.dataUrl,
+                caption: g.title || ''
+            }));
+            setAlbumPhotos([...mains, ...extras]);
+            setActiveIdx(0);
+        } finally {
+            setAlbumLoading(false);
+        }
+    };
+    const closeAlbum = () => setAlbumOpen(false);
+    const prev = () => setActiveIdx((i) => (i - 1 + albumPhotos.length) % albumPhotos.length);
+    const next = () => setActiveIdx((i) => (i + 1) % albumPhotos.length);
+
+    useEffect(() => {
+        if (!albumOpen) return;
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') closeAlbum();
+            if (e.key === 'ArrowLeft') prev();
+            if (e.key === 'ArrowRight') next();
+        };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [albumOpen, albumPhotos.length]);
 
     return (
         <div className="episode-detail-page">
@@ -169,10 +212,114 @@ const Episode1Detail = () => {
                                 aria-label="윤여정 대표 입시 컨설팅 강연"
                             />
                         </div>
+
+                        <div style={{ textAlign: 'center', marginTop: 28 }}>
+                            <button
+                                type="button"
+                                onClick={openAlbum}
+                                style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: 10,
+                                    padding: '12px 26px',
+                                    background: 'transparent',
+                                    border: '1px solid rgba(0, 240, 255, 0.5)',
+                                    color: '#00f0ff',
+                                    borderRadius: 999,
+                                    fontSize: '0.95rem',
+                                    fontWeight: 600,
+                                    cursor: 'pointer',
+                                    transition: 'all 0.18s ease'
+                                }}
+                                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0, 240, 255, 0.08)'; }}
+                                onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+                            >
+                                📷 사진 더보기 (포토앨범)
+                                <span style={{ fontSize: '0.85rem', opacity: 0.8 }}>→</span>
+                            </button>
+                        </div>
                     </div>
 
                 </div>
             </main>
+
+            {albumOpen && (
+                <div
+                    onClick={closeAlbum}
+                    style={{
+                        position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.92)',
+                        zIndex: 2000, display: 'flex', flexDirection: 'column',
+                        animation: 'albumFadeIn 0.18s ease'
+                    }}
+                >
+                    <div style={{
+                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                        padding: '14px 22px', color: '#fff', fontSize: 14
+                    }}>
+                        <div style={{ opacity: 0.85 }}>
+                            1회차 포토앨범 {albumPhotos.length > 0 && `· ${activeIdx + 1} / ${albumPhotos.length}`}
+                        </div>
+                        <button
+                            onClick={(e) => { e.stopPropagation(); closeAlbum(); }}
+                            style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.3)', color: '#fff', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontSize: 13 }}
+                        >
+                            ✕ 닫기
+                        </button>
+                    </div>
+
+                    <div
+                        onClick={(e) => e.stopPropagation()}
+                        style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', padding: '0 60px', overflow: 'hidden' }}
+                    >
+                        {albumLoading ? (
+                            <div style={{ color: '#fff', opacity: 0.7 }}>로딩 중…</div>
+                        ) : albumPhotos.length === 0 ? (
+                            <div style={{ color: '#fff', opacity: 0.7 }}>표시할 사진이 없습니다.</div>
+                        ) : (
+                            <>
+                                <button
+                                    onClick={prev}
+                                    aria-label="이전 사진"
+                                    style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.18)', color: '#fff', width: 44, height: 44, borderRadius: '50%', fontSize: 22, cursor: 'pointer' }}
+                                >‹</button>
+                                <img
+                                    src={albumPhotos[activeIdx].src}
+                                    alt={albumPhotos[activeIdx].caption}
+                                    style={{ maxWidth: '100%', maxHeight: '78vh', objectFit: 'contain', borderRadius: 10 }}
+                                />
+                                <button
+                                    onClick={next}
+                                    aria-label="다음 사진"
+                                    style={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.18)', color: '#fff', width: 44, height: 44, borderRadius: '50%', fontSize: 22, cursor: 'pointer' }}
+                                >›</button>
+                            </>
+                        )}
+                    </div>
+
+                    {/* 썸네일 스트립 */}
+                    {albumPhotos.length > 0 && !albumLoading && (
+                        <div
+                            onClick={(e) => e.stopPropagation()}
+                            style={{ display: 'flex', gap: 8, padding: '14px 18px', overflowX: 'auto', justifyContent: 'center', flexWrap: 'wrap' }}
+                        >
+                            {albumPhotos.map((p, i) => (
+                                <button
+                                    key={i}
+                                    onClick={() => setActiveIdx(i)}
+                                    style={{
+                                        width: 64, height: 48, padding: 0,
+                                        border: i === activeIdx ? '2px solid #00f0ff' : '1px solid rgba(255,255,255,0.2)',
+                                        borderRadius: 6, cursor: 'pointer', overflow: 'hidden',
+                                        backgroundImage: `url(${p.src})`, backgroundSize: 'cover', backgroundPosition: 'center',
+                                        flexShrink: 0
+                                    }}
+                                    aria-label={`${i + 1}번 사진`}
+                                />
+                            ))}
+                        </div>
+                    )}
+                </div>
+            )}
 
             <footer>
                 <div className="container footer-content">

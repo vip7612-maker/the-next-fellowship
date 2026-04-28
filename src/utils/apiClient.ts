@@ -308,6 +308,16 @@ export const fetchGalleryBySlot = async (slot: string): Promise<GalleryImage | n
     return res.json();
 };
 
+// 공개: 슬롯 미지정 활성 이미지 목록 (포토앨범용)
+export const fetchUnslottedGallery = async (): Promise<GalleryImage[]> => {
+    const res = await fetch(`${API_BASE}/gallery?list=unslotted&t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache' }
+    });
+    if (!res.ok) return [];
+    return res.json();
+};
+
 // 공개: 모든 슬롯 이미지 매핑
 export const fetchGalleryPublicMap = async (): Promise<Record<string, GalleryImage>> => {
     const res = await fetch(`${API_BASE}/gallery?list=public&t=${Date.now()}`, {
