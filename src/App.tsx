@@ -17,9 +17,7 @@ import ApplicantList from './admin/ApplicantList';
 import VoteAdmin from './admin/VoteAdmin';
 import GalleryAdmin from './admin/GalleryAdmin';
 import Dashboard from './admin/Dashboard';
-import SurveyAdmin from './admin/SurveyAdmin';
 import MentorSurveyAdmin from './admin/MentorSurveyAdmin';
-import Survey from './components/Survey';
 import MentorSurvey from './components/MentorSurvey';
 import './App.css';
 
@@ -80,9 +78,7 @@ function App() {
           <Route path="/admin/dashboard" element={<ProtectedAdmin><Dashboard /></ProtectedAdmin>} />
           <Route path="/admin/vote" element={<ProtectedAdmin><VoteAdmin /></ProtectedAdmin>} />
           <Route path="/admin/gallery" element={<ProtectedAdmin><GalleryAdmin /></ProtectedAdmin>} />
-          <Route path="/survey" element={<Survey />} />
           <Route path="/mentor-apply/:id" element={<MentorSurvey />} />
-          <Route path="/admin/survey" element={<ProtectedAdmin><SurveyAdmin /></ProtectedAdmin>} />
           <Route path="/admin/mentor-surveys" element={<ProtectedAdmin><MentorSurveyAdmin /></ProtectedAdmin>} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
