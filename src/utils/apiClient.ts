@@ -100,6 +100,25 @@ export const fetchApplicants = async (): Promise<Applicant[]> => {
     return res.json();
 };
 
+export const fetchApplicantTranscript = async (id: string | number): Promise<{
+    id: string;
+    name: string;
+    transcriptFileName: string;
+    transcriptMimeType: string;
+    transcriptDataUrl: string;
+    transcriptSizeBytes: number | null;
+}> => {
+    const res = await apiFetch(`${API_BASE}/applicants?id=${encodeURIComponent(String(id))}&attachment=transcript&t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache', ...adminHeaders() }
+    });
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || '첨부 파일을 불러올 수 없습니다.');
+    }
+    return res.json();
+};
+
 export const submitApplicant = async (data: ApplicantSubmit): Promise<void> => {
     const res = await fetch(`${API_BASE}/applicants`, {
         method: 'POST',

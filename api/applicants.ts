@@ -24,7 +24,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (req.method === 'GET') {
         if (!requireAdmin(req, res)) return;
         try {
-            const { rows } = await db.execute('SELECT * FROM applicants ORDER BY date DESC');
+            const { id, attachment } = req.query;
+
+            // 단건의 생기부 첨부 파일 (dataUrl 포함, 무거운 페이로드)
+            if (id && typeof id === 'string' && attachment === 'transcript') {
+                const { rows } = await db.execute({
+                    sql: 'SELECT id, name, transcriptFileName, transcriptMimeType, transcriptDataUrl, transcriptSizeBytes FROM applicants WHERE id = ?',
+                    args: [id]
+                });
+                if (rows.length === 0) return res.status(404).json({ error: '신청자를 찾을 수 없습니다.' });
+                const row = rows[0] as Record<string, unknown>;
+                if (!row.transcriptDataUrl) return res.status(404).json({ error: '첨부된 생기부가 없습니다.' });
+                return res.status(200).json(row);
+            }
+
+            // 목록: dataUrl은 무거우므로 제외하고 첨부 메타만 반환
+            const { rows } = await db.execute(
+                `SELECT id, name, school, phone, email, careerReason, motivation, questionForYoon,
+                        status, date, deletedAt, role, round,
+                        transcriptFileName, transcriptMimeType, transcriptSizeBytes
+                 FROM applicants ORDER BY date DESC`
+            );
             return res.status(200).json(rows);
         } catch (error) {
             console.error('[applicants GET]', error);

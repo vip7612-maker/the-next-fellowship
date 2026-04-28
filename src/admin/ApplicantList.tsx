@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { ROUND_BOUNDARIES, currentRound as currentEventRound } from '../utils/rounds';
+import { fetchApplicantTranscript } from '../utils/apiClient';
 import { fetchApplicants, getTargetCapacity, saveTargetCapacity, updateApplicantStatus } from '../utils/apiClient';
 import type { Applicant } from '../utils/apiClient';
 import { formatPhone } from '../utils/formatPhone';
@@ -24,6 +25,40 @@ const ApplicantList = () => {
     const [statusFilter, setStatusFilter] = useState<string | null>(null);
     const [loadError, setLoadError] = useState('');
     const [activeRound, setActiveRound] = useState<number>(() => currentEventRound());
+    const [transcriptBusyId, setTranscriptBusyId] = useState<string | null>(null);
+
+    const handleViewTranscript = async (id: string | number, fileName?: string | null) => {
+        setTranscriptBusyId(String(id));
+        try {
+            const data = await fetchApplicantTranscript(id);
+            // dataUrl을 Blob으로 변환해 새 탭에서 열기 (큰 dataUrl이 URL bar에 노출되는 것 방지)
+            const arr = data.transcriptDataUrl.split(',');
+            const mime = (arr[0].match(/:(.*?);/) || [])[1] || data.transcriptMimeType || 'application/octet-stream';
+            const bin = atob(arr[1]);
+            const u8 = new Uint8Array(bin.length);
+            for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+            const blob = new Blob([u8], { type: mime });
+            const url = URL.createObjectURL(blob);
+
+            const safeName = (fileName || data.transcriptFileName || `${data.name || 'transcript'}`).replace(/[^\w가-힣.\-_ ]+/g, '_');
+            const w = window.open(url, '_blank', 'noopener,noreferrer');
+            if (!w) {
+                // 팝업 차단 시 다운로드로 폴백
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = safeName;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            }
+            // 메모리 해제는 약간 뒤
+            setTimeout(() => URL.revokeObjectURL(url), 60_000);
+        } catch (err) {
+            alert(err instanceof Error ? err.message : '첨부 파일을 불러오지 못했습니다.');
+        } finally {
+            setTranscriptBusyId(null);
+        }
+    };
 
     const loadApplicants = async () => {
         setLoadError('');
@@ -323,6 +358,28 @@ const ApplicantList = () => {
                         <tr key={app.id}>
                             <td style={{ fontWeight: '600' }}>
                                 {app.name}
+                                {app.transcriptFileName && (
+                                    <div style={{ marginTop: 4 }}>
+                                        <button
+                                            type="button"
+                                            onClick={(e) => { e.stopPropagation(); handleViewTranscript(app.id, app.transcriptFileName); }}
+                                            disabled={transcriptBusyId === String(app.id)}
+                                            title={`생기부: ${app.transcriptFileName}`}
+                                            style={{
+                                                fontSize: '0.7rem',
+                                                color: '#2b5b3a',
+                                                background: '#eaf1ec',
+                                                border: '1px solid rgba(43,91,58,0.3)',
+                                                padding: '2px 8px',
+                                                borderRadius: 999,
+                                                cursor: 'pointer',
+                                                fontWeight: 600
+                                            }}
+                                        >
+                                            📎 생기부
+                                        </button>
+                                    </div>
+                                )}
                                 {app.applyCount > 1 && (
                                     <div style={{ marginTop: '5px' }}>
                                         <span style={{ fontSize: '0.75rem', color: '#ef4444', background: '#fee2e2', padding: '2px 6px', borderRadius: '10px' }}>
@@ -389,6 +446,38 @@ const ApplicantList = () => {
 
                             <div style={{ fontWeight: 'bold', color: '#64748b' }}>이메일</div>
                             <div style={{ color: '#0f172a' }}>{selectedApplicant.email || '-'}</div>
+
+                            <div style={{ fontWeight: 'bold', color: '#64748b' }}>생기부</div>
+                            <div>
+                                {selectedApplicant.transcriptFileName ? (
+                                    <button
+                                        type="button"
+                                        onClick={() => handleViewTranscript(selectedApplicant.id, selectedApplicant.transcriptFileName)}
+                                        disabled={transcriptBusyId === String(selectedApplicant.id)}
+                                        style={{
+                                            display: 'inline-flex', alignItems: 'center', gap: 8,
+                                            padding: '6px 12px',
+                                            background: '#eaf1ec',
+                                            border: '1px solid #2b5b3a',
+                                            color: '#2b5b3a',
+                                            borderRadius: 6,
+                                            cursor: 'pointer',
+                                            fontSize: '0.85rem',
+                                            fontWeight: 600
+                                        }}
+                                    >
+                                        📎 {selectedApplicant.transcriptFileName}
+                                        <span style={{ color: '#64748b', fontWeight: 400 }}>
+                                            ({selectedApplicant.transcriptSizeBytes ? `${Math.round(selectedApplicant.transcriptSizeBytes / 1024)}KB` : '-'})
+                                        </span>
+                                        <span style={{ marginLeft: 4, fontSize: '0.78rem' }}>
+                                            {transcriptBusyId === String(selectedApplicant.id) ? '여는 중…' : '열기 / 다운로드'}
+                                        </span>
+                                    </button>
+                                ) : (
+                                    <span style={{ color: '#94a3b8', fontSize: '0.9rem' }}>첨부 없음</span>
+                                )}
+                            </div>
 
                             <div style={{ fontWeight: 'bold', color: '#64748b' }}>상태</div>
                             <div><span className={`badge ${selectedApplicant.status}`}>{selectedApplicant.status}</span></div>
