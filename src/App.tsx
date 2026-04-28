@@ -10,6 +10,7 @@ import Consulting from './components/Consulting';
 import Application from './components/Application';
 import Vote from './components/Vote';
 import Episode1Detail from './components/Episode1Detail';
+import Episode2Detail from './components/Episode2Detail';
 import Staff from './components/Staff';
 import AdminLayout from './admin/AdminLayout';
 import AdminLogin from './admin/AdminLogin';
@@ -75,6 +76,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/episode/1" element={<Episode1Detail />} />
+          <Route path="/episode/2" element={<Episode2Detail />} />
           <Route path="/staff" element={<Staff />} />
           <Route path="/admin" element={<ProtectedAdmin><ApplicantList /></ProtectedAdmin>} />
           <Route path="/admin/dashboard" element={<ProtectedAdmin><Dashboard /></ProtectedAdmin>} />
