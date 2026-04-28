@@ -138,6 +138,7 @@ const Application = () => {
     const [transcriptError, setTranscriptError] = useState<string | null>(null);
     const [isTxDragOver, setIsTxDragOver] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [consentPrivacy, setConsentPrivacy] = useState(false);
 
     const acceptTranscriptFile = async (file: File) => {
         setTranscriptError(null);
@@ -197,6 +198,10 @@ const Application = () => {
             alert("필수 항목(이름, 연락처, 진로이유, 지원동기, 질문)을 모두 입력해주세요.");
             return;
         }
+        if (!consentPrivacy) {
+            alert("개인정보 수집·이용 동의(필수)에 체크해주세요.");
+            return;
+        }
 
         setIsSubmitting(true);
         try {
@@ -218,6 +223,7 @@ const Application = () => {
                 ? "신청이 완료되었습니다. 생기부도 함께 접수되었어요. 미니컨설팅 선정 결과는 개별 안내드립니다."
                 : "신청이 완료되었습니다. 정성스러운 이야기 감사합니다!");
             setFormData({ name: '', school: '', phone: '', email: '', role: '학생', roleCustom: '', careerReason: '', motivation: '', questionForYoon: '' });
+            setConsentPrivacy(false);
             clearTranscript();
         } catch (error) {
             alert(error instanceof Error ? error.message : "오류가 발생했습니다.");
@@ -433,6 +439,61 @@ const Application = () => {
                                     {transcriptError}
                                 </div>
                             )}
+                        </div>
+
+                        {/* 개인정보 수집·이용 동의 (필수) */}
+                        <div className="form-field">
+                            <div style={{
+                                background: 'rgba(255,255,255,0.03)',
+                                border: '1px solid rgba(255,255,255,0.12)',
+                                borderRadius: 10,
+                                padding: '14px 16px',
+                                marginBottom: 12,
+                                fontSize: '0.82rem',
+                                lineHeight: 1.65,
+                                color: 'var(--color-text-sub)',
+                                maxHeight: 160,
+                                overflowY: 'auto'
+                            }}>
+                                <div style={{ color: 'var(--color-white)', fontWeight: 600, marginBottom: 6 }}>
+                                    개인정보 수집·이용 동의 안내
+                                </div>
+                                <div>
+                                    사단법인 인순이와 좋은 사람들은 「개인정보 보호법」에 따라 다음과 같이 개인정보를 수집·이용합니다.
+                                </div>
+                                <ul style={{ margin: '6px 0 0', paddingLeft: 18 }}>
+                                    <li><strong style={{ color: 'var(--color-text-main)' }}>수집 항목:</strong> 이름, 학교, 연락처(휴대폰), 이메일, 신청 내용, 첨부 자료(생기부)</li>
+                                    <li><strong style={{ color: 'var(--color-text-main)' }}>수집 목적:</strong> 신청자 선발 심사, 행사 운영 안내, 미니 컨설팅 사례 선정</li>
+                                    <li><strong style={{ color: 'var(--color-text-main)' }}>보유·이용 기간:</strong> 행사 종료 후 1년간 보관 후 파기</li>
+                                    <li><strong style={{ color: 'var(--color-text-main)' }}>거부 권리:</strong> 동의를 거부하실 수 있으나, 거부 시 신청 접수가 어렵습니다.</li>
+                                </ul>
+                            </div>
+
+                            <label style={{
+                                display: 'flex',
+                                alignItems: 'flex-start',
+                                gap: 10,
+                                padding: '12px 14px',
+                                border: `1px solid ${consentPrivacy ? 'rgba(204, 255, 0, 0.5)' : 'rgba(255,255,255,0.18)'}`,
+                                background: consentPrivacy ? 'rgba(204, 255, 0, 0.06)' : 'rgba(255,255,255,0.02)',
+                                borderRadius: 8,
+                                cursor: 'pointer',
+                                transition: 'all 0.15s ease',
+                                fontSize: '0.92rem',
+                                color: 'var(--color-text-main)',
+                                fontWeight: 400,
+                                marginBottom: 0
+                            }}>
+                                <input
+                                    type="checkbox"
+                                    checked={consentPrivacy}
+                                    onChange={(e) => setConsentPrivacy(e.target.checked)}
+                                    style={{ marginTop: 3, accentColor: 'var(--color-neon-lime)', cursor: 'pointer' }}
+                                />
+                                <span>
+                                    <strong style={{ color: 'var(--color-white)' }}>(필수)</strong> 개인정보 수집·이용에 동의합니다.
+                                </span>
+                            </label>
                         </div>
 
                         <button type="submit" className="cta-button-main full-width" disabled={isSubmitting}>
