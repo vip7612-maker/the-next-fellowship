@@ -1,4 +1,3 @@
-import GalleryImage from './GalleryImage';
 import './Pipeline.css';
 
 const Pipeline = () => {
@@ -16,56 +15,6 @@ const Pipeline = () => {
                             <h3>실행과 전략 <span className="step-subtitle">Actionable Strategy</span></h3>
                             <h4 className="step-role purple-text">윤앤고 입시컨설팅의 1:1 진학 설계</h4>
                             <p>단순한 상담이 아닌, 학생 개인의 생기부·내신·관심 분야를 데이터로 정밀 분석합니다. 메가스터디 러셀에서 쌓아온 최상위권 입시 노하우를 바탕으로, 막연한 진학 고민을 합격으로 이어지는 명확한 실행 로드맵으로 바꾸어 드리는 윤앤고만의 컨설팅 방식입니다.</p>
-
-                            <div className="consultant-card" style={{
-                                marginTop: '24px',
-                                display: 'flex',
-                                gap: '20px',
-                                alignItems: 'center',
-                                padding: '18px',
-                                background: 'rgba(255,255,255,0.04)',
-                                border: '1px solid rgba(255,255,255,0.08)',
-                                borderRadius: '14px'
-                            }}>
-                                <GalleryImage
-                                    slot="consultant_lee_sangyeon"
-                                    fallback="/lee_sangyeon.jpg"
-                                    alt="이상연 소장"
-                                    style={{
-                                        width: '92px',
-                                        height: '92px',
-                                        borderRadius: '50%',
-                                        objectFit: 'cover',
-                                        objectPosition: 'center top',
-                                        flexShrink: 0,
-                                        background: '#e2e8f0'
-                                    }}
-                                />
-                                <div style={{ flex: 1, minWidth: 0 }}>
-                                    <div style={{ fontSize: '0.78rem', letterSpacing: '0.14em', color: '#ff7eb9', fontWeight: 700, marginBottom: 4 }}>
-                                        2회차 입시 컨설턴트
-                                    </div>
-                                    <div style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--color-white)', marginBottom: 2 }}>
-                                        이상연 <span style={{ fontSize: '0.95rem', fontWeight: 500, color: 'var(--color-text-sub)' }}>소장</span>
-                                    </div>
-                                    <div style={{ fontSize: '0.85rem', color: 'var(--color-text-sub)', marginBottom: 8 }}>
-                                        합격을 만드는 입시 플래너
-                                    </div>
-                                    <ul style={{
-                                        listStyle: 'none',
-                                        padding: 0,
-                                        margin: 0,
-                                        fontSize: '0.82rem',
-                                        color: 'var(--color-text-sub)',
-                                        lineHeight: 1.6
-                                    }}>
-                                        <li><strong style={{ color: 'var(--color-white)' }}>현)</strong> 윤앤고 입시컨설팅 소장</li>
-                                        <li><strong style={{ color: 'var(--color-text-sub)' }}>전)</strong> 메가스터디 러셀 입시연구소장</li>
-                                        <li><strong style={{ color: 'var(--color-text-sub)' }}>전)</strong> 메가스터디 러셀 입시교육총괄</li>
-                                        <li><strong style={{ color: 'var(--color-text-sub)' }}>전)</strong> 메가스터디 최상위권반 전문담임</li>
-                                    </ul>
-                                </div>
-                            </div>
                         </div>
                     </div>
 
