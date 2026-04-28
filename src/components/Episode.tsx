@@ -56,11 +56,28 @@ const Episode = () => {
                         <h3 className="card-title">데이터 기반 진학 나침반</h3>
 
                         <div className="person-item">
-                            <div className="person-role">Consulting Group</div>
+                            <div className="person-role" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                                <span style={{ fontSize: '0.7rem', padding: '2px 8px', borderRadius: 999, border: '1px solid rgba(255,0,127,0.4)', color: '#ff7eb9' }}>1회차</span>
+                                <span>Consulting Group</span>
+                            </div>
                             <div className="person-name">윤여정 대표</div>
                             <div className="person-desc">윤앤고 입시전략팀<br />입시트랜드와 진학관련 이슈를 단번에 정리하는 임팩트 특강<br />현장에서 직접 질문하며 생기부 및 진학궁금증을 해결할 수 있는 미니컨설팅</div>
                         </div>
 
+                        <div className="person-item" style={{ borderBottom: 'none' }}>
+                            <div className="person-role" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                                <span style={{ fontSize: '0.7rem', padding: '2px 8px', borderRadius: 999, background: 'rgba(255,0,127,0.18)', color: '#ff7eb9', fontWeight: 700 }}>2회차 · 이번 회차</span>
+                                <span>Consulting Group</span>
+                            </div>
+                            <div className="person-name">이상연 소장</div>
+                            <div className="person-desc" style={{ marginBottom: 8 }}>합격을 만드는 입시 플래너</div>
+                            <div style={{ fontSize: '0.85rem', color: 'var(--color-text-sub)', lineHeight: 1.6, textAlign: 'left' }}>
+                                <strong style={{ color: 'var(--color-white)' }}>현)</strong> 윤앤고 입시컨설팅 소장<br />
+                                <strong style={{ color: 'var(--color-text-sub)' }}>전)</strong> 메가스터디 러셀 입시연구소장<br />
+                                <strong style={{ color: 'var(--color-text-sub)' }}>전)</strong> 메가스터디 러셀 입시교육총괄<br />
+                                <strong style={{ color: 'var(--color-text-sub)' }}>전)</strong> 메가스터디 최상위권반 전문담임
+                            </div>
+                        </div>
 
                         <div style={{ marginTop: 'auto', paddingTop: '20px', width: '100%', display: 'flex', justifyContent: 'center' }}>
                             <GalleryImage

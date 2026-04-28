@@ -46,7 +46,7 @@ const Pipeline = () => {
                                         2회차 입시 컨설턴트
                                     </div>
                                     <div style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--color-white)', marginBottom: 2 }}>
-                                        이상연 <span style={{ fontSize: '0.95rem', fontWeight: 500, color: 'var(--color-text-sub)' }}>선생님</span>
+                                        이상연 <span style={{ fontSize: '0.95rem', fontWeight: 500, color: 'var(--color-text-sub)' }}>소장</span>
                                     </div>
                                     <div style={{ fontSize: '0.85rem', color: 'var(--color-text-sub)', marginBottom: 8 }}>
                                         합격을 만드는 입시 플래너
