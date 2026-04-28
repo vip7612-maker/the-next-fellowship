@@ -461,7 +461,9 @@ const GalleryAdmin = () => {
                         style={{
                             display: 'grid',
                             gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-                            gap: 18
+                            gridAutoRows: '1fr',
+                            gap: 18,
+                            alignItems: 'stretch'
                         }}
                     >
                         {items.map((item) => {
@@ -481,6 +483,7 @@ const GalleryAdmin = () => {
                                         background: '#fff',
                                         display: 'flex',
                                         flexDirection: 'column',
+                                        height: '100%',
                                         opacity: isActive ? 1 : 0.55,
                                         transition: 'transform 0.15s ease, box-shadow 0.15s ease'
                                     }}
@@ -493,7 +496,7 @@ const GalleryAdmin = () => {
                                         e.currentTarget.style.boxShadow = '';
                                     }}
                                 >
-                                    {/* 썸네일 */}
+                                    {/* 썸네일 (고정 높이) */}
                                     <button
                                         type="button"
                                         onClick={() => openPreview(item.id)}
@@ -501,12 +504,14 @@ const GalleryAdmin = () => {
                                         style={{
                                             position: 'relative',
                                             width: '100%',
-                                            aspectRatio: '4 / 3',
+                                            height: 180,
+                                            flexShrink: 0,
                                             background: '#f1f5f9',
                                             border: 'none',
                                             cursor: 'pointer',
                                             padding: 0,
-                                            display: 'block'
+                                            display: 'block',
+                                            overflow: 'hidden'
                                         }}
                                     >
                                         {thumb ? (
@@ -563,17 +568,15 @@ const GalleryAdmin = () => {
                                         )}
                                     </button>
 
-                                    {/* 본문 */}
-                                    <div style={{ padding: 12, display: 'flex', flexDirection: 'column', gap: 8, flex: 1 }}>
-                                        <div>
+                                    {/* 본문 (고정 구조) */}
+                                    <div style={{ padding: 12, display: 'flex', flexDirection: 'column', gap: 8, flex: 1, minWidth: 0 }}>
+                                        <div style={{ minWidth: 0 }}>
                                             <div style={{ fontSize: 14, fontWeight: 700, color: '#1a1a1a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={item.title}>
                                                 {item.title}
                                             </div>
-                                            {item.description && (
-                                                <div style={{ fontSize: 12, color: '#666', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={item.description}>
-                                                    {item.description}
-                                                </div>
-                                            )}
+                                            <div style={{ fontSize: 12, color: '#666', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minHeight: '1.2em' }} title={item.description || ''}>
+                                                {item.description || ' '}
+                                            </div>
                                             <div style={{ fontSize: 11, color: '#888', marginTop: 4 }}>
                                                 {item.width && item.height ? `${item.width}×${item.height} · ` : ''}{formatBytes(item.sizeBytes)}
                                             </div>
