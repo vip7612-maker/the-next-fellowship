@@ -260,11 +260,32 @@ const Application = () => {
 
                         <h2 className="section-title" style={{ fontSize: '2.2rem' }}>좋아하는 분야가 분명할수록,<br /><span className="neon-text">AI는 더 멀리</span> 데려다 줍니다</h2>
                         <p style={{ marginBottom: '30px' }}>음악·운동·글쓰기·요리·게임 — 무엇을 좋아하든 좋습니다.<br />그 관심에 AI를 더해 ‘나만의 다음 진로’를 함께 그려볼 50명을 모십니다.</p>
-                        <ul className="criteria-list" style={{ marginBottom: '40px' }}>
+                        <ul className="criteria-list" style={{ marginBottom: '24px' }}>
                             <li>신청 기간: 2026년 5월 15일(금)까지</li>
                             <li>선발 인원: 홍천지역 고등학생 50명</li>
                             <li>발표: 신청 마감 후 개별 연락</li>
                         </ul>
+
+                        <div style={{
+                            padding: '18px 20px',
+                            borderRadius: 12,
+                            background: 'linear-gradient(135deg, rgba(204, 255, 0, 0.10), rgba(255, 0, 127, 0.06))',
+                            border: '1px solid rgba(204, 255, 0, 0.3)',
+                            fontSize: '0.95rem',
+                            lineHeight: 1.7,
+                            color: 'var(--color-text-main)',
+                            wordBreak: 'keep-all'
+                        }}>
+                            <div style={{ marginBottom: 6 }}>
+                                <strong style={{ color: 'var(--color-neon-lime)', fontSize: '1rem' }}>🎁 큰 혜택!</strong>
+                            </div>
+                            <p style={{ margin: '0 0 8px', color: 'var(--color-text-main)' }}>
+                                생기부를 신청서와 함께 첨부하시면, <strong style={{ color: 'var(--color-white)' }}>윤앤고 이상연 소장님</strong>이 신청자 중 몇 분을 사례로 선정하여 <strong style={{ color: 'var(--color-white)' }}>현장에서 직접 미니 컨설팅</strong>을 진행해 드립니다.
+                            </p>
+                            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--color-text-sub)' }}>
+                                필수는 아니지만, 첨부하실 경우 컨설팅 사례 선정에 큰 가산점이 됩니다.
+                            </p>
+                        </div>
                     </div>
 
                     <form className="application-form-preview" onSubmit={handleSubmit}>
@@ -324,25 +345,8 @@ const Application = () => {
                             <label style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                                 생기부 첨부
                                 <span style={{ fontSize: '0.75rem', padding: '2px 8px', borderRadius: 999, border: '1px solid rgba(255,255,255,0.2)', color: 'var(--color-text-sub)', fontWeight: 500 }}>선택</span>
+                                <span style={{ fontSize: '0.78rem', color: 'var(--color-neon-lime)' }}>← 좌측 안내의 큰 혜택을 확인해주세요</span>
                             </label>
-
-                            <div style={{
-                                marginBottom: 12,
-                                padding: '14px 16px',
-                                borderRadius: 10,
-                                background: 'linear-gradient(135deg, rgba(204, 255, 0, 0.10), rgba(255, 0, 127, 0.06))',
-                                border: '1px solid rgba(204, 255, 0, 0.3)',
-                                fontSize: '0.92rem',
-                                lineHeight: 1.65,
-                                color: 'var(--color-text-main)'
-                            }}>
-                                <strong style={{ color: 'var(--color-neon-lime)' }}>🎁 큰 혜택!</strong>{' '}
-                                생기부를 함께 첨부하시면, <strong style={{ color: 'var(--color-white)' }}>윤앤고 이상연 소장님</strong>이 신청자 중 몇 분을 사례로 선정하여 <strong style={{ color: 'var(--color-white)' }}>현장에서 직접 미니 컨설팅</strong>을 진행해 드립니다.
-                                <br />
-                                <span style={{ color: 'var(--color-text-sub)', fontSize: '0.85rem' }}>
-                                    필수는 아니지만, 첨부하실 경우 컨설팅 사례 선정에 큰 가산점이 됩니다.
-                                </span>
-                            </div>
 
                             <input
                                 ref={transcriptInputRef}
