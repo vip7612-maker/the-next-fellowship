@@ -3,6 +3,109 @@ import { submitApplicant } from '../utils/apiClient';
 import { autoFormatPhone } from '../utils/formatPhone';
 import './Application.css';
 
+// 2회차 일정 정보
+const EVENT_DATE = new Date('2026-05-17T14:00:00+09:00');
+const EVENT_END = '17:00';
+const EVENT_LOCATION = '홍천읍 꽃신';
+const EVENT_LOCATION_DETAIL = '강원특별자치도 홍천군 홍천읍 홍천로5길 10';
+
+const computeDday = () => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const event = new Date(EVENT_DATE.getFullYear(), EVENT_DATE.getMonth(), EVENT_DATE.getDate()).getTime();
+    const diffDays = Math.round((event - today) / (1000 * 60 * 60 * 24));
+    return diffDays;
+};
+
+const EventScheduleHero = () => {
+    const dday = computeDday();
+    const ddayLabel = dday > 0 ? `D-${dday}` : dday === 0 ? 'D-DAY' : `D+${Math.abs(dday)}`;
+    const ddayActive = dday >= 0;
+
+    return (
+        <div className="event-schedule-hero" style={{
+            marginTop: '36px',
+            display: 'grid',
+            gridTemplateColumns: 'auto 1fr',
+            gap: '24px',
+            alignItems: 'stretch',
+            background: 'linear-gradient(135deg, rgba(204, 255, 0, 0.08), rgba(0, 240, 255, 0.05))',
+            border: '1px solid rgba(204, 255, 0, 0.25)',
+            borderRadius: '20px',
+            padding: '28px 32px',
+            maxWidth: '760px',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            boxShadow: '0 12px 40px -12px rgba(0,0,0,0.4)'
+        }}>
+            {/* D-Day 배지 */}
+            <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '12px 22px',
+                borderRight: '1px solid rgba(255, 255, 255, 0.08)',
+                paddingRight: '28px'
+            }}>
+                <div style={{
+                    fontSize: '0.75rem',
+                    letterSpacing: '0.2em',
+                    color: ddayActive ? 'var(--color-neon-lime)' : 'var(--color-text-sub)',
+                    fontWeight: 700,
+                    marginBottom: '4px'
+                }}>
+                    EVENT
+                </div>
+                <div style={{
+                    fontSize: 'clamp(2.4rem, 5vw, 3.2rem)',
+                    fontWeight: 900,
+                    color: ddayActive ? 'var(--color-neon-lime)' : 'var(--color-text-sub)',
+                    lineHeight: 1,
+                    letterSpacing: '-0.03em'
+                }}>
+                    {ddayLabel}
+                </div>
+            </div>
+
+            {/* 날짜/시간/장소 */}
+            <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '14px',
+                justifyContent: 'center',
+                textAlign: 'left'
+            }}>
+                <div>
+                    <div style={{ fontSize: '0.75rem', letterSpacing: '0.2em', color: 'var(--color-text-sub)', fontWeight: 700, marginBottom: '4px' }}>
+                        📅 WHEN
+                    </div>
+                    <div style={{ fontSize: 'clamp(1.4rem, 2.6vw, 1.9rem)', fontWeight: 800, color: 'var(--color-white)', lineHeight: 1.25, letterSpacing: '-0.02em' }}>
+                        2026년 5월 17일 <span style={{ color: 'var(--color-neon-lime)' }}>(일)</span>
+                    </div>
+                    <div style={{ fontSize: 'clamp(1rem, 1.6vw, 1.15rem)', color: 'var(--color-text-main)', marginTop: '2px', fontWeight: 600 }}>
+                        오후 2:00 — {EVENT_END} (3시간)
+                    </div>
+                </div>
+
+                <div style={{ height: 1, background: 'rgba(255,255,255,0.08)' }} />
+
+                <div>
+                    <div style={{ fontSize: '0.75rem', letterSpacing: '0.2em', color: 'var(--color-text-sub)', fontWeight: 700, marginBottom: '4px' }}>
+                        📍 WHERE
+                    </div>
+                    <div style={{ fontSize: 'clamp(1.2rem, 2.2vw, 1.5rem)', fontWeight: 700, color: 'var(--color-white)', lineHeight: 1.3 }}>
+                        {EVENT_LOCATION}
+                    </div>
+                    <div style={{ fontSize: '0.9rem', color: 'var(--color-text-sub)', marginTop: '2px' }}>
+                        {EVENT_LOCATION_DETAIL}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const Application = () => {
     const [isMapOpen, setIsMapOpen] = useState(false);
     const [formData, setFormData] = useState({
@@ -69,6 +172,8 @@ const Application = () => {
                         그 교차점에서, 한 번도 없던 직업이 태어납니다.<br />
                         2회차 주제와 세부 일정은 곧 공개됩니다 — 지금 미리 신청해 두세요.
                     </p>
+
+                    <EventScheduleHero />
                 </div>
 
                 <div className="application-box">
@@ -84,25 +189,6 @@ const Application = () => {
 
                         <div style={{ marginTop: '20px', marginBottom: '20px' }}>
                             <a href="#/episode/1" className="secondary-button" style={{ display: 'inline-block', textDecoration: 'none', textAlign: 'center' }}>1회차 지난 프로그램 보기 ➔</a>
-                        </div>
-                        <div className="session-meta-new" style={{
-                            marginBottom: '40px',
-                            fontSize: '1.4rem',
-                            lineHeight: '1.6',
-                            border: '1px solid rgba(255, 255, 255, 0.15)',
-                            background: 'rgba(0, 0, 0, 0.2)',
-                            padding: '20px 25px',
-                            borderRadius: '12px',
-                            display: 'inline-block'
-                        }}>
-                            <p style={{ margin: '0 0 10px 0', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                <span style={{ fontSize: '1.6rem' }}>📆</span>
-                                <strong>일시:</strong> 2026년 5월 17일(일) 14:00–17:00
-                            </p>
-                            <p style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                <span style={{ fontSize: '1.6rem' }}>📍</span>
-                                <strong>장소:</strong> 홍천읍 꽃신
-                            </p>
                         </div>
                     </div>
 

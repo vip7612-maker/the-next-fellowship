@@ -3,6 +3,19 @@
     padding-bottom: 20px;
 }
 
+@media (max-width: 640px) {
+    .event-schedule-hero {
+        grid-template-columns: 1fr !important;
+        padding: 22px !important;
+        gap: 18px !important;
+    }
+    .event-schedule-hero > div:first-child {
+        border-right: none !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 0 0 16px 0 !important;
+    }
+}
+
 .application-box {
     display: grid;
     grid-template-columns: 1fr 1fr;
