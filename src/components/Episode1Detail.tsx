@@ -171,16 +171,8 @@ const Episode1Detail = () => {
                         </div>
                     </div>
 
-                    <div className="bottom-cta">
-                        <h2 className="section-title">여러분의 진심을 기다립니다.</h2>
-                        <Link to="/#application" className="cta-button-main" style={{ display: 'inline-block', textDecoration: 'none', padding: '15px 40px', fontSize: '1.2rem' }}>신청하러 가기</Link>
-                    </div>
                 </div>
             </main>
-
-            <div className="floating-btn-container">
-                <Link to="/#application" className="cta-button-main" style={{ textDecoration: 'none' }}>신청하러 가기</Link>
-            </div>
 
             <footer>
                 <div className="container footer-content">
