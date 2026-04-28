@@ -106,11 +106,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
             const id = crypto.randomUUID();
             const createdAt = new Date().toISOString();
+            const finalSlot = slot && String(slot).trim() !== '' ? String(slot).trim() : null;
+
+            // 새 슬롯이 이미 점유돼 있으면 기존 점유자의 슬롯을 자동 해제 (1슬롯 1이미지 보장)
+            if (finalSlot) {
+                await db.execute({
+                    sql: 'UPDATE gallery_images SET slot = NULL WHERE slot = ?',
+                    args: [finalSlot]
+                });
+            }
 
             await db.execute({
                 sql: `INSERT INTO gallery_images (id, slot, title, description, dataUrl, mimeType, sizeBytes, width, height, isActive, createdAt)
                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?)`,
-                args: [id, slot || null, title, description || '', dataUrl, mimeType, sizeBytes ?? null, width ?? null, height ?? null, createdAt]
+                args: [id, finalSlot, title, description || '', dataUrl, mimeType, sizeBytes ?? null, width ?? null, height ?? null, createdAt]
             });
             return res.status(200).json({ success: true, id });
         } catch (error) {
@@ -122,24 +131,45 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (req.method === 'PUT') {
         if (!requireAdmin(req, res)) return;
         try {
-            const { id, slot, title, description, isActive } = req.body;
+            const body = req.body || {};
+            const { id, title, description, isActive } = body;
             if (!id) return res.status(400).json({ error: 'id는 필수입니다.' });
 
-            await db.execute({
-                sql: `UPDATE gallery_images
-                      SET slot = COALESCE(?, slot),
-                          title = COALESCE(?, title),
-                          description = COALESCE(?, description),
-                          isActive = COALESCE(?, isActive)
-                      WHERE id = ?`,
-                args: [
-                    slot === undefined ? null : (slot || null),
-                    title === undefined ? null : title,
-                    description === undefined ? null : description,
-                    isActive === undefined ? null : (isActive ? 1 : 0),
-                    id
-                ]
-            });
+            // slot 필드는 명시적 분기 (null/빈문자열은 슬롯 해제)
+            // 새 슬롯이 이미 다른 활성 이미지에 점유돼 있으면, 기존 점유자의 슬롯을 먼저 해제(자동 양도)
+            if ('slot' in body) {
+                const newSlot: string | null = body.slot && String(body.slot).trim() !== ''
+                    ? String(body.slot).trim()
+                    : null;
+                if (newSlot) {
+                    await db.execute({
+                        sql: 'UPDATE gallery_images SET slot = NULL WHERE slot = ? AND id != ?',
+                        args: [newSlot, id]
+                    });
+                }
+                await db.execute({
+                    sql: 'UPDATE gallery_images SET slot = ? WHERE id = ?',
+                    args: [newSlot, id]
+                });
+            }
+
+            // 나머지 필드는 COALESCE로 부분 업데이트
+            if (title !== undefined || description !== undefined || isActive !== undefined) {
+                await db.execute({
+                    sql: `UPDATE gallery_images
+                          SET title = COALESCE(?, title),
+                              description = COALESCE(?, description),
+                              isActive = COALESCE(?, isActive)
+                          WHERE id = ?`,
+                    args: [
+                        title === undefined ? null : title,
+                        description === undefined ? null : description,
+                        isActive === undefined ? null : (isActive ? 1 : 0),
+                        id
+                    ]
+                });
+            }
+
             return res.status(200).json({ success: true });
         } catch (error) {
             console.error('[gallery PUT]', error);

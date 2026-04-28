@@ -273,11 +273,19 @@ const GalleryAdmin = () => {
         }
     };
 
-    const slotsInUse = useMemo(() => {
-        const set = new Set<string>();
-        items.forEach((it) => { if (it.slot && Number(it.isActive) === 1) set.add(it.slot); });
-        return set;
+    // 슬롯 → 점유 이미지 ID (활성 여부와 무관하게 점유로 간주)
+    const slotOwnerMap = useMemo(() => {
+        const map: Record<string, string> = {};
+        items.forEach((it) => {
+            if (it.slot) {
+                // 같은 슬롯이 여러 행에 있으면 가장 최근 것이 owner
+                if (!map[it.slot]) map[it.slot] = it.id;
+            }
+        });
+        return map;
     }, [items]);
+
+    const slotsInUse = useMemo(() => new Set(Object.keys(slotOwnerMap)), [slotOwnerMap]);
 
     return (
         <div className="admin-content">
@@ -385,11 +393,14 @@ const GalleryAdmin = () => {
                                 style={inputStyle}
                             >
                                 <option value="">(슬롯 없음 — 자료실 전용)</option>
-                                {SLOT_PRESETS.map((s) => (
-                                    <option key={s.value} value={s.value}>
-                                        {s.label} {slotsInUse.has(s.value) ? '· 현재 사용 중' : ''}
-                                    </option>
-                                ))}
+                                {SLOT_PRESETS.map((s) => {
+                                    const taken = slotsInUse.has(s.value);
+                                    return (
+                                        <option key={s.value} value={s.value} disabled={taken}>
+                                            {s.label}{taken ? ' · 사용 중 (선택 불가)' : ''}
+                                        </option>
+                                    );
+                                })}
                                 <option value="__custom__">＋ 직접 입력</option>
                             </select>
                             {uploadForm.slot === '__custom__' && (
@@ -408,7 +419,7 @@ const GalleryAdmin = () => {
                             )}
                             {uploadForm.slot && uploadForm.slot !== '__custom__' && slotsInUse.has(uploadForm.slot) && (
                                 <div style={{ fontSize: 11, color: '#b14a3a', marginTop: 6 }}>
-                                    ⚠ 이 슬롯에 이미 활성 이미지가 있습니다. 새로 업로드하면 가장 최근 것이 사용됩니다.
+                                    ⚠ 이 슬롯은 이미 사용 중입니다. 다른 슬롯을 고르거나, 기존 이미지를 먼저 삭제/슬롯 해제 후 업로드해 주세요.
                                 </div>
                             )}
                         </div>
@@ -582,7 +593,7 @@ const GalleryAdmin = () => {
                                             </div>
                                         </div>
 
-                                        {/* 슬롯 변경 */}
+                                        {/* 슬롯 변경 — 다른 이미지가 점유한 슬롯은 비활성 */}
                                         <select
                                             value={item.slot || ''}
                                             onChange={(e) => handleUpdateSlot(item, e.target.value)}
@@ -590,9 +601,15 @@ const GalleryAdmin = () => {
                                             title="슬롯 변경"
                                         >
                                             <option value="">슬롯: (없음)</option>
-                                            {SLOT_PRESETS.map((s) => (
-                                                <option key={s.value} value={s.value}>{s.label}</option>
-                                            ))}
+                                            {SLOT_PRESETS.map((s) => {
+                                                const owner = slotOwnerMap[s.value];
+                                                const takenByOther = !!owner && owner !== item.id;
+                                                return (
+                                                    <option key={s.value} value={s.value} disabled={takenByOther}>
+                                                        {s.label}{takenByOther ? ' · 사용 중' : ''}
+                                                    </option>
+                                                );
+                                            })}
                                             {item.slot && !SLOT_PRESETS.some((s) => s.value === item.slot) && (
                                                 <option value={item.slot}>{item.slot} (커스텀)</option>
                                             )}
