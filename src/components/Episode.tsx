@@ -54,7 +54,17 @@ const Episode = () => {
 
 
                         <div style={{ marginTop: 'auto', paddingTop: '20px', width: '100%', display: 'flex', justifyContent: 'center' }}>
-                            <img src="/consulting_illustration.png" alt="Consulting Logo" style={{ width: '100%', maxHeight: '200px', borderRadius: '12px', opacity: 0.9, objectFit: 'cover' }} />
+                            <img
+                                src="/episode1/4.jpg"
+                                alt="1회차 윤여정 대표 입시 컨설팅 강연 현장"
+                                style={{
+                                    width: '100%',
+                                    maxHeight: '220px',
+                                    borderRadius: '12px',
+                                    objectFit: 'cover',
+                                    objectPosition: 'center'
+                                }}
+                            />
                         </div>
                     </div>
 
