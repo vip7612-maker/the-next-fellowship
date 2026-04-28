@@ -67,10 +67,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             const id = crypto.randomUUID();
             const date = new Date().toISOString().split('T')[0];
 
+            // 현재 진행 중 회차: 1회차(2026-04-05 이전 신청) 종료 후, 2회차(2026-05-17) 행사 다음날까지를 2회차 접수로 본다.
+            // 회차 행사일이 지나면 자동으로 다음 회차로 카운트 업.
+            const ROUND_BOUNDARIES = [
+                { round: 1, endsBefore: '2026-04-06' }, // 1회차 행사 4/5 → 4/6 자정 이후 신청은 다음 회차
+                { round: 2, endsBefore: '2026-05-18' }, // 2회차 행사 5/17 → 5/18 자정 이후 신청은 다음 회차
+            ];
+            let currentRound = ROUND_BOUNDARIES.length + 1; // 모든 경계 이후라면 다음 회차
+            for (const b of ROUND_BOUNDARIES) {
+                if (date < b.endsBefore) { currentRound = b.round; break; }
+            }
+
             await db.execute({
-                sql: `INSERT INTO applicants (id, name, school, phone, email, careerReason, motivation, questionForYoon, status, date, role, transcriptFileName, transcriptMimeType, transcriptDataUrl, transcriptSizeBytes)
-                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-                args: [id, name, school, phone, email, careerReason, motivation, questionForYoon, 'Pending', date, role || '학생',
+                sql: `INSERT INTO applicants (id, name, school, phone, email, careerReason, motivation, questionForYoon, status, date, role, round, transcriptFileName, transcriptMimeType, transcriptDataUrl, transcriptSizeBytes)
+                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                args: [id, name, school, phone, email, careerReason, motivation, questionForYoon, 'Pending', date, role || '학생', currentRound,
                     txFileName, txMimeType, txDataUrl, txSize]
             });
 
@@ -82,7 +93,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                         ? `\n📎 생기부 첨부: ${escapeTg(txFileName)} (${escapeTg(((txSize || 0) / 1024).toFixed(0))}KB)`
                         : '';
                     const message =
-                        `🔔 새로운 신청자가 등록되었습니다\\! \\[2회차\\]\n\n` +
+                        `🔔 새로운 신청자가 등록되었습니다\\! \\[${currentRound}회차\\]\n\n` +
                         `👤 이름: ${escapeTg(name)}\n` +
                         `🏫 소속: ${escapeTg(school || '미입력')}\n` +
                         `📱 연락처: ${escapeTg(phone)}\n` +

@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { fetchApplicants } from '../utils/apiClient';
 import type { Applicant } from '../utils/apiClient';
+import { ROUND_BOUNDARIES, currentRound as currentEventRound } from '../utils/rounds';
 
 interface GroupedApplicant extends Applicant {
     applyCount: number;
@@ -105,23 +106,28 @@ const Dashboard = () => {
 
     useEffect(() => { load(); }, []);
 
-    // 사용 가능한 회차 목록 + 최신 회차(당회차) 계산
+    // 당회차 = 오늘 날짜 기반 (행사일 지나면 자동 전환)
+    const todayRound = useMemo(() => currentEventRound(), []);
+
+    // 사용 가능한 회차 목록 — 등록된 회차 ∪ 정의된 회차 경계 ∪ 오늘 회차
     const { availableRounds, latestRound } = useMemo(() => {
         const roundSet = new Set<number>();
         applicants.forEach(a => roundSet.add(a.round ?? 1));
+        ROUND_BOUNDARIES.forEach(b => roundSet.add(b.round));
+        roundSet.add(todayRound); // 행사 후 신청자 0명이어도 탭은 보이도록
         const list = Array.from(roundSet).sort((a, b) => a - b);
         return {
-            availableRounds: list.length > 0 ? list : [2],
-            latestRound: list.length > 0 ? Math.max(...list) : 2,
+            availableRounds: list,
+            latestRound: todayRound,
         };
-    }, [applicants]);
+    }, [applicants, todayRound]);
 
-    // 데이터 로드 후 당회차를 기본 선택
+    // 데이터 로드 후 당회차를 기본 선택 (오늘 기준)
     useEffect(() => {
-        if (activeRound === null && applicants.length > 0) {
+        if (activeRound === null) {
             setActiveRound(latestRound);
         }
-    }, [applicants, latestRound, activeRound]);
+    }, [latestRound, activeRound]);
 
     const currentRound = activeRound ?? latestRound;
 

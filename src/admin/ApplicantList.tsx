@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { ROUND_BOUNDARIES, currentRound as currentEventRound } from '../utils/rounds';
 import { fetchApplicants, getTargetCapacity, saveTargetCapacity, updateApplicantStatus } from '../utils/apiClient';
 import type { Applicant } from '../utils/apiClient';
 import { formatPhone } from '../utils/formatPhone';
@@ -22,7 +23,7 @@ const ApplicantList = () => {
     const [showDeleted, setShowDeleted] = useState(false);
     const [statusFilter, setStatusFilter] = useState<string | null>(null);
     const [loadError, setLoadError] = useState('');
-    const [activeRound, setActiveRound] = useState<1 | 2>(2);
+    const [activeRound, setActiveRound] = useState<number>(() => currentEventRound());
 
     const loadApplicants = async () => {
         setLoadError('');
@@ -170,8 +171,14 @@ const ApplicantList = () => {
     const waitlistCount = groupedApplicants.filter(a => a.status === 'Waitlist').length;
     const deletedCount = deletedByRound.length;
 
-    const round1Count = applicants.filter(a => (a.round ?? 1) === 1).length;
-    const round2Count = applicants.filter(a => (a.round ?? 1) === 2).length;
+    const roundCount = (r: number) => applicants.filter(a => (a.round ?? 1) === r).length;
+    const allRounds = useMemo(() => {
+        const set = new Set<number>();
+        applicants.forEach(a => set.add(a.round ?? 1));
+        ROUND_BOUNDARIES.forEach(b => set.add(b.round));
+        set.add(currentEventRound());
+        return Array.from(set).sort((a, b) => a - b);
+    }, [applicants]);
 
     const handleStatClick = (filter: string | null) => {
         setStatusFilter(prev => prev === filter ? null : filter);
@@ -186,30 +193,33 @@ const ApplicantList = () => {
                 </div>
             )}
 
-            {/* 회차 탭 */}
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
-                {([1, 2] as const).map(r => (
-                    <button
-                        key={r}
-                        onClick={() => { setActiveRound(r); setStatusFilter(null); }}
-                        style={{
-                            padding: '10px 28px',
-                            borderRadius: '8px',
-                            border: activeRound === r ? 'none' : '1px solid var(--admin-border)',
-                            background: activeRound === r ? '#3b82f6' : 'white',
-                            color: activeRound === r ? 'white' : '#64748b',
-                            fontWeight: activeRound === r ? '700' : '400',
-                            fontSize: '1rem',
-                            cursor: 'pointer',
-                            transition: 'all 0.15s',
-                        }}
-                    >
-                        {r}회차
-                        <span style={{ marginLeft: '8px', fontSize: '0.8rem', opacity: 0.8 }}>
-                            ({r === 1 ? round1Count : round2Count}명)
-                        </span>
-                    </button>
-                ))}
+            {/* 회차 탭 (회차가 끝나면 자동으로 다음 회차 추가) */}
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
+                {allRounds.map(r => {
+                    const isCurrent = r === currentEventRound();
+                    return (
+                        <button
+                            key={r}
+                            onClick={() => { setActiveRound(r); setStatusFilter(null); }}
+                            style={{
+                                padding: '10px 28px',
+                                borderRadius: '8px',
+                                border: activeRound === r ? 'none' : '1px solid var(--admin-border)',
+                                background: activeRound === r ? '#3b82f6' : 'white',
+                                color: activeRound === r ? 'white' : '#64748b',
+                                fontWeight: activeRound === r ? 700 : 400,
+                                fontSize: '1rem',
+                                cursor: 'pointer',
+                                transition: 'all 0.15s',
+                            }}
+                        >
+                            {r}회차{isCurrent && ' (당회차)'}
+                            <span style={{ marginLeft: '8px', fontSize: '0.8rem', opacity: 0.8 }}>
+                                ({roundCount(r)}명)
+                            </span>
+                        </button>
+                    );
+                })}
             </div>
 
             {/* Statistics Cards - Clickable Filters */}
