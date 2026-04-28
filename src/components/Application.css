@@ -125,6 +125,47 @@
     }
 }
 
+@media (max-width: 720px) {
+    /* 모바일: 좌우 여백 최소화 — 입력 영역을 화면 폭에 가깝게 */
+    .application > .container {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+    .application-box {
+        padding: 20px 12px;
+        gap: 28px;
+        border-radius: 14px;
+    }
+    .application-form-preview {
+        padding: 16px 12px;
+        border-radius: 10px;
+    }
+    .form-row {
+        gap: 12px;
+    }
+    .form-field {
+        margin-bottom: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .application > .container {
+        padding-left: 4px;
+        padding-right: 4px;
+    }
+    .application-box {
+        padding: 18px 10px;
+    }
+    .application-form-preview {
+        padding: 14px 10px;
+    }
+    /* 한 줄 두 칸 → 한 줄 한 칸 (이름/학교, 연락처/이메일 분리해서 더 넓게) */
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+}
+
 @media (max-width: 500px) {
     .application-info h2 {
         font-size: 1.6rem;
