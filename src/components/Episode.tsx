@@ -69,13 +69,13 @@ const Episode = () => {
                             wordBreak: 'keep-all'
                         }}>
                             <div style={{ fontSize: '0.72rem', letterSpacing: '0.16em', color: '#ff7eb9', fontWeight: 700, marginBottom: 6 }}>
-                                ABOUT 윤앤고 컨설팅
+                                ABOUT 윤앤고 입시컨설팅
                             </div>
                             <p style={{ margin: 0, color: 'var(--color-white)', fontWeight: 600, marginBottom: 4 }}>
                                 "데이터로 길을 찾는 1:1 맞춤 입시 컨설팅 그룹"
                             </p>
                             <p style={{ margin: 0, color: 'var(--color-text-sub)', fontSize: '0.83rem' }}>
-                                메가스터디 러셀에서 쌓아온 최상위권 입시 노하우를 바탕으로, 개인별 생기부·내신·관심분야를 정밀 분석해 학생에게 가장 잘 맞는 진학 전략을 설계합니다. 단순 상담이 아닌 합격으로 이어지는 실행 로드맵을 제시하는 윤앤고만의 컨설팅 방식입니다.
+                                메가스터디 러셀에서 쌓아온 최상위권 입시 노하우를 바탕으로, 학생 개인의 생기부·내신·관심분야를 정밀 분석합니다. 막연한 진학 고민을 합격으로 이어지는 명확한 실행 로드맵으로 바꾸어 드리는 윤앤고만의 컨설팅 방식입니다.
                             </p>
                         </div>
 

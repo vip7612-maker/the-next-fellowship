@@ -14,8 +14,8 @@ const Pipeline = () => {
                         <div className="step-indicator">STEP 01</div>
                         <div className="step-content">
                             <h3>실행과 전략 <span className="step-subtitle">Actionable Strategy</span></h3>
-                            <h4 className="step-role purple-text">윤앤고 이상연 소장의 진학 컨설팅</h4>
-                            <p>내가 원하는 학교와 학과에 진학하기 위해 지금 당장 필요한 것이 무엇인지, 윤앤고 입시전략팀이 체계적이고 현실적인 맞춤형 진학 컨설팅을 제공합니다.</p>
+                            <h4 className="step-role purple-text">윤앤고 입시컨설팅의 1:1 진학 설계</h4>
+                            <p>단순한 상담이 아닌, 학생 개인의 생기부·내신·관심 분야를 데이터로 정밀 분석합니다. 메가스터디 러셀에서 쌓아온 최상위권 입시 노하우를 바탕으로, 막연한 진학 고민을 합격으로 이어지는 명확한 실행 로드맵으로 바꾸어 드리는 윤앤고만의 컨설팅 방식입니다.</p>
 
                             <div className="consultant-card" style={{
                                 marginTop: '24px',
