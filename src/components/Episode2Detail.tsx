@@ -73,6 +73,7 @@ const Episode2Detail = () => {
                                 <h4>AI 시대, 교실과 업무를 다시 디자인하다</h4>
                                 <p className="ds-bio">
                                     <strong>現)</strong> 사단법인 인순이와 좋은 사람들 사무국장<br />
+                                    <strong>現)</strong> 넥스트스쿨(NEXT SCHOOL) 교장<br />
                                     <strong>前)</strong> 해밀학교 교장<br /><br />
                                     <strong style={{ color: 'var(--color-white)' }}>강의 주제</strong><br />
                                     · AI 도구들을 활용한 다양성 교실 구성<br />

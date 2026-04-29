@@ -131,6 +131,7 @@ const Episode = () => {
                                 <div style={{ color: 'var(--color-white)', fontSize: '0.83rem', fontWeight: 600 }}>약력</div>
                                 <ul style={{ listStyle: 'none', padding: 0, margin: '4px 0 10px', color: 'var(--color-text-sub)' }}>
                                     <li>· 現) 사단법인 인순이와 좋은 사람들 사무국장</li>
+                                    <li>· 現) 넥스트스쿨(NEXT SCHOOL) 교장</li>
                                     <li>· 前) 해밀학교 교장</li>
                                 </ul>
                                 <div style={{ color: 'var(--color-white)', fontSize: '0.83rem', fontWeight: 600 }}>강의 주제</div>
