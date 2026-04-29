@@ -70,12 +70,14 @@ const Episode2Detail = () => {
                             <div className="ds-info">
                                 <span className="field-tag" style={{ color: 'var(--color-neon-lime)' }}>사단법인 인순이와 좋은 사람들 사무국장</span>
                                 <h3>이경진</h3>
-                                <h4>해밀학교 설립 운영 총괄 · 인공지능 활용 다문화교육 성공사례</h4>
+                                <h4>AI 시대, 교실과 업무를 다시 디자인하다</h4>
                                 <p className="ds-bio">
                                     <strong>現)</strong> 사단법인 인순이와 좋은 사람들 사무국장<br />
                                     <strong>前)</strong> 해밀학교 교장<br /><br />
-                                    <strong>· 해밀학교 설립 운영 총괄</strong><br />
-                                    <strong>· 인공지능 활용 다문화교육 성공사례</strong>
+                                    <strong style={{ color: 'var(--color-white)' }}>강의 주제</strong><br />
+                                    · AI 도구들을 활용한 다양성 교실 구성<br />
+                                    · AI agent 활용한 업무 효율화<br />
+                                    · K12를 위한 DX, AX 전환
                                 </p>
                             </div>
                         </div>

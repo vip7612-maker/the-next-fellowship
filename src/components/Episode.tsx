@@ -126,17 +126,18 @@ const Episode = () => {
                             </div>
                             <div className="person-role">사단법인 인순이와 좋은 사람들 사무국장</div>
                             <div className="person-name">이경진</div>
-                            <div className="person-desc">해밀학교 설립 운영 총괄 · 인공지능 활용 다문화교육 성공사례</div>
+                            <div className="person-desc">AI 시대, 교실과 업무를 다시 디자인하다</div>
                             <div style={{ marginTop: '14px', fontSize: '0.85rem', color: 'var(--color-neon-lime)', lineHeight: '1.6', textAlign: 'left' }}>
                                 <div style={{ color: 'var(--color-white)', fontSize: '0.83rem', fontWeight: 600 }}>약력</div>
                                 <ul style={{ listStyle: 'none', padding: 0, margin: '4px 0 10px', color: 'var(--color-text-sub)' }}>
                                     <li>· 現) 사단법인 인순이와 좋은 사람들 사무국장</li>
                                     <li>· 前) 해밀학교 교장</li>
                                 </ul>
-                                <div style={{ color: 'var(--color-white)', fontSize: '0.83rem', fontWeight: 600 }}>주요 활동</div>
+                                <div style={{ color: 'var(--color-white)', fontSize: '0.83rem', fontWeight: 600 }}>강의 주제</div>
                                 <ul style={{ listStyle: 'none', padding: 0, margin: '4px 0 0', color: 'var(--color-text-sub)' }}>
-                                    <li>· 해밀학교 설립 운영 총괄</li>
-                                    <li>· 인공지능 활용 다문화교육 성공사례</li>
+                                    <li>· AI 도구들을 활용한 다양성 교실 구성</li>
+                                    <li>· AI agent 활용한 업무 효율화</li>
+                                    <li>· K12를 위한 DX, AX 전환</li>
                                 </ul>
                             </div>
                         </div>
