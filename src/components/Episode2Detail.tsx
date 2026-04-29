@@ -78,7 +78,8 @@ const Episode2Detail = () => {
                                     <strong style={{ color: 'var(--color-white)' }}>강의 주제</strong><br />
                                     · AI 도구들을 활용한 다양성 교실 구성<br />
                                     · AI agent 활용한 업무 효율화<br />
-                                    · K12를 위한 DX, AX 전환
+                                    · K12를 위한 DX, AX 전환<br />
+                                    · AI 융합 미래진로탐색
                                 </p>
                             </div>
                         </div>

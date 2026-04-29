@@ -139,6 +139,7 @@ const Episode = () => {
                                     <li>· AI 도구들을 활용한 다양성 교실 구성</li>
                                     <li>· AI agent 활용한 업무 효율화</li>
                                     <li>· K12를 위한 DX, AX 전환</li>
+                                    <li>· AI 융합 미래진로탐색</li>
                                 </ul>
                             </div>
                         </div>
