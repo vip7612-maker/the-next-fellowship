@@ -15,6 +15,7 @@ const SLOT_PRESETS: { value: string; label: string; usage: string }[] = [
     { value: 'episode_card_consulting', label: '메인 · 컨설팅 카드 사진', usage: '"지난 회차" 컨설팅 카드 하단 이미지' },
     { value: 'episode_card_mentor', label: '메인 · 멘토 카드 사진', usage: '"지난 회차" 멘토 카드 하단 이미지' },
     { value: 'expert_kim_daesik', label: '메인 · 강사(김대식 교수) 프로필', usage: '전문가 카드 원형 프로필' },
+    { value: 'expert_lee_kyungjin', label: '2회차 · 전문가 강사(이경진 사무국장) 프로필', usage: 'Episode2 상세 페이지 전문가 카드' },
     { value: 'consultant_lee_sangyeon', label: '메인 · 컨설턴트(이상연 소장) 프로필', usage: 'Pipeline STEP 01 컨설턴트 카드' },
     { value: 'episode1_photo_1', label: '1회차 갤러리 사진 1', usage: '메인 4장 그리드 + 1회차 상세 페이지' },
     { value: 'episode1_photo_2', label: '1회차 갤러리 사진 2', usage: '메인 4장 그리드 + 1회차 상세 페이지' },

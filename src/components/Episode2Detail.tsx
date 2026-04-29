@@ -60,29 +60,22 @@ const Episode2Detail = () => {
 
                         <div className="detail-speaker-card">
                             <GalleryImage
-                                slot="expert_kim_daesik"
-                                fallback="/kim_daesik.jpg"
+                                slot="expert_lee_kyungjin"
+                                fallback="/staff/3.jpg"
                                 asBackground
-                                alt="김대식 교수"
+                                alt="이경진 사무국장"
+                                placeholderLabel="이경진 사무국장"
                                 className="ds-image bg-neon"
                             />
                             <div className="ds-info">
-                                <span className="field-tag" style={{ color: 'var(--color-neon-lime)' }}>AI · Brain Science</span>
-                                <h3>김대식 교수</h3>
-                                <h4>뇌과학으로 풀어낸 AI 시대, 인간의 다음 진로</h4>
+                                <span className="field-tag" style={{ color: 'var(--color-neon-lime)' }}>사단법인 인순이와 좋은 사람들 사무국장</span>
+                                <h3>이경진</h3>
+                                <h4>해밀학교 설립 운영 총괄 · 인공지능 활용 다문화교육 성공사례</h4>
                                 <p className="ds-bio">
-                                    <strong>"AI와 뇌과학을 잇는 한국의 대표 융합 연구자"</strong><br /><br />
-                                    <strong>현직</strong><br />
-                                    · KAIST 전자및전기공학과 교수<br />
-                                    · 건명원 과학분야 운영위원<br /><br />
-                                    <strong>주요 경력</strong><br />
-                                    · MIT 박사후연구원<br />
-                                    · 미네소타대 의대 자기공명연구센터 조교수<br />
-                                    · 보스턴대 생체의학이미지센터 부교수<br />
-                                    · KAIST 전자및전기공학과 부학과장<br /><br />
-                                    <strong>학력</strong><br />
-                                    · 막스 플랑크 뇌 연구소 (뇌과학 박사)<br />
-                                    · 다름슈타트 공과대 (컴퓨터공학·심리학)
+                                    <strong>現)</strong> 사단법인 인순이와 좋은 사람들 사무국장<br />
+                                    <strong>前)</strong> 해밀학교 교장<br /><br />
+                                    <strong>· 해밀학교 설립 운영 총괄</strong><br />
+                                    <strong>· 인공지능 활용 다문화교육 성공사례</strong>
                                 </p>
                             </div>
                         </div>

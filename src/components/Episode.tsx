@@ -110,9 +110,9 @@ const Episode = () => {
                         <div className="person-item" style={{ borderBottom: 'none' }}>
                             <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginBottom: '14px' }}>
                                 <GalleryImage
-                                    slot="expert_kim_daesik"
-                                    fallback="/kim_daesik.jpg"
-                                    alt="김대식 교수"
+                                    slot="expert_lee_kyungjin"
+                                    fallback="/staff/3.jpg"
+                                    alt="이경진 사무국장"
                                     style={{
                                         width: '120px',
                                         height: '120px',
@@ -124,27 +124,19 @@ const Episode = () => {
                                     }}
                                 />
                             </div>
-                            <div className="person-role">AI · Brain Science</div>
-                            <div className="person-name">김대식 교수</div>
-                            <div className="person-desc">뇌과학으로 풀어낸 AI 시대, 인간의 다음 진로</div>
+                            <div className="person-role">사단법인 인순이와 좋은 사람들 사무국장</div>
+                            <div className="person-name">이경진</div>
+                            <div className="person-desc">해밀학교 설립 운영 총괄 · 인공지능 활용 다문화교육 성공사례</div>
                             <div style={{ marginTop: '14px', fontSize: '0.85rem', color: 'var(--color-neon-lime)', lineHeight: '1.6', textAlign: 'left' }}>
-                                <strong style={{ color: 'var(--color-white)', fontSize: '0.9rem' }}>"AI와 뇌과학을 잇는 한국의 대표 융합 연구자"</strong>
-                                <div style={{ marginTop: '10px', color: 'var(--color-white)', fontSize: '0.83rem', fontWeight: 600 }}>현직</div>
+                                <div style={{ color: 'var(--color-white)', fontSize: '0.83rem', fontWeight: 600 }}>약력</div>
                                 <ul style={{ listStyle: 'none', padding: 0, margin: '4px 0 10px', color: 'var(--color-text-sub)' }}>
-                                    <li>· KAIST 전자및전기공학과 교수</li>
-                                    <li>· 건명원 과학분야 운영위원</li>
+                                    <li>· 現) 사단법인 인순이와 좋은 사람들 사무국장</li>
+                                    <li>· 前) 해밀학교 교장</li>
                                 </ul>
-                                <div style={{ color: 'var(--color-white)', fontSize: '0.83rem', fontWeight: 600 }}>주요 경력</div>
-                                <ul style={{ listStyle: 'none', padding: 0, margin: '4px 0 10px', color: 'var(--color-text-sub)' }}>
-                                    <li>· MIT 박사후연구원</li>
-                                    <li>· 미네소타대 의대 자기공명연구센터 조교수</li>
-                                    <li>· 보스턴대 생체의학이미지센터 부교수</li>
-                                    <li>· KAIST 전자및전기공학과 부학과장</li>
-                                </ul>
-                                <div style={{ color: 'var(--color-white)', fontSize: '0.83rem', fontWeight: 600 }}>학력</div>
+                                <div style={{ color: 'var(--color-white)', fontSize: '0.83rem', fontWeight: 600 }}>주요 활동</div>
                                 <ul style={{ listStyle: 'none', padding: 0, margin: '4px 0 0', color: 'var(--color-text-sub)' }}>
-                                    <li>· 막스 플랑크 뇌 연구소 (뇌과학 박사)</li>
-                                    <li>· 다름슈타트 공과대 (컴퓨터공학·심리학)</li>
+                                    <li>· 해밀학교 설립 운영 총괄</li>
+                                    <li>· 인공지능 활용 다문화교육 성공사례</li>
                                 </ul>
                             </div>
                         </div>

@@ -472,6 +472,8 @@ const Application = () => {
                             <label style={{
                                 display: 'flex',
                                 alignItems: 'flex-start',
+                                justifyContent: 'flex-start',
+                                textAlign: 'left',
                                 gap: 10,
                                 padding: '12px 14px',
                                 border: `1px solid ${consentPrivacy ? 'rgba(204, 255, 0, 0.5)' : 'rgba(255,255,255,0.18)'}`,
@@ -488,9 +490,20 @@ const Application = () => {
                                     type="checkbox"
                                     checked={consentPrivacy}
                                     onChange={(e) => setConsentPrivacy(e.target.checked)}
-                                    style={{ marginTop: 3, accentColor: 'var(--color-neon-lime)', cursor: 'pointer' }}
+                                    style={{
+                                        width: 18,
+                                        height: 18,
+                                        flexShrink: 0,
+                                        marginTop: 2,
+                                        padding: 0,
+                                        background: 'transparent',
+                                        border: 'none',
+                                        borderRadius: 0,
+                                        accentColor: 'var(--color-neon-lime)',
+                                        cursor: 'pointer'
+                                    }}
                                 />
-                                <span>
+                                <span style={{ flex: 1, textAlign: 'left' }}>
                                     <strong style={{ color: 'var(--color-white)' }}>(필수)</strong> 개인정보 수집·이용에 동의합니다.
                                 </span>
                             </label>
