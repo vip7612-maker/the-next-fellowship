@@ -68,8 +68,8 @@ const Episode2Detail = () => {
                                 className="ds-image bg-neon"
                             />
                             <div className="ds-info">
-                                <span className="field-tag" style={{ color: 'var(--color-neon-lime)' }}>사단법인 인순이와 좋은 사람들 사무국장</span>
                                 <h3>이경진</h3>
+                                <span className="field-tag" style={{ color: 'var(--color-neon-lime)' }}>사단법인 인순이와 좋은 사람들 사무국장</span>
                                 <h4>AI 시대, 교실과 업무를 다시 디자인하다</h4>
                                 <p className="ds-bio">
                                     <strong>現)</strong> 사단법인 인순이와 좋은 사람들 사무국장<br />

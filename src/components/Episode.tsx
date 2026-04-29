@@ -124,8 +124,8 @@ const Episode = () => {
                                     }}
                                 />
                             </div>
-                            <div className="person-role">사단법인 인순이와 좋은 사람들 사무국장</div>
                             <div className="person-name">이경진</div>
+                            <div className="person-role">사단법인 인순이와 좋은 사람들 사무국장</div>
                             <div className="person-desc">AI 시대, 교실과 업무를 다시 디자인하다</div>
                             <div style={{ marginTop: '14px', fontSize: '0.85rem', color: 'var(--color-neon-lime)', lineHeight: '1.6', textAlign: 'left' }}>
                                 <div style={{ color: 'var(--color-white)', fontSize: '0.83rem', fontWeight: 600 }}>약력</div>
