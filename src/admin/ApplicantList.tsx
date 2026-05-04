@@ -31,28 +31,45 @@ const ApplicantList = () => {
         setTranscriptBusyId(String(id));
         try {
             const data = await fetchApplicantTranscript(id);
-            // dataUrl을 Blob으로 변환해 새 탭에서 열기 (큰 dataUrl이 URL bar에 노출되는 것 방지)
-            const arr = data.transcriptDataUrl.split(',');
-            const mime = (arr[0].match(/:(.*?);/) || [])[1] || data.transcriptMimeType || 'application/octet-stream';
-            const bin = atob(arr[1]);
-            const u8 = new Uint8Array(bin.length);
-            for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
-            const blob = new Blob([u8], { type: mime });
-            const url = URL.createObjectURL(blob);
-
             const safeName = (fileName || data.transcriptFileName || `${data.name || 'transcript'}`).replace(/[^\w가-힣.\-_ ]+/g, '_');
-            const w = window.open(url, '_blank', 'noopener,noreferrer');
-            if (!w) {
-                // 팝업 차단 시 다운로드로 폴백
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = safeName;
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
+
+            // 1순위: Blob URL (현재 방식)
+            if (data.transcriptUrl) {
+                const w = window.open(data.transcriptUrl, '_blank', 'noopener,noreferrer');
+                if (!w) {
+                    const a = document.createElement('a');
+                    a.href = data.transcriptUrl;
+                    a.download = safeName;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                }
+                return;
             }
-            // 메모리 해제는 약간 뒤
-            setTimeout(() => URL.revokeObjectURL(url), 60_000);
+
+            // 2순위: 레거시 dataUrl (Vercel Blob 도입 이전 데이터)
+            if (data.transcriptDataUrl) {
+                const arr = data.transcriptDataUrl.split(',');
+                const mime = (arr[0].match(/:(.*?);/) || [])[1] || data.transcriptMimeType || 'application/octet-stream';
+                const bin = atob(arr[1]);
+                const u8 = new Uint8Array(bin.length);
+                for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+                const blob = new Blob([u8], { type: mime });
+                const url = URL.createObjectURL(blob);
+                const w = window.open(url, '_blank', 'noopener,noreferrer');
+                if (!w) {
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = safeName;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                }
+                setTimeout(() => URL.revokeObjectURL(url), 60_000);
+                return;
+            }
+
+            throw new Error('첨부된 파일이 없습니다.');
         } catch (err) {
             alert(err instanceof Error ? err.message : '첨부 파일을 불러오지 못했습니다.');
         } finally {

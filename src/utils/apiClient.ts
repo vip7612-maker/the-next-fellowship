@@ -41,6 +41,7 @@ export interface Applicant {
     deletedAt?: string;
     transcriptFileName?: string | null;
     transcriptMimeType?: string | null;
+    transcriptUrl?: string | null;
     transcriptSizeBytes?: number | null;
 }
 
@@ -56,7 +57,7 @@ export interface ApplicantSubmit {
     questionForYoon: string;
     transcriptFileName?: string;
     transcriptMimeType?: string;
-    transcriptDataUrl?: string;
+    transcriptUrl?: string;
     transcriptSizeBytes?: number;
 }
 
@@ -105,7 +106,8 @@ export const fetchApplicantTranscript = async (id: string | number): Promise<{
     name: string;
     transcriptFileName: string;
     transcriptMimeType: string;
-    transcriptDataUrl: string;
+    transcriptUrl?: string | null;
+    transcriptDataUrl?: string | null;
     transcriptSizeBytes: number | null;
 }> => {
     const res = await apiFetch(`${API_BASE}/applicants?id=${encodeURIComponent(String(id))}&attachment=transcript&t=${Date.now()}`, {
@@ -117,6 +119,18 @@ export const fetchApplicantTranscript = async (id: string | number): Promise<{
         throw new Error(err.error || '첨부 파일을 불러올 수 없습니다.');
     }
     return res.json();
+};
+
+export const uploadTranscript = async (file: File, onProgress?: (pct: number) => void): Promise<{ url: string }> => {
+    const { upload } = await import('@vercel/blob/client');
+    const safeName = file.name.replace(/[^\w가-힣.\-]+/g, '_');
+    const blob = await upload(`transcripts/${Date.now()}-${safeName}`, file, {
+        access: 'public',
+        handleUploadUrl: `${API_BASE}/blob-upload`,
+        contentType: file.type,
+        onUploadProgress: onProgress ? (e) => onProgress(e.percentage) : undefined,
+    });
+    return { url: blob.url };
 };
 
 export const submitApplicant = async (data: ApplicantSubmit): Promise<void> => {
