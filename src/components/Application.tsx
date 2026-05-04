@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import type { ChangeEvent, DragEvent } from 'react';
-import { submitApplicant } from '../utils/apiClient';
+import { submitApplicant, uploadTranscript } from '../utils/apiClient';
 import { autoFormatPhone } from '../utils/formatPhone';
 import './Application.css';
 
@@ -107,16 +107,8 @@ const EventScheduleHero = () => {
     );
 };
 
-const MAX_TRANSCRIPT_BYTES = 3 * 1024 * 1024; // 3MB
+const MAX_TRANSCRIPT_BYTES = 10 * 1024 * 1024; // 10MB
 const ALLOWED_TRANSCRIPT_TYPES = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
-
-const fileToDataUrl = (file: File): Promise<string> =>
-    new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onerror = () => reject(new Error('파일 읽기 실패'));
-        reader.onload = () => resolve(reader.result as string);
-        reader.readAsDataURL(file);
-    });
 
 const Application = () => {
     const [isMapOpen, setIsMapOpen] = useState(false);
@@ -134,33 +126,29 @@ const Application = () => {
 
     // 생기부 첨부(선택)
     const transcriptInputRef = useRef<HTMLInputElement>(null);
-    const [transcript, setTranscript] = useState<{ file: File; dataUrl: string } | null>(null);
+    const [transcript, setTranscript] = useState<{ file: File } | null>(null);
     const [transcriptError, setTranscriptError] = useState<string | null>(null);
     const [isTxDragOver, setIsTxDragOver] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState<number | null>(null);
     const [consentPrivacy, setConsentPrivacy] = useState(false);
 
-    const acceptTranscriptFile = async (file: File) => {
+    const acceptTranscriptFile = (file: File) => {
         setTranscriptError(null);
         if (!ALLOWED_TRANSCRIPT_TYPES.includes(file.type)) {
             setTranscriptError('PDF 또는 이미지(JPG/PNG/WebP) 파일만 첨부할 수 있습니다.');
             return;
         }
         if (file.size > MAX_TRANSCRIPT_BYTES) {
-            setTranscriptError(`파일이 너무 큽니다. (${(file.size / 1024 / 1024).toFixed(1)}MB) 3MB 이하로 줄여주세요.`);
+            setTranscriptError(`파일이 너무 큽니다. (${(file.size / 1024 / 1024).toFixed(1)}MB) 10MB 이하로 줄여주세요.`);
             return;
         }
-        try {
-            const dataUrl = await fileToDataUrl(file);
-            setTranscript({ file, dataUrl });
-        } catch (err) {
-            setTranscriptError(err instanceof Error ? err.message : '파일 처리 실패');
-        }
+        setTranscript({ file });
     };
 
-    const handleTranscriptInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const handleTranscriptInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (file) await acceptTranscriptFile(file);
+        if (file) acceptTranscriptFile(file);
     };
 
     const handleTranscriptDragOver = (e: DragEvent<HTMLDivElement>) => {
@@ -171,11 +159,11 @@ const Application = () => {
         e.preventDefault(); e.stopPropagation();
         setIsTxDragOver(false);
     };
-    const handleTranscriptDrop = async (e: DragEvent<HTMLDivElement>) => {
+    const handleTranscriptDrop = (e: DragEvent<HTMLDivElement>) => {
         e.preventDefault(); e.stopPropagation();
         setIsTxDragOver(false);
         const file = e.dataTransfer.files?.[0];
-        if (file) await acceptTranscriptFile(file);
+        if (file) acceptTranscriptFile(file);
     };
     const clearTranscript = () => {
         setTranscript(null);
@@ -208,14 +196,21 @@ const Application = () => {
             const roleValue = formData.role === '기타' ? (formData.roleCustom || '기타') : formData.role;
             const { roleCustom: _omit, ...rest } = formData;
             void _omit;
+
+            let uploaded: { url: string } | null = null;
+            if (transcript) {
+                setUploadProgress(0);
+                uploaded = await uploadTranscript(transcript.file, (pct) => setUploadProgress(pct));
+            }
+
             await submitApplicant({
                 ...rest,
                 role: roleValue,
                 round: 2,
-                ...(transcript ? {
+                ...(transcript && uploaded ? {
                     transcriptFileName: transcript.file.name,
                     transcriptMimeType: transcript.file.type,
-                    transcriptDataUrl: transcript.dataUrl,
+                    transcriptUrl: uploaded.url,
                     transcriptSizeBytes: transcript.file.size
                 } : {})
             });
@@ -229,6 +224,7 @@ const Application = () => {
             alert(error instanceof Error ? error.message : "오류가 발생했습니다.");
         } finally {
             setIsSubmitting(false);
+            setUploadProgress(null);
         }
     };
 
@@ -429,7 +425,7 @@ const Application = () => {
                                         {isTxDragOver ? '여기에 놓아주세요' : '생기부 파일을 끌어다 놓거나 클릭해서 선택'}
                                     </div>
                                     <div style={{ fontSize: '0.78rem', color: 'var(--color-text-sub)' }}>
-                                        PDF · JPG · PNG · WebP · 최대 3MB
+                                        PDF · JPG · PNG · WebP · 최대 10MB
                                     </div>
                                 </div>
                             )}
@@ -511,7 +507,11 @@ const Application = () => {
 
                         <button type="submit" className="cta-button-main full-width" disabled={isSubmitting}>
                             {isSubmitting
-                                ? (transcript ? '전송 중… (생기부 업로드)' : '전송 중…')
+                                ? (transcript
+                                    ? (uploadProgress !== null && uploadProgress < 100
+                                        ? `생기부 업로드 중… ${Math.round(uploadProgress)}%`
+                                        : '전송 중… (생기부 업로드)')
+                                    : '전송 중…')
                                 : (transcript ? '지금 참가신청하기 (생기부 포함)' : '지금 참가신청하기')}
                         </button>
                     </form>

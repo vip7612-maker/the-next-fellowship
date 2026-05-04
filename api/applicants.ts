@@ -26,23 +26,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         try {
             const { id, attachment } = req.query;
 
-            // 단건의 생기부 첨부 파일 (dataUrl 포함, 무거운 페이로드)
+            // 단건의 생기부 첨부 파일 (URL 우선, 레거시 dataUrl 폴백)
             if (id && typeof id === 'string' && attachment === 'transcript') {
                 const { rows } = await db.execute({
-                    sql: 'SELECT id, name, transcriptFileName, transcriptMimeType, transcriptDataUrl, transcriptSizeBytes FROM applicants WHERE id = ?',
+                    sql: 'SELECT id, name, transcriptFileName, transcriptMimeType, transcriptUrl, transcriptDataUrl, transcriptSizeBytes FROM applicants WHERE id = ?',
                     args: [id]
                 });
                 if (rows.length === 0) return res.status(404).json({ error: '신청자를 찾을 수 없습니다.' });
                 const row = rows[0] as Record<string, unknown>;
-                if (!row.transcriptDataUrl) return res.status(404).json({ error: '첨부된 생기부가 없습니다.' });
+                if (!row.transcriptUrl && !row.transcriptDataUrl) return res.status(404).json({ error: '첨부된 생기부가 없습니다.' });
                 return res.status(200).json(row);
             }
 
-            // 목록: dataUrl은 무거우므로 제외하고 첨부 메타만 반환
+            // 목록: 본문이 큰 dataUrl은 제외하고 메타+URL만 반환
             const { rows } = await db.execute(
                 `SELECT id, name, school, phone, email, careerReason, motivation, questionForYoon,
                         status, date, deletedAt, role, round,
-                        transcriptFileName, transcriptMimeType, transcriptSizeBytes
+                        transcriptFileName, transcriptMimeType, transcriptUrl, transcriptSizeBytes
                  FROM applicants ORDER BY date DESC`
             );
             return res.status(200).json(rows);
@@ -56,7 +56,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         try {
             const {
                 name, school, phone, email, careerReason, motivation, questionForYoon, role,
-                transcriptFileName, transcriptMimeType, transcriptDataUrl, transcriptSizeBytes
+                transcriptFileName, transcriptMimeType, transcriptUrl, transcriptSizeBytes
             } = req.body;
 
             if (!name || !phone || !careerReason || !motivation || !questionForYoon) {
@@ -66,21 +66,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 return res.status(400).json({ error: '유효한 전화번호 형식이 아닙니다.' });
             }
 
-            // 생기부 파일 검증 (선택)
+            // 생기부 파일 메타 (선택) — 실제 파일은 Vercel Blob에 직접 업로드되어 있고, 본문에는 URL만 들어옴.
             let txFileName: string | null = null;
             let txMimeType: string | null = null;
-            let txDataUrl: string | null = null;
+            let txUrl: string | null = null;
             let txSize: number | null = null;
-            if (transcriptDataUrl) {
-                if (typeof transcriptDataUrl !== 'string' || !transcriptDataUrl.startsWith('data:')) {
-                    return res.status(400).json({ error: '첨부 파일 형식이 올바르지 않습니다.' });
-                }
-                if (transcriptDataUrl.length > 4 * 1024 * 1024) {
-                    return res.status(413).json({ error: '첨부 파일이 너무 큽니다. 3MB 이하로 줄여주세요.' });
+            if (transcriptUrl) {
+                if (typeof transcriptUrl !== 'string' || !/^https:\/\/[^.]+\.public\.blob\.vercel-storage\.com\//.test(transcriptUrl)) {
+                    return res.status(400).json({ error: '첨부 파일 URL 형식이 올바르지 않습니다.' });
                 }
                 txFileName = transcriptFileName || '생기부';
                 txMimeType = transcriptMimeType || 'application/octet-stream';
-                txDataUrl = transcriptDataUrl;
+                txUrl = transcriptUrl;
                 txSize = typeof transcriptSizeBytes === 'number' ? transcriptSizeBytes : null;
             }
 
@@ -99,10 +96,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             }
 
             await db.execute({
-                sql: `INSERT INTO applicants (id, name, school, phone, email, careerReason, motivation, questionForYoon, status, date, role, round, transcriptFileName, transcriptMimeType, transcriptDataUrl, transcriptSizeBytes)
+                sql: `INSERT INTO applicants (id, name, school, phone, email, careerReason, motivation, questionForYoon, status, date, role, round, transcriptFileName, transcriptMimeType, transcriptUrl, transcriptSizeBytes)
                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 args: [id, name, school, phone, email, careerReason, motivation, questionForYoon, 'Pending', date, role || '학생', currentRound,
-                    txFileName, txMimeType, txDataUrl, txSize]
+                    txFileName, txMimeType, txUrl, txSize]
             });
 
             try {
@@ -110,7 +107,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 const chatId = process.env.TELEGRAM_CHAT_ID;
                 if (botToken && chatId) {
                     const transcriptLine = txFileName
-                        ? `\n📎 생기부 첨부: ${escapeTg(txFileName)} (${escapeTg(((txSize || 0) / 1024).toFixed(0))}KB)`
+                        ? `\n📎 생기부 첨부: ${escapeTg(txFileName)} (${escapeTg(((txSize || 0) / 1024).toFixed(0))}KB)` +
+                          (txUrl ? `\n🔗 ${escapeTg(txUrl)}` : '')
                         : '';
                     const message =
                         `🔔 새로운 신청자가 등록되었습니다\\! \\[${currentRound}회차\\]\n\n` +
