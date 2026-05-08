@@ -263,7 +263,7 @@ const Application = () => {
                         <h2 className="section-title" style={{ fontSize: '2.2rem' }}>좋아하는 분야가 분명할수록,<br /><span className="neon-text">AI는 더 멀리</span> 데려다 줍니다</h2>
                         <p style={{ marginBottom: '30px' }}>음악·운동·글쓰기·요리·게임 — 무엇을 좋아하든 좋습니다.<br />그 관심에 AI를 더해 ‘나만의 다음 진로’를 함께 그려볼 50명을 모십니다.</p>
                         <ul className="criteria-list" style={{ marginBottom: '24px' }}>
-                            <li>신청 기간: 2026년 5월 15일(금)까지</li>
+                            <li>신청 기간: 2026년 5월 12일(화)까지</li>
                             <li>선발 인원: 홍천지역 고등학생 50명</li>
                             <li>발표: 신청 마감 후 개별 연락</li>
                         </ul>
