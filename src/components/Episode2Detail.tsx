@@ -47,7 +47,7 @@ const Episode2Detail = () => {
                         <div className="meta-box" style={{ background: 'rgba(204, 255, 0, 0.05)', borderColor: 'rgba(204, 255, 0, 0.25)' }}>
                             <p style={{ margin: 0 }}><strong>📆 일시:</strong> 2026년 5월 17일(일) 14:00–17:00</p>
                             <p style={{ margin: 0 }}><strong>📍 장소:</strong> 홍천읍 꽃신</p>
-                            <p style={{ margin: 0 }}><strong>📝 신청 기간:</strong> 5월 15일(금)까지</p>
+                            <p style={{ margin: 0 }}><strong>📝 신청 기간:</strong> 5월 12일(화)까지</p>
                             <p style={{ margin: 0 }}><strong>👥 모집:</strong> 홍천지역 고등학생 50명</p>
                         </div>
                     </div>
