@@ -21,6 +21,7 @@ import Dashboard from './admin/Dashboard';
 import MentorSurveyAdmin from './admin/MentorSurveyAdmin';
 import MentorSurvey from './components/MentorSurvey';
 import MentorBanner from './components/MentorBanner';
+import SmsAdmin from './admin/SmsAdmin';
 import './App.css';
 
 const LandingPage = () => (
@@ -84,6 +85,7 @@ function App() {
           <Route path="/admin/gallery" element={<ProtectedAdmin><GalleryAdmin /></ProtectedAdmin>} />
           <Route path="/mentor-apply/:id" element={<MentorSurvey />} />
           <Route path="/admin/mentor-surveys" element={<ProtectedAdmin><MentorSurveyAdmin /></ProtectedAdmin>} />
+          <Route path="/admin/sms" element={<ProtectedAdmin><SmsAdmin /></ProtectedAdmin>} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>
