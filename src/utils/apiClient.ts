@@ -211,16 +211,122 @@ export const saveTargetCapacity = (capacity: number) => {
 
 // ===== SMS =====
 
-export const sendSms = async (messages: { to: string, text: string }[]): Promise<any> => {
+export interface SmsTemplate {
+    id: string;
+    title: string;
+    content: string;
+    category: string | null;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface SmsSendLog {
+    id: string;
+    groupId: string | null;
+    templateId: string | null;
+    title: string | null;
+    content: string;
+    targetType: string;
+    targetCount: number;
+    successCount: number;
+    failCount: number;
+    isLms: number;
+    sentAt: string;
+    rawResult: string | null;
+}
+
+export interface SmsSendRecipient {
+    id: string;
+    sendLogId: string;
+    name: string | null;
+    phone: string;
+    status: 'success' | 'failed' | null;
+    errorMessage: string | null;
+}
+
+export interface SmsSendMeta {
+    templateId?: string;
+    title?: string;
+    targetType?: string;
+    content?: string;
+}
+
+export const sendSms = async (
+    messages: { to: string; text: string; name?: string }[],
+    meta?: SmsSendMeta
+): Promise<{ success: boolean; count: number; successCount: number; failCount: number; groupId?: string; logId?: string }> => {
     const res = await apiFetch(`${API_BASE}/sms`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...adminHeaders() },
-        body: JSON.stringify({ messages })
+        body: JSON.stringify({ messages, meta })
     });
     if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.error || '문자 발송에 실패했습니다.');
     }
+    return res.json();
+};
+
+export const fetchSmsTemplates = async (): Promise<SmsTemplate[]> => {
+    const res = await apiFetch(`${API_BASE}/smsAdmin?type=templates&t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache', ...adminHeaders() }
+    });
+    if (!res.ok) throw new Error('템플릿 목록을 불러올 수 없습니다.');
+    return res.json();
+};
+
+export const createSmsTemplate = async (data: { title: string; content: string; category?: string }): Promise<{ id: string }> => {
+    const res = await apiFetch(`${API_BASE}/smsAdmin?type=template`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...adminHeaders() },
+        body: JSON.stringify(data)
+    });
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || '템플릿 생성에 실패했습니다.');
+    }
+    return res.json();
+};
+
+export const updateSmsTemplate = async (id: string, patch: { title?: string; content?: string; category?: string }): Promise<void> => {
+    const res = await apiFetch(`${API_BASE}/smsAdmin?type=template`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', ...adminHeaders() },
+        body: JSON.stringify({ id, ...patch })
+    });
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || '템플릿 수정에 실패했습니다.');
+    }
+};
+
+export const deleteSmsTemplate = async (id: string): Promise<void> => {
+    const res = await apiFetch(`${API_BASE}/smsAdmin?type=template&id=${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+        headers: { ...adminHeaders() }
+    });
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || '템플릿 삭제에 실패했습니다.');
+    }
+};
+
+export const fetchSmsLogs = async (): Promise<SmsSendLog[]> => {
+    const res = await apiFetch(`${API_BASE}/smsAdmin?type=logs&t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache', ...adminHeaders() }
+    });
+    if (!res.ok) throw new Error('발송 이력을 불러올 수 없습니다.');
+    return res.json();
+};
+
+export const fetchSmsLogDetail = async (id: string): Promise<SmsSendLog & { recipients: SmsSendRecipient[] }> => {
+    const res = await apiFetch(`${API_BASE}/smsAdmin?type=log&id=${encodeURIComponent(id)}&t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache', ...adminHeaders() }
+    });
+    if (!res.ok) throw new Error('발송 상세를 불러올 수 없습니다.');
     return res.json();
 };
 

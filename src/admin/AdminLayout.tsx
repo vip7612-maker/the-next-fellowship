@@ -26,6 +26,9 @@ const AdminLayout = ({ children, onLogout }: { children: React.ReactNode; onLogo
                         <Link to="/admin/mentor-surveys" className={`menu-item ${location.pathname === '/admin/mentor-surveys' ? 'active' : ''}`}>
                             🎓 멘토 신청 (회차별)
                         </Link>
+                        <Link to="/admin/sms" className={`menu-item ${location.pathname === '/admin/sms' ? 'active' : ''}`}>
+                            📨 문자 발송
+                        </Link>
                         <Link to="/" className="menu-item" style={{ marginTop: 'auto', opacity: 0.5 }}>
                             홈으로 가기
                         </Link>
