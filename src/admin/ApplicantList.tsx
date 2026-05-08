@@ -4,6 +4,7 @@ import { fetchApplicantTranscript } from '../utils/apiClient';
 import { fetchApplicants, getTargetCapacity, saveTargetCapacity, updateApplicantStatus } from '../utils/apiClient';
 import type { Applicant } from '../utils/apiClient';
 import { formatPhone } from '../utils/formatPhone';
+import { SmsModal } from './SmsModal';
 
 interface GroupedApplicant extends Applicant {
     applyCount: number;
@@ -26,6 +27,7 @@ const ApplicantList = () => {
     const [loadError, setLoadError] = useState('');
     const [activeRound, setActiveRound] = useState<number>(() => currentEventRound());
     const [transcriptBusyId, setTranscriptBusyId] = useState<string | null>(null);
+    const [showSmsModal, setShowSmsModal] = useState(false);
 
     const handleViewTranscript = async (id: string | number, fileName?: string | null) => {
         setTranscriptBusyId(String(id));
@@ -355,6 +357,13 @@ const ApplicantList = () => {
                     >
                         엑셀 다운로드 (CSV)
                     </button>
+                    <button
+                        onClick={() => setShowSmsModal(true)}
+                        disabled={filteredApplicants.length === 0}
+                        style={{ padding: '8px 15px', borderRadius: '4px', border: 'none', background: filteredApplicants.length === 0 ? '#cbd5e1' : '#10b981', color: 'white', cursor: filteredApplicants.length === 0 ? 'not-allowed' : 'pointer', fontWeight: '500' }}
+                    >
+                        📨 문자 발송 ({filteredApplicants.length}명)
+                    </button>
                 </div>
             </div>
 
@@ -535,6 +544,13 @@ const ApplicantList = () => {
                 </div>
             )}
             </div>
+
+            {showSmsModal && (
+                <SmsModal
+                    applicants={filteredApplicants}
+                    onClose={() => setShowSmsModal(false)}
+                />
+            )}
 
             {/* Deleted Applicants Section */}
             <div className="admin-card deleted-section" style={{ marginTop: '30px' }}>
