@@ -26,6 +26,44 @@ const getByteLength = (s: string) => {
 
 const isValidKoreanPhone = (raw: string) => /^01[016789]\d{7,8}$/.test(String(raw).replace(/[^0-9]/g, ''));
 
+// 1:1 테스트 발송용 프리셋 본문
+const PRESET_TEST_MESSAGES: { key: string; label: string; text: string }[] = [
+    {
+        key: 'confirm-r2',
+        label: '✅ 2회차 참석 확정',
+        text:
+`[더 넥스트 펠로우십]
+
+{이름}님, 반가워요 🙌
+2회차 「AI 융합 — 내가 좋아하는 그것에, AI를 더하는 순간」 에 오시는 걸 환영합니다.
+
+📆 5월 17일(일) 14:00–17:00
+📍 홍천읍 꽃신
+   강원특별자치도 홍천군 홍천읍 홍천로5길 10
+🎤 이경진 강사 · 대학생 멘토 · 이상연 입시 컨설턴트
+
+· 13:30부터 입장 가능합니다
+· 못 오시게 되면 미리 알려주세요!
+
+당일 만나요 ✨
+- 인순이와 좋은 사람들 -`
+    },
+    {
+        key: 'introduce-friend',
+        label: '💌 친구 소개',
+        text:
+`야, 나 이번 일요일(5/17) 「더 넥스트 펠로우십」 2회차 가는데
+너도 같이 가자!
+
+「AI 융합 — 내가 좋아하는 그것에, AI를 더하는 순간」
+📆 5/17(일) 14:00–17:00
+📍 홍천읍 꽃신
+🎤 강사 + 대학생 멘토 + 입시 컨설턴트
+
+👉 https://the-next-fellowship.vercel.app`
+    },
+];
+
 const SmsAdmin = () => {
     const [tab, setTab] = useState<Tab>('send');
 
@@ -52,6 +90,13 @@ const SmsAdmin = () => {
 
     // 템플릿 편집
     const [editingTemplate, setEditingTemplate] = useState<{ id?: string; title: string; content: string; category: string } | null>(null);
+
+    // 1:1 테스트 발송 (임시 — 임의 번호로 한 건 발송)
+    const [testPhone, setTestPhone] = useState('');
+    const [testName, setTestName] = useState('테스트');
+    const [testContent, setTestContent] = useState('');
+    const [testSending, setTestSending] = useState(false);
+    const [testResult, setTestResult] = useState('');
 
     useEffect(() => {
         loadApplicants();
@@ -168,6 +213,31 @@ const SmsAdmin = () => {
         }
     };
 
+    // 1:1 테스트 발송
+    const handleTestSend = async () => {
+        const cleanPhone = testPhone.replace(/[^0-9]/g, '');
+        if (!isValidKoreanPhone(cleanPhone)) { alert('수신 번호 형식이 올바르지 않습니다.'); return; }
+        if (!testContent.trim()) { alert('본문을 입력하거나 프리셋을 선택해 주세요.'); return; }
+
+        const text = testContent.replace(/{이름}/g, testName.trim() || '테스트');
+        const isLmsTest = getByteLength(text) > 90;
+        if (!confirm(`${cleanPhone} 으로 ${isLmsTest ? 'LMS 장문' : 'SMS 단문'} 1건을 발송합니다. 계속할까요?`)) return;
+
+        setTestSending(true);
+        setTestResult('');
+        try {
+            const result = await sendSms(
+                [{ to: cleanPhone, text, name: testName.trim() || undefined }],
+                { targetType: 'test', title: '1:1 테스트', content: text }
+            );
+            setTestResult(`✅ 발송 등록 완료 (성공 ${result.successCount} / 실패 ${result.failCount})`);
+        } catch (err: any) {
+            setTestResult(`❌ 발송 실패: ${err.message}`);
+        } finally {
+            setTestSending(false);
+        }
+    };
+
     // 템플릿 저장
     const handleSaveTemplate = async (e: FormEvent) => {
         e.preventDefault();
@@ -255,7 +325,95 @@ const SmsAdmin = () => {
 
             {/* === 새 발송 === */}
             {tab === 'send' && (
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+                    {/* 1:1 테스트 발송 (임시) */}
+                    <div className="admin-card" style={{ borderLeft: '4px solid #f59e0b', background: '#fffbeb' }}>
+                        <h3 style={{ marginTop: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
+                            🧪 임의 번호 1:1 테스트 발송
+                            <span style={{ fontSize: 12, fontWeight: 500, color: '#92400e', padding: '2px 8px', background: '#fef3c7', borderRadius: 999 }}>
+                                실 발송 / 이력에 'test' 로 기록
+                            </span>
+                        </h3>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+                            <label style={labelStyle}>
+                                수신 번호
+                                <input
+                                    type="tel"
+                                    value={testPhone}
+                                    onChange={e => setTestPhone(e.target.value)}
+                                    placeholder="01012345678"
+                                    style={inputStyle}
+                                />
+                            </label>
+                            <label style={labelStyle}>
+                                수신자 이름 ({'{이름}'} 치환용)
+                                <input
+                                    type="text"
+                                    value={testName}
+                                    onChange={e => setTestName(e.target.value)}
+                                    placeholder="테스트"
+                                    style={inputStyle}
+                                />
+                            </label>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 8 }}>
+                            <span style={{ fontSize: 13, fontWeight: 600, alignSelf: 'center', color: '#475569' }}>프리셋:</span>
+                            {PRESET_TEST_MESSAGES.map(p => (
+                                <button
+                                    key={p.key}
+                                    onClick={() => setTestContent(p.text)}
+                                    className="export-btn"
+                                    style={{ background: '#fff', borderColor: '#f59e0b' }}
+                                >
+                                    {p.label}
+                                </button>
+                            ))}
+                            {testContent && (
+                                <button
+                                    onClick={() => setTestContent('')}
+                                    className="export-btn"
+                                    style={{ background: '#fff', color: '#94a3b8' }}
+                                >
+                                    지우기
+                                </button>
+                            )}
+                        </div>
+
+                        <textarea
+                            value={testContent}
+                            onChange={e => setTestContent(e.target.value)}
+                            placeholder="프리셋을 누르거나 직접 입력. {이름}을 쓰면 위 수신자 이름으로 치환됩니다."
+                            rows={8}
+                            style={{ ...inputStyle, resize: 'vertical', fontFamily: 'inherit', whiteSpace: 'pre-wrap' }}
+                        />
+                        <div style={{ fontSize: 12, color: '#64748b', marginTop: 4, display: 'flex', justifyContent: 'space-between' }}>
+                            <span>{getByteLength(testContent)} Byte ({getByteLength(testContent) > 90 ? 'LMS' : 'SMS'})</span>
+                            <span>* 실제로 SMS가 발송되며 발송 이력 탭에 기록됩니다.</span>
+                        </div>
+
+                        {testResult && (
+                            <div style={{ marginTop: 12, padding: 12, borderRadius: 8, background: testResult.startsWith('✅') ? '#dcfce7' : '#fee2e2', color: testResult.startsWith('✅') ? '#15803d' : '#b91c1c', fontSize: 14, fontWeight: 600 }}>
+                                {testResult}
+                            </div>
+                        )}
+
+                        <div style={{ marginTop: 12, display: 'flex', justifyContent: 'flex-end' }}>
+                            <button
+                                onClick={handleTestSend}
+                                disabled={testSending || !testPhone || !testContent.trim()}
+                                className="export-btn"
+                                style={{ background: '#f59e0b', color: '#fff', padding: '10px 20px', fontWeight: 700 }}
+                            >
+                                {testSending ? '발송 중…' : '🧪 1건 테스트 발송'}
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* 정식 발송 영역 */}
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
                     <div className="admin-card">
                         <h3 style={{ marginTop: 0 }}>1. 발송 대상</h3>
                         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
@@ -347,6 +505,7 @@ const SmsAdmin = () => {
                                 {sending ? '발송 중…' : `📤 ${targets.length}명 발송`}
                             </button>
                         </div>
+                    </div>
                     </div>
                 </div>
             )}
